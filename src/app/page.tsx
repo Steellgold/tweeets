@@ -1,113 +1,225 @@
-import Image from 'next/image'
+"use client";
 
-export default function Home() {
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/lib/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/lib/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
+import type { WritingSentiment, WritingStyle, WritingTone } from "@/lib/configs/generation/types";
+import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
+import { useState, type ReactElement, useEffect } from "react";
+import { exampleTexts } from "@/lib/configs/generation/ideas";
+import { useUserContext } from "@/lib/contexts/UserProvider";
+import { Textarea } from "@/lib/components/ui/textarea";
+import { Slider } from "@/lib/components/ui/slider";
+import { Button } from "@/lib/components/ui/button";
+import { Label } from "@/lib/components/ui/label";
+import { Badge } from "@/lib/components/ui/badge";
+import { useMediaQuery } from "usehooks-ts";
+import { PenTool, SaveAll, User } from "lucide-react";
+import { z } from "zod";
+import { Input } from "@/lib/components/ui/input";
+
+const getData = async(): Promise<{ isPro: boolean; message: string }> => {
+  const response = await fetch("/api/isPro");
+  const schema = z.object({
+    isPro: z.boolean()
+  }).safeParse(await response.json());
+
+  const random = exampleTexts[Math.floor(Math.random() * exampleTexts.length)];
+
+  if (!schema.success) return { isPro: false, message: random };
+  return { isPro: schema.data.isPro, message: random };
+};
+
+const Home = (): ReactElement => {
+  const media = useMediaQuery("(max-width: 640px)");
+  const [isPro, setIsPro] = useState(false);
+  const [length, setLength] = useState(10);
+  const [isBlue, _] = useState(false);
+  const [__, setSentiment] = useState<WritingSentiment>("sentiment-neutral");
+  const [___, setStyle] = useState<WritingStyle>("style-neutral");
+  const [____, setTone] = useState<WritingTone>("tone-neutral");
+  const [random, setRandom] = useState("");
+  const { user } = useUserContext();
+
+  useEffect(() => {
+    void getData().then((data) => {
+      setIsPro(data.isPro);
+      setRandom(data.message);
+    });
+  }, [isPro]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div className="flex flex-col items-center justify-center mt-32 py-2 px-3">
+      <Card className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem]">
+        <CardHeader>
+          <CardTitle>Tweet like a pro</CardTitle>
+          <CardDescription>
+            Tweeets is a tool for analyzing and creating tweets to make your life easier as a regular Twitter user.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="context">Context of the tweet</Label>
+            <Textarea id="context" placeholder={!random ? ". . ." : random} className="mb-4" disabled={!user} />
+          </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 mt-1.5 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="sentiment">Sentiment</Label>
+              <Select defaultValue="sentiment-neutral" onValueChange={(value) => setSentiment(value as WritingSentiment)} disabled={!user}>
+                <SelectTrigger id="sentiment">
+                  <SelectValue placeholder="Select a sentiment" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem id="sentiment-neutral" value="sentiment-neutral">Neutral</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-adventurous" disabled={!isPro}>
+                    Adventurous {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="sentiment-exhilarated" value="sentiment-exhilarated" disabled={!isPro}>
+                    Exhilarated {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-grateful" disabled={!isPro}>
+                    Grateful {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-joyful">Joyful</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-sad">Sad</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-energetic">Energetic</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-calm">Calm</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-confident">Confident</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-hopeful">Hopeful</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-sarcastic">Sarcastic</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-playful">Playful</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-thoughtful">Thoughtful</SelectItem>
+                  <SelectItem id="sentiment-neutral" value="sentiment-motivational">Motivational</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="style">Writing style</Label>
+              {/* can click on "friendy", "informative" and "poetic" even if not pro but the select value doesn't change */}
+              <Select defaultValue="style-neutral" onValueChange={(value) => setStyle(value as WritingStyle)} disabled={!user}>
+                <SelectTrigger id="style">
+                  <SelectValue placeholder="Select a writing style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem id="style-neutral" value="style-neutral">Neutral</SelectItem>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+                  <SelectItem id="style-friendly" value="style-friendly" disabled={!isPro}>
+                    Friendly {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="style-informative" value="style-informative" disabled={!isPro}>
+                    Informative {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="style-poetic" value="style-poetic" disabled={!isPro}>
+                    Poetic {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="style-formal" value="style-formal">Formalb</SelectItem>
+                  <SelectItem id="style-humorous" value="style-humorous">Humorous</SelectItem>
+                  <SelectItem id="style-inspirational" value="style-inspirational">Inspirational</SelectItem>
+                  <SelectItem id="style-educational" value="style-educational">Educational</SelectItem>
+                  <SelectItem id="style-controversial" value="style-controversial">Controversial</SelectItem>
+                  <SelectItem id="style-sentimental" value="style-sentimental">Sentimental</SelectItem>
+                  <SelectItem id="style-mysterious" value="style-mysterious">Mysterious</SelectItem>
+                  <SelectItem id="style-engaging" value="style-engaging">Engaging</SelectItem>
+                  <SelectItem id="style-narrative" value="style-narrative">Narrative</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+            <div className="space-y-2">
+              <Label htmlFor="tone">Tone</Label>
+              <Select defaultValue="tone-neutral" onValueChange={(value) => setTone(value as WritingTone)} disabled={!user}>
+                <SelectTrigger id="tone">
+                  <SelectValue placeholder="Select a tone" />
+                </SelectTrigger>
+                {/* flex, 2 per lines for md: and default 1 per line */}
+                <SelectContent>
+                  <SelectItem id="tone-neutral" value="tone-neutral">Neutral</SelectItem>
+                  <SelectItem id="tone-appreciative" value="tone-appreciative" disabled={!isPro}>
+                    Appreciative {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="tone-curious" value="tone-curious" disabled={!isPro}>
+                    Curious {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="tone-motivational" value="tone-motivational" disabled={!isPro}>
+                    Motivational {!isPro && <Badge variant={"pro"}>Pro</Badge>}</SelectItem>
+                  <SelectItem id="tone-optimistic" value="tone-optimistic">Optimistic</SelectItem>
+                  <SelectItem id="tone-pessimistic" value="tone-pessimistic">Pessimistic</SelectItem>
+                  <SelectItem id="tone-angry" value="tone-angry">Angry</SelectItem>
+                  <SelectItem id="tone-joyful" value="tone-joyful">Joyful</SelectItem>
+                  <SelectItem id="tone-sad" value="tone-sad">Sad</SelectItem>
+                  <SelectItem id="tone-energetic" value="tone-energetic">Energetic</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+          <div className="grid grid-cols-1 mt-1.5 items-center">
+            <div className="space-y-2">
+              <Label htmlFor="length">Length {length}/{isBlue ? 4000 : 280}</Label>
+              <Slider
+                id="length"
+                defaultValue={[length]}
+                max={isBlue ? (isPro ? 4000 : 280) : 280}
+                step={isBlue ? 25 : 1}
+                onValueChange={(value) => setLength(value[0])}
+                disabled={!user} />
+            </div>
+          </div>
+        </CardContent>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+        <CardFooter className="flex justify-between gap-2">
+          <Sheet>
+            <SheetTrigger disabled={!user}>
+              <Button size={"sm"} variant={"link"} disabled={!user}>
+                Load template
+              </Button>
+            </SheetTrigger>
+            <SheetContent side={"left"}>
+              <SheetHeader>
+                <SheetTitle>Templates</SheetTitle>
+                <SheetDescription>
+                  Save your own parameters to generate tweets faster, and share them with your friends.
+                </SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+
+          <div className="flex gap-2">
+            <Dialog>
+              <DialogTrigger>
+                <Button size={media ? "icon" : "sm"} disabled={!user}>
+                  {media ? <SaveAll /> : "Save parameters"}
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Save as template</DialogTitle>
+                  <DialogDescription>
+                    Save your parameters to generate tweets faster, and share them with your friends.
+                    <Input placeholder="Template name" className="mt-2" />
+                    <Textarea placeholder="Template description (optional)" className="mt-2" />
+                  </DialogDescription>
+
+                  <DialogFooter className="flex justify-end gap-2 mt-2">
+                    <Button variant={"ghost"}>Cancel</Button>
+                    <Button>Save</Button>
+                  </DialogFooter>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+
+            <Button size={media ? "icon" : "sm"} disabled={!user}>
+              {media ? <PenTool /> : "Generate"}
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+
+      {!user && (
+        <Alert className="w-[35rem] mt-3">
+          <User className="h-4 w-4" />
+          <AlertTitle>Log in to use Tweeets</AlertTitle>
+          <AlertDescription>
+            If you want use Tweeets, you need to log in with your Twitter account, for save your parameters and generate tweets.
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
+  );
+};
+
+export default Home;
