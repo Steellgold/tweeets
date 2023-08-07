@@ -180,7 +180,7 @@ const Home = (): ReactElement => {
 
           <div className="flex gap-2">
             <Dialog>
-              <DialogTrigger>
+              <DialogTrigger disabled={!user}>
                 <Button size={media ? "icon" : "sm"} disabled={!user}>
                   {media ? <SaveAll /> : "Save parameters"}
                 </Button>
