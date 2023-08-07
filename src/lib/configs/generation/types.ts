@@ -40,3 +40,23 @@ export type WritingTone = "tone-neutral" |
 "tone-appreciative" |
  "tone-curious" |
  "tone-motivational";
+
+const proSelects = [
+  "sentiment-exhilarated",
+  "sentiment-grateful",
+  "sentiment-adventurous",
+  "style-friendly",
+  "style-informative",
+  "style-poetic",
+  "tone-appreciative",
+  "tone-curious",
+  "tone-motivational"
+];
+
+export const testProSelected = (isPro: boolean, selected: string[]): boolean => {
+  if (!isPro) {
+    return !selected.some((option) => proSelects.includes(option));
+  }
+
+  return true;
+};

@@ -51,6 +51,16 @@ const Home = (): ReactElement => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-32 py-2 px-3">
+      {!user && (
+        <Alert className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem] mb-4">
+          <User className="h-4 w-4" />
+          <AlertTitle>Log in to use Tweeets</AlertTitle>
+          <AlertDescription>
+            If you want use Tweeets, you need to log in with your Twitter account, for save your parameters and generate tweets.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem]">
         <CardHeader>
           <CardTitle>Tweet like a pro</CardTitle>
@@ -208,16 +218,6 @@ const Home = (): ReactElement => {
           </div>
         </CardFooter>
       </Card>
-
-      {!user && (
-        <Alert className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem] mt-4">
-          <User className="h-4 w-4" />
-          <AlertTitle>Log in to use Tweeets</AlertTitle>
-          <AlertDescription>
-            If you want use Tweeets, you need to log in with your Twitter account, for save your parameters and generate tweets.
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 };

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:unit": "vitest --ui"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
@@ -60,7 +61,10 @@
     "@bluzzi/eslint-config": "1.1.0",
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
+    "@vitest/ui": "^0.34.1",
     "encoding": "^0.1.13",
+    "vitest": "^0.34.1",
+    "happy-dom": "^10.8.0",
     "prisma": "^5.1.0"
   },
   "eslintConfig": {
