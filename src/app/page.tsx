@@ -50,7 +50,7 @@ const Home = (): ReactElement => {
   }, [isPro]);
 
   return (
-    <div className="flex flex-col items-center justify-center mt-32 py-2 px-3">
+    <div className="flex flex-col items-center justify-center mt-3 md:mt-32 py-2 px-3">
       {!user && (
         <Alert className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem] mb-4">
           <User className="h-4 w-4" />
