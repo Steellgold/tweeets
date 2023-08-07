@@ -210,7 +210,7 @@ const Home = (): ReactElement => {
       </Card>
 
       {!user && (
-        <Alert className="w-[35rem] mt-3">
+        <Alert className="w-full sm:w-[20rem] md:w-[30rem] lg:w-[40rem] xl:w-[50rem]">
           <User className="h-4 w-4" />
           <AlertTitle>Log in to use Tweeets</AlertTitle>
           <AlertDescription>

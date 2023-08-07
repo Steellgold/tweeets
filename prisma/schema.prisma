@@ -11,7 +11,18 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  isPro Boolean @default(false)
+  id     String  @id @default(cuid())
+  email  String  @unique
+  isPro  Boolean @default(false)
+  models Model[]
+}
+
+model Model {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  description String   @default("")
+  shareLink   String   @default("")
 }
