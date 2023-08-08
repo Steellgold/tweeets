@@ -15,6 +15,11 @@ model User {
   email  String  @unique
   isPro  Boolean @default(false)
   models Model[]
+
+  // First parameters of the account has been done ? 
+  fpDone   Boolean    @default(false)
+  // Tweets for take as an example
+  fpTweets fpTweets[]
 }
 
 model Model {
@@ -24,5 +29,17 @@ model Model {
   userId      String
   name        String
   description String   @default("")
-  shareLink   String   @default("")
+  shareLink   String   @unique @default("")
+  sentiment   String
+  style       String
+  tone        String
+  context     String
+  length      Int
+}
+
+model fpTweets {
+  id      String  @id @default(cuid())
+  content String
+  user    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }

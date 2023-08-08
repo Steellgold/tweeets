@@ -16,7 +16,7 @@ const os = Open_Sans({ subsets: ["latin"] });
 const RootLayout: Component<PropsWithChildren> = ({ children }) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("bg-white dark:bg-zinc-950", os)} suppressHydrationWarning>
+      <body className={cn("bg-white dark:bg-zinc-950", os)}>
         <Analytics />
 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

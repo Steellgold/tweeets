@@ -75,7 +75,7 @@ export const Navbar = (): ReactElement => {
         ) : (
           <Button variant={"twitter"} onClick={() => {
             void supabase.auth.signInWithOAuth({ provider: "twitter", options: {
-              redirectTo: (process.env.NEXT_PUBLIC_REDIRECT_URL ?? "https://tweeets.app") + "/auth/callback"
+              redirectTo: `${window.location.origin}/auth/callback`
             } });
           }}>
             <Twitter size={20} className="mr-2 text-white fill-current" />

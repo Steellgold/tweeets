@@ -20,10 +20,11 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
     await prisma.user.create({
       data: {
         id: resp.data.user?.id || Math.random().toString(36).substring(7).toString(),
-        email: resp.data.user?.email ?? "",
-        isPro: false
+        email: resp.data.user?.email ?? ""
       }
     });
+
+    await prisma.$disconnect();
   }
 
   return NextResponse.redirect(requestUrl.origin);
