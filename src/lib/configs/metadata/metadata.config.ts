@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 const data = {
   title: "Tweeets",
   description: [
-    "Analyse your last tweets and ask AI to generate new ones like you."
+    "Generate tweets using IA, based with your own tweets or your own parameters.",
+    "Share your tweets models with your friends and the world."
   ].join(" "),
   siteName: "Tweeets"
 };
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     siteName: data.siteName,
     url: "https://tweeets.app/",
     type: "website",
-    images: ["/tweeets.png"]
+    images: ["/assets/tweeets.png"]
   },
 
   twitter: {
