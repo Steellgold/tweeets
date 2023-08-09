@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: data.description,
   applicationName: data.siteName,
 
-  themeColor: "#0ea5e9",
+  themeColor: "#0d0d11",
 
   openGraph: {
     title: {
