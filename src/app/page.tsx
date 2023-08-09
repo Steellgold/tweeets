@@ -26,6 +26,7 @@ import { useMediaQuery } from "usehooks-ts";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
+import { tweet } from "@/lib/utils";
 
 const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean }> => {
   const response = await fetch("/api/user");
@@ -365,9 +366,9 @@ const Home = (): ReactElement => {
             <Button variant={"default"} size={"icon"}>
               <Copy size={16} />
             </Button>
-            <Button variant={"default"} size={"icon"}>
+            <Link target="_blank" href={tweet(answer)} className={buttonVariants({ variant: "default", size: "icon" })}>
               <SiTwitter size={16} />
-            </Button>
+            </Link>
           </CardFooter>
         </Card>
       ) : null}
