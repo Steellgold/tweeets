@@ -47,12 +47,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const url = new URL(request.nextUrl);
   const code = url.searchParams.get("code");
-  if (!code) return NextResponse.json({ data: [] }, { status: 400 });
+  if (!code) return NextResponse.json({}, { status: 400 });
 
   const model = await prisma.model.findUnique({
     where: { shareLink: code },
     include: { user: false }
   });
 
-  return NextResponse.json({ data: model }, { status: 200 });
+  return NextResponse.json(model, { status: 200 });
 }

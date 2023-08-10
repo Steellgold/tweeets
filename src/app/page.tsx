@@ -31,17 +31,45 @@ import { Toggle } from "@/lib/components/ui/toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
 import { getLang, langs } from "@/lib/utils/langs";
 
-const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean; priority: boolean }> => {
+type Response = {
+  isPro: boolean;
+  message: string;
+  models?: Model[];
+  fpDone: boolean;
+  priority: boolean;
+  loadModel: Model | null;
+};
+
+const getData = async(): Promise<Response> => {
   const response = await fetch("/api/user");
   const schema = UserResponseSchema.safeParse(await response.json());
   const random = exampleTexts[Math.floor(Math.random() * exampleTexts.length)];
 
-  if (!schema.success) {
-    console.log(schema.error);
-    return { isPro: false, message: random, models: [], fpDone: false, priority: false };
+  let model: Model | null = null;
+  const urlParams = new URLSearchParams(window.location.search);
+  const share = urlParams.get("share");
+  if (share) {
+    const response = await fetch(`/api/model?code=${share}`);
+    const schema = ModelResponseSchema.safeParse(await response.json());
+    if (!schema.success) {
+      model = null;
+    } else {
+      model = schema.data;
+    }
   }
 
-  return { isPro: schema.data.isPro, message: random, models: schema.data.models || [], fpDone: schema.data.fpDone, priority: schema.data.priority };
+  if (!schema.success) {
+    return { isPro: false, message: random, models: [], fpDone: false, priority: false, loadModel: model };
+  }
+
+  return {
+    isPro: schema.data.isPro,
+    message: random,
+    models: schema.data.models || [],
+    fpDone: schema.data.fpDone,
+    priority: schema.data.priority,
+    loadModel: model
+  };
 };
 
 const navigatorLanguage = (): string => {
@@ -81,32 +109,13 @@ const Home = (): ReactElement => {
 
   useEffect(() => {
     void getData().then((data) => {
-      console.log(data);
       setIsPro(data.isPro);
       setRandom(data.message);
       setModels(data.models ?? []);
       setFpDone(data.fpDone);
       setPriority(data.priority);
+      if (data.loadModel) handleLoad(data.loadModel);
     });
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareCode = urlParams.get("share");
-    if (shareCode) {
-      const res = void fetch(`/api/model?code=${shareCode}`);
-      const schema = ModelResponseSchema.safeParse(res);
-      if (schema.success) {
-        const model = schema.data;
-        setSentiment(model.sentiment as WritingSentiment);
-        setStyle(model.style as WritingStyle);
-        setTone(model.tone as WritingTone);
-        setTarget(model.target as WritingTarget);
-        setIncludeHTags(model.includeHashtags);
-        setHTags(model.hashtags ?? []);
-        setGptFourEnabled(model.gpt4);
-        setContext(model.context);
-        setLang(model.lang);
-      }
-    }
   }, [isPro]);
 
   const handleShareModel = async(model: Model): Promise<void> => {
@@ -453,7 +462,7 @@ const Home = (): ReactElement => {
                       {model.shareLink && (
                         <Input
                           className="mt-2"
-                          value={`tweeets.app/?share=${model.shareLink}`}
+                          value={`${process.env.NEXT_PUBLIC_URL ?? "tweeets.app"}/?share=${model.shareLink}`}
                           disabled
                           readOnly />
                       )}
