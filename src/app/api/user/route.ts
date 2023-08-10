@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/utils/database";
 import { z } from "zod";
-import { ModelResponseSchema } from "@/lib/utils/schemas";
+import { ModelResponseSchema, TweetResponseSchema } from "@/lib/utils/schemas";
+import { checkSubscriptionStatus } from "@/lib/utils/stripe";
 
 export async function GET(): Promise<NextResponse> {
   const supabase = createRouteHandlerClient({ cookies });
@@ -15,7 +16,8 @@ export async function GET(): Promise<NextResponse> {
       models: true,
       fpDone: true,
       fpTweets: true,
-      priority: true
+      priority: true,
+      tweets: true
     } });
 
     const schema = z.object({
@@ -27,22 +29,38 @@ export async function GET(): Promise<NextResponse> {
         content: z.string(),
         userId: z.string()
       })).optional().nullable(),
-      models: z.array(ModelResponseSchema).optional()
+      models: z.array(ModelResponseSchema).optional(),
+      tweets: z.array(TweetResponseSchema).optional()
     }).safeParse(data);
 
     if (!schema.success) {
-      console.log("aa", schema.error);
       return NextResponse.json({ isPro: false, priority: false, models: [], fpDone: false, fpTweets: [] });
+    }
+
+    if (schema.data.isPro) {
+      const subscriptionId = await prisma.subscription.findUnique({ where: { userId: user.id } }).then(sub => sub?.id);
+      if (subscriptionId && !(await checkSubscriptionStatus(subscriptionId))) {
+        await prisma.user.update({ where: { id: user.id }, data: { isPro: false, priority: false } });
+        return NextResponse.json({
+          isPro: false,
+          priority: false,
+          models: schema.data.models || [],
+          tweets: schema.data.tweets || [],
+          fpDone: schema.data?.fpDone || true,
+          fpTweets: schema.data?.fpTweets || []
+        });
+      }
     }
 
     return NextResponse.json({
       isPro: schema.data?.isPro || false,
       priority: schema.data?.priority || false,
       models: schema.data.models || [],
+      tweets: schema.data.tweets || [],
       fpDone: schema.data?.fpDone || true,
       fpTweets: schema.data?.fpTweets || []
     });
   }
 
-  return NextResponse.json({ isPro: false, priority: false, models: [], fpDone: false, fpTweets: [] });
+  return NextResponse.json({ isPro: false, priority: false, models: [], tweets: [], fpDone: false, fpTweets: [] });
 }

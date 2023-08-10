@@ -15,3 +15,19 @@ export type Model = {
   gpt4: boolean;
   lang: string;
 };
+
+export type Tweet = {
+  id: string;
+  createdAt: string;
+  userId: string;
+  sentiment: string | "sentiment-neutral";
+  style: string | "style-neutral";
+  tone: string | "tone-neutral";
+  target: string | "target-all";
+  includeHashtags: boolean;
+  hashtags?: string[] | null;
+  context: string;
+  gpt4: boolean;
+  lang: string;
+  result?: string | null;
+};

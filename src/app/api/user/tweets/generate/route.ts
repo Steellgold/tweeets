@@ -48,6 +48,8 @@ export async function POST(request: NextRequest): Promise<NextResponse | Streami
     { role: "user", content: userFinalPrompt }
   ];
 
+  await prisma.user.update({ where: { id: user.id }, data: { usage: { increment: 1 } } });
+
   let model = "gpt-3.5-turbo-16k";
   if (schema.data.model !== "gpt-3.5-turbo-16k") {
     const data = await prisma.user.findUnique({ where: { id: user.id }, select: { priority: true } });

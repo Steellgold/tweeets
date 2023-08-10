@@ -11,11 +11,13 @@ model User {
   id           String        @id @default(cuid())
   email        String        @unique
   isPro        Boolean       @default(false)
-  fpDone       Boolean       @default(false)
+  fpDone       Boolean       @default(true)
   priority     Boolean       @default(false)
   models       Model[]
   subscription Subscription?
   fpTweets     fpTweets[]
+  usage        Int           @default(0)
+  tweets       Tweet[]
 }
 
 model Subscription {
@@ -46,6 +48,23 @@ model Model {
   includeHashtags Boolean  @default(false)
   target          String
   lang            String   @default("en")
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model Tweet {
+  id              String   @id @default(cuid())
+  createdAt       String
+  userId          String
+  sentiment       String
+  style           String
+  tone            String
+  context         String
+  gpt4            Boolean  @default(false)
+  hashtags        String[]
+  includeHashtags Boolean  @default(false)
+  target          String
+  lang            String   @default("en")
+  result          String
   user            User     @relation(fields: [userId], references: [id])
 }
 

@@ -2,14 +2,16 @@
 
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
   AlertDialogTitle, AlertDialogTrigger } from "@/lib/components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/lib/components/ui/dialog";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
 import type { WritingSentiment, WritingStyle, WritingTone, WritingTarget } from "@/lib/configs/generation/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/lib/components/ui/card";
 import { sentimentOptions, styleOptions, targetOptions, testProSelected, toneOptions } from "@/lib/configs/generation/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
-import { ModelResponseSchema, ModelShareResponseSchema, UserResponseSchema, buildJsonModelString } from "@/lib/utils/schemas";
-import { Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
+import { ModelResponseSchema, ModelShareResponseSchema, TweetResponseSchema, UserResponseSchema, buildJsonModelString,
+  buildJsonTweetString } from "@/lib/utils/schemas";
+import { BookDown, BookUp, Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { useState, type ReactElement, useEffect } from "react";
@@ -20,7 +22,7 @@ import { Textarea } from "@/lib/components/ui/textarea";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import { Badge } from "@/lib/components/ui/badge";
-import type { Model  } from "@/lib/utils/types";
+import type { Model, Tweet  } from "@/lib/utils/types";
 import { useMediaQuery } from "usehooks-ts";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -28,16 +30,18 @@ import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { gen, rau, tweet } from "@/lib/utils";
 import { readStream } from "@/lib/utils/stream";
 import { Toggle } from "@/lib/components/ui/toggle";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
 import { getLang, langs } from "@/lib/utils/langs";
+import Image from "next/image";
 
 type Response = {
   isPro: boolean;
   message: string;
   models?: Model[];
+  tweets?: Tweet[];
   fpDone: boolean;
   priority: boolean;
   loadModel: Model | null;
+  usage: number;
 };
 
 const getData = async(): Promise<Response> => {
@@ -59,16 +63,19 @@ const getData = async(): Promise<Response> => {
   }
 
   if (!schema.success) {
-    return { isPro: false, message: random, models: [], fpDone: false, priority: false, loadModel: model };
+    console.log(schema.error);
+    return { isPro: false, message: random, models: [], tweets: [], fpDone: false, priority: false, loadModel: model, usage: 0 };
   }
 
   return {
     isPro: schema.data.isPro,
     message: random,
     models: schema.data.models || [],
+    tweets: schema.data.tweets || [],
     fpDone: schema.data.fpDone,
     priority: schema.data.priority,
-    loadModel: model
+    loadModel: model,
+    usage: schema.data.usage
   };
 };
 
@@ -83,7 +90,6 @@ const Home = (): ReactElement => {
 
   const [isPro, setIsPro] = useState(false);
   const [isPriority, setPriority] = useState(false);
-  const [models, setModels] = useState<Model[]>([]);
 
   const [sentiment, setSentiment] = useState<WritingSentiment>("sentiment-neutral");
   const [style, setStyle] = useState<WritingStyle>("style-neutral");
@@ -102,8 +108,11 @@ const Home = (): ReactElement => {
   const [answering, setAnswering] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
 
-  const [fpDone, setFpDone] = useState(true);
+  // const [fpDone, setFpDone] = useState(true);
 
+  const [tweets, setTweets] = useState<Tweet[]>([]);
+
+  const [models, setModels] = useState<Model[]>([]);
   const [modelName, setModelName] = useState<string>("");
   const [modelDescription, setModelDescription] = useState<string>("");
 
@@ -112,7 +121,8 @@ const Home = (): ReactElement => {
       setIsPro(data.isPro);
       setRandom(data.message);
       setModels(data.models ?? []);
-      setFpDone(data.fpDone);
+      // setFpDone(data.fpDone);
+      setTweets(data.tweets ?? []);
       setPriority(data.priority);
       if (data.loadModel) handleLoad(data.loadModel);
     });
@@ -122,18 +132,22 @@ const Home = (): ReactElement => {
     if (!user) return;
     if (answering) return;
 
-    const response = await fetch("/api/model/share", { method: "POST", body: JSON.stringify({
-      link: gen(5),
-      modelId: model.id
-    }) });
-    const schema = ModelShareResponseSchema.safeParse(await response.json());
-    if (!schema.success) return;
+    const link = gen(5);
 
     const newModels = models.map((m) => {
-      if (m.id === model.id) m.shareLink = schema.data.shareLink;
+      if (m.id === model.id) m.shareLink = link;
       return m;
     });
+
     setModels(newModels);
+
+    const response = await fetch("/api/model/share", { method: "POST", body: JSON.stringify({
+      link: link,
+      modelId: model.id
+    }) });
+
+    const schema = ModelShareResponseSchema.safeParse(await response.json());
+    if (!schema.success) return;
   };
 
   const handleModelSave = async(): Promise<void> => {
@@ -164,11 +178,11 @@ const Home = (): ReactElement => {
     return;
   };
 
-  const handleFpDone = async(): Promise<void> => {
-    if (!user) return;
-    setFpDone(true);
-    await fetch("/api/user/fpdone", { method: "PUT" });
-  };
+  // const handleFpDone = async(): Promise<void> => {
+  //   if (!user) return;
+  //   setFpDone(true);
+  //   await fetch("/api/user/fpdone", { method: "PUT" });
+  // };
 
   const handleGenerate = async(): Promise<void> => {
     if (!user) return;
@@ -210,7 +224,62 @@ const Home = (): ReactElement => {
     setAnswering(false);
   };
 
-  const handleLoad = (model: Model): void => {
+  const handleSave = async(): Promise<void> => {
+    if (!user) return;
+    if (answering) return;
+    if (tweets.find((tweet) => tweet.context === context && tweet.result === answer)) return;
+    if (!testProSelected(isPro, [sentiment, style, tone, target])) return;
+    const tweet: Tweet = {
+      id: `tweet-${dayjs().unix()}`,
+      userId: user.id,
+      context,
+      sentiment,
+      style,
+      tone,
+      target,
+      lang,
+      includeHashtags: includeHTags,
+      hashtags: hTags,
+      result: answer,
+      gpt4: gptFourEnabled,
+      createdAt: dayjs().toDate().toDateString()
+    };
+
+    setTweets([...tweets, tweet]);
+
+    const response = await fetch("/api/user/tweets", {
+      method: "POST",
+      body: buildJsonTweetString(tweet)
+    });
+
+    if (!response.ok || response.status !== 200 || response.body === null) return;
+
+    const schema = TweetResponseSchema.safeParse(await response.json());
+    if (!schema.success) {
+      console.log(schema.error);
+      return;
+    }
+  };
+
+  const handleTweetDelete = async(tweet: Tweet): Promise<void> => {
+    if (!user) return;
+    if (answering) return;
+    if (tweets.length === 0) return;
+    if (tweets.find((t) => t.id === tweet.id) === undefined) return;
+
+    const newTweets = tweets.filter((t) => t.id !== tweet.id);
+    setTweets(newTweets);
+
+    const response = await fetch("/api/user/tweets", {
+      method: "DELETE",
+      body: JSON.stringify({ id: tweet.id })
+    });
+
+    if (!response.ok || response.status !== 200 || response.body === null) return;
+  };
+
+
+  const handleLoad = (model: Model | Tweet): void => {
     setSentiment(model.sentiment as WritingSentiment);
     setStyle(model.style as WritingStyle);
     setTone(model.tone as WritingTone);
@@ -220,6 +289,11 @@ const Home = (): ReactElement => {
     setGptFourEnabled(model.gpt4);
     setContext(model.context);
     setLang(model.lang);
+
+    if ("result" in model) {
+      if (model.result === undefined) return;
+      setAnswer(model.result ?? "");
+    }
   };
 
   return (
@@ -234,7 +308,7 @@ const Home = (): ReactElement => {
         </Alert>
       )}
 
-      {!fpDone && user && (
+      {/* {!fpDone && user && (
         <Alert className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
           <User className="h-4 w-4" />
           <AlertTitle>Finish your profile</AlertTitle>
@@ -253,7 +327,7 @@ const Home = (): ReactElement => {
             </div>
           </AlertDescription>
         </Alert>
-      )}
+      )} */}
 
       <Card className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
         <CardHeader>
@@ -556,7 +630,7 @@ const Home = (): ReactElement => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your generated tweet because our not save your generated tweets.
+                    Think twice before clicking that button, did you save the tweet? You won&apos;t be able to retrieve it later
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -568,6 +642,9 @@ const Home = (): ReactElement => {
               </AlertDialogContent>
             </AlertDialog>
 
+            <Button variant={"default"} size={"sm"} onClick={() => void handleSave()}>
+              <BookDown size={16} />&nbsp;&nbsp;Save
+            </Button>
             <Button variant={"default"} size={"icon"}>
               <Copy size={16} />
             </Button>
@@ -577,6 +654,59 @@ const Home = (): ReactElement => {
           </CardFooter>
         </Card>
       ) : null}
+
+      {user && tweets.length > 0 ? (
+        <>
+          {tweets.map((tweet) => (
+            <Card key={tweet.id} className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
+              <CardHeader>
+                <CardDescription>{tweet.result}</CardDescription>
+              </CardHeader>
+              <CardFooter className="flex justify-end gap-2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant={"destructive"} size={"icon"}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        If you delete it, you will never be able to find this item again in the history.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => void handleTweetDelete(tweet)}>
+                        Yes, delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <Button variant={"default"} size={"sm"} onClick={() => void handleLoad(tweet)}>
+                  <BookUp size={16} />&nbsp;&nbsp;Load
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </>
+      ) : null}
+
+      <Link href={"https://linkfy.fr/6yck"} target="_blank">
+        <Image
+          src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=546656&theme=neutral"
+          alt="Tweeets - Tweet&#0032;with&#0032;AI | Product Hunt"
+          style={{
+            width: "250px",
+            height: "54px"
+          }}
+          className="opacity-20 hover:opacity-100 transition-opacity duration-300"
+          width="250"
+          height="54"
+        />
+      </Link>
     </div>
   );
 };
