@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { prisma } from "@/lib/utils/database";
+import { getLang } from "@/lib/utils/langs";
 
 export async function POST(request: NextRequest): Promise<NextResponse | StreamingTextResponse> {
   const supabase = createRouteHandlerClient({ cookies });
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Streami
     tweetStyle: z.string().default("style-normal"),
     tweetTarget: z.string().default("target-all"),
     model: z.string().default("gpt-3.5-turbo-16k"),
+    tweetLang: z.string().default("en"),
     tweets: z.array(z.object({
       content: z.string()
     })).default([])
@@ -36,6 +38,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Streami
     .replace("[TWEET_TONE]", schema.data.tweetTone)
     .replace("[TWEET_STYLE]", schema.data.tweetStyle)
     .replace("[TWEET_PUBLIC]", schema.data.tweetTarget)
+    .replace("[TWEET_LANGUAGE]", getLang(schema.data.tweetLang))
     .replace("[TWEET_EXAMPLES]", schema.data.tweets.map((tweet) => tweet.content).join("\n"));
 
   const messages: ChatCompletionRequestMessage[] = [

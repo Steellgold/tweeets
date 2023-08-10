@@ -29,6 +29,8 @@ import { gen, rau, tweet } from "@/lib/utils";
 import { readStream } from "@/lib/utils/stream";
 import { Toggle } from "@/lib/components/ui/toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
+import { Combobox } from "@/lib/components/ui/combobox";
+import { langs } from "@/lib/utils/langs";
 
 const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean; priority: boolean }> => {
   const response = await fetch("/api/user");
@@ -55,6 +57,7 @@ const Home = (): ReactElement => {
   const [style, setStyle] = useState<WritingStyle>("style-neutral");
   const [tone, setTone] = useState<WritingTone>("tone-neutral");
   const [target, setTarget] = useState<WritingTarget>("target-all");
+  const [lang, setLang] = useState<string>("en");
 
   const [random, setRandom] = useState("");
   const [context, setContext] = useState("");
@@ -118,6 +121,7 @@ const Home = (): ReactElement => {
       tone,
       target,
       context,
+      lang,
       gpt4: gptFourEnabled,
       includeHashtags: includeHTags, hashtags: hTags
     }) });
@@ -150,6 +154,7 @@ const Home = (): ReactElement => {
         tweetTone: tone,
         tweetStyle: style,
         tweetTarget: target,
+        lang,
         model: gptFourEnabled ? "gpt-4-turbo-32k" : "gpt-3.5-turbo-16k"
       })
     });
@@ -182,6 +187,7 @@ const Home = (): ReactElement => {
     setHTags(model.hashtags ?? []);
     setGptFourEnabled(model.gpt4);
     setContext(model.context);
+    setLang(model.lang);
   };
 
   return (
@@ -310,6 +316,26 @@ const Home = (): ReactElement => {
             </div>
           </div>
 
+          <div className="mt-4">
+            <Label htmlFor="lang">Generate the tweet in: </Label>
+            <Select
+              defaultValue={langs[0].value}
+              value={langs[0].value}
+              onValueChange={() => setLang(langs[0].value)}
+              disabled={!user || answering}>
+              <SelectTrigger id="lang">
+                {langs[0].label}
+              </SelectTrigger>
+              <SelectContent>
+                {langs.map((lang) => (
+                  <SelectItem key={lang.value} id={lang.value} value={lang.value} disabled={!isPro || answering}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="flex items-center gap-2 mt-4">
             <Toggle aria-label="Include hashtags" onPressedChange={(value) => setIncludeHTags(value)}>
               <Hash size={16} />
@@ -339,10 +365,6 @@ const Home = (): ReactElement => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <span className="text-xs text-muted-foreground">
-              {!isPriority && <span className="text-xs text-muted-foreground">
-                GPT-4 is only aviailable for Pro users with a yearly subscription.</span>}
-            </span>
           </div>
         </CardContent>
 

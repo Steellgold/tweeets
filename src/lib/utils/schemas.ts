@@ -15,7 +15,8 @@ export const ModelResponseSchema = z.object({
   gpt4: z.boolean(),
   includeHashtags: z.boolean(),
   hashtags: z.array(z.string()),
-  target: z.string()
+  target: z.string(),
+  lang: z.string()
 });
 
 export const ModelShareResponseSchema = z.object({
@@ -43,7 +44,8 @@ export const buildJsonModelString = (model: Model): string => {
     gpt4: model.gpt4,
     includeHashtags: model.includeHashtags,
     hashtags: model.hashtags,
-    target: model.target
+    target: model.target,
+    lang: model.lang
   });
 };
 

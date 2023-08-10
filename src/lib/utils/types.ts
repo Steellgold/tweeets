@@ -13,4 +13,5 @@ export type Model = {
   hashtags?: string[] | null;
   context: string;
   gpt4: boolean;
+  lang: string;
 };

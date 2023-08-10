@@ -45,6 +45,7 @@ model Model {
   hashtags        String[]
   includeHashtags Boolean  @default(false)
   target          String
+  lang            String   @default("en")
   user            User     @relation(fields: [userId], references: [id])
 }
 
