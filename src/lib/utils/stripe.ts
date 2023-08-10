@@ -25,7 +25,6 @@ export const checkSubscriptionStatus = async(subscriptionId: string): Promise<bo
 
     return false;
   } catch (err) {
-    console.log(err);
     return false;
   }
 };

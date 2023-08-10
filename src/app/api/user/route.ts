@@ -13,6 +13,7 @@ export async function GET(): Promise<NextResponse> {
   if (user) {
     const data = await prisma.user.findUnique({ where: { id: user.id }, select: {
       isPro: true,
+      usage: true,
       models: true,
       fpDone: true,
       fpTweets: true,
@@ -24,6 +25,7 @@ export async function GET(): Promise<NextResponse> {
       isPro: z.boolean(),
       fpDone: z.boolean(),
       priority: z.boolean(),
+      usage: z.number().default(0),
       fpTweets: z.array(z.object({
         id: z.string(),
         content: z.string(),
@@ -34,7 +36,7 @@ export async function GET(): Promise<NextResponse> {
     }).safeParse(data);
 
     if (!schema.success) {
-      return NextResponse.json({ isPro: false, priority: false, models: [], fpDone: false, fpTweets: [] });
+      return NextResponse.json({ isPro: false, priority: false, models: [], fpDone: false, fpTweets: [], tweets: [], usage: 0 });
     }
 
     if (schema.data.isPro) {
@@ -47,7 +49,8 @@ export async function GET(): Promise<NextResponse> {
           models: schema.data.models || [],
           tweets: schema.data.tweets || [],
           fpDone: schema.data?.fpDone || true,
-          fpTweets: schema.data?.fpTweets || []
+          fpTweets: schema.data?.fpTweets || [],
+          usage: schema.data?.usage || 0
         });
       }
     }
@@ -58,7 +61,8 @@ export async function GET(): Promise<NextResponse> {
       models: schema.data.models || [],
       tweets: schema.data.tweets || [],
       fpDone: schema.data?.fpDone || true,
-      fpTweets: schema.data?.fpTweets || []
+      fpTweets: schema.data?.fpTweets || [],
+      usage: schema.data?.usage || 0
     });
   }
 

@@ -11,7 +11,7 @@ import { sentimentOptions, styleOptions, targetOptions, testProSelected, toneOpt
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
 import { ModelResponseSchema, ModelShareResponseSchema, TweetResponseSchema, UserResponseSchema, buildJsonModelString,
   buildJsonTweetString } from "@/lib/utils/schemas";
-import { BookDown, BookUp, Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
+import { BookDown, BookUp, Coins, Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, StopCircle, Trash2, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { useState, type ReactElement, useEffect } from "react";
@@ -63,7 +63,6 @@ const getData = async(): Promise<Response> => {
   }
 
   if (!schema.success) {
-    console.log(schema.error);
     return { isPro: false, message: random, models: [], tweets: [], fpDone: false, priority: false, loadModel: model, usage: 0 };
   }
 
@@ -116,6 +115,8 @@ const Home = (): ReactElement => {
   const [modelName, setModelName] = useState<string>("");
   const [modelDescription, setModelDescription] = useState<string>("");
 
+  const [usage, setUsage] = useState<number>(0);
+
   useEffect(() => {
     void getData().then((data) => {
       setIsPro(data.isPro);
@@ -124,6 +125,7 @@ const Home = (): ReactElement => {
       // setFpDone(data.fpDone);
       setTweets(data.tweets ?? []);
       setPriority(data.priority);
+      setUsage(data.usage);
       if (data.loadModel) handleLoad(data.loadModel);
     });
   }, [isPro]);
@@ -188,9 +190,11 @@ const Home = (): ReactElement => {
     if (!user) return;
     if (answering) return;
     if (!testProSelected(isPro, [sentiment, style, tone, target])) return;
+    if (usage >= (isPro ? 50 : 10)) return;
 
     setAnswering(true);
     setAnswer("");
+    setUsage(usage + 1);
 
     const response = await fetch("/api/user/tweets/generate", {
       method: "POST",
@@ -256,7 +260,6 @@ const Home = (): ReactElement => {
 
     const schema = TweetResponseSchema.safeParse(await response.json());
     if (!schema.success) {
-      console.log(schema.error);
       return;
     }
   };
@@ -297,13 +300,25 @@ const Home = (): ReactElement => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-3 md:mt-32 py-2 px-3">
+    <div className="flex flex-col items-center justify-center mt-3 md:mt-12 py-2 px-3">
       {!user && (
         <Alert className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
           <User className="h-4 w-4" />
           <AlertTitle>Log in to use Tweeets</AlertTitle>
           <AlertDescription>
             If you want use Tweeets, you need to log in with your Twitter account, for save your parameters and generate tweets.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {user && (usage >= (isPro ? 25 : 5)) && (
+        <Alert className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4" variant={
+          usage == (isPro ? 50 : 10) ? "destructive" : (usage >= (isPro ? 25 : 5) ? "warning" : "default")
+        }>
+          <Coins className="h-4 w-4" />
+          <AlertTitle>You&apos;re almost out of usage</AlertTitle>
+          <AlertDescription>
+            You&apos;re almost out of usage, you&apos;ve used <strong>{usage}</strong> of <strong>{isPro ? 50 : 10}</strong> tweets this month.
           </AlertDescription>
         </Alert>
       )}
@@ -597,13 +612,19 @@ const Home = (): ReactElement => {
               </DialogContent>
             </Dialog>
 
-            <Button size={media || answering ? "icon" : "sm"} disabled={!user || answering || context == ""} onClick={() => {
-              void handleGenerate();
-            }}>
-              {answering ? <Loader2 className="animate-spin" /> : <>
-                {media ? <PenTool /> : "Generate"}
-              </>}
-            </Button>
+            {user && (isPro && usage >= 50 || !isPro && usage >= 10) ? (
+              <Button variant={"destructive"} size={media ? "icon" : "sm"} disabled>
+                <Coins />&nbsp;&nbsp;Out of usage
+              </Button>
+            ) : (
+              <Button size={media || answering ? "icon" : "sm"} disabled={!user || answering || context == ""} onClick={() => {
+                void handleGenerate();
+              }}>
+                {answering ? <Loader2 className="animate-spin" /> : <>
+                  {media ? <PenTool /> : "Generate"}
+                </>}
+              </Button>
+            )}
           </div>
         </CardFooter>
       </Card>

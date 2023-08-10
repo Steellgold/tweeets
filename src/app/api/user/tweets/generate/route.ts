@@ -41,8 +41,6 @@ export async function POST(request: NextRequest): Promise<NextResponse | Streami
     .replace("[TWEET_LANGUAGE]", getLang(schema.data.tweetLang))
     .replace("[TWEET_EXAMPLES]", schema.data.tweets.map((tweet) => tweet.content).join("\n"));
 
-  console.log(userFinalPrompt);
-
   const messages: ChatCompletionRequestMessage[] = [
     { role: "system", content: systemPrompt },
     { role: "user", content: userFinalPrompt }
