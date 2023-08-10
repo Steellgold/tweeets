@@ -31,6 +31,7 @@ export async function GET(): Promise<NextResponse> {
     }).safeParse(data);
 
     if (!schema.success) {
+      console.log("aa", schema.error);
       return NextResponse.json({ isPro: false, priority: false, models: [], fpDone: false, fpTweets: [] });
     }
 

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       name,
       description: description ?? "",
       shareLink: shareLink ?? "",
-      createdAt: dayjs().toDate(),
+      createdAt: dayjs().toDate().toDateString(),
       sentiment,
       tone,
       style,

@@ -36,6 +36,7 @@ const getData = async(): Promise<{ isPro: boolean; message: string; models?: Mod
   const random = exampleTexts[Math.floor(Math.random() * exampleTexts.length)];
 
   if (!schema.success) {
+    console.log(schema.error);
     return { isPro: false, message: random, models: [], fpDone: false, priority: false };
   }
 
@@ -73,6 +74,7 @@ const Home = (): ReactElement => {
 
   useEffect(() => {
     void getData().then((data) => {
+      console.log(data);
       setIsPro(data.isPro);
       setRandom(data.message);
       setModels(data.models ?? []);

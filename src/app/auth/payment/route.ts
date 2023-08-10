@@ -19,9 +19,9 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
         data: {
           cusId: session.customer?.toString() || "",
           subId: session.subscription?.toString() || "",
-          createdAt: dayjs().toDate(),
-          startAt: dayjs().toDate(),
-          endAt: plan == "monthly" ? dayjs().add(1, "month").toDate() : dayjs().add(1, "year").toDate(),
+          createdAt: dayjs().toDate().toDateString(),
+          startAt: dayjs().toDate().toDateString(),
+          endAt: plan == "monthly" ? dayjs().add(1, "month").toDate().toDateString() : dayjs().add(1, "year").toDate().toDateString(),
           plan: plan == "monthly" ? "MONTHLY" : "YEARLY",
           user: {
             connect: {
