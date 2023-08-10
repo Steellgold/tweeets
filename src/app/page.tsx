@@ -316,9 +316,10 @@ const Home = (): ReactElement => {
           usage == (isPro ? 50 : 10) ? "destructive" : (usage >= (isPro ? 25 : 5) ? "warning" : "default")
         }>
           <Coins className="h-4 w-4" />
-          <AlertTitle>You&apos;re almost out of usage</AlertTitle>
+          <AlertTitle>You&apos;re {usage == (isPro ? 50 : 10) ? "" : "almost "}out of usage</AlertTitle>
           <AlertDescription>
-            You&apos;re almost out of usage, you&apos;ve used <strong>{usage}</strong> of <strong>{isPro ? 50 : 10}</strong> tweets this month.
+            You&apos;re {usage == (isPro ? 50 : 10) ? "" : "almost "}out of usage,
+            you&apos;ve used <strong>{usage}</strong> of <strong>{isPro ? 50 : 10}</strong> tweets this month.
           </AlertDescription>
         </Alert>
       )}
@@ -359,7 +360,10 @@ const Home = (): ReactElement => {
               placeholder={!random ? ". . ." : random}
               disabled={!user || answering}
               value={context}
-              onChange={(e) => setContext(e.target.value)} />
+              onChange={(e) => setContext(e.target.value)}
+              lw8={(context.toLowerCase().includes("lw8") && context.split(" ").length === 1) || false}
+              supabase={(context.toLowerCase().includes("supabase") && context.split(" ").length === 1) || false}
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
