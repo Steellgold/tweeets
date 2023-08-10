@@ -29,7 +29,7 @@ import { gen, rau, tweet } from "@/lib/utils";
 import { readStream } from "@/lib/utils/stream";
 import { Toggle } from "@/lib/components/ui/toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
-import { langs } from "@/lib/utils/langs";
+import { getLang, langs } from "@/lib/utils/langs";
 
 const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean; priority: boolean }> => {
   const response = await fetch("/api/user");
@@ -88,6 +88,25 @@ const Home = (): ReactElement => {
       setFpDone(data.fpDone);
       setPriority(data.priority);
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareCode = urlParams.get("share");
+    if (shareCode) {
+      const res = void fetch(`/api/model?code=${shareCode}`);
+      const schema = ModelResponseSchema.safeParse(res);
+      if (schema.success) {
+        const model = schema.data;
+        setSentiment(model.sentiment as WritingSentiment);
+        setStyle(model.style as WritingStyle);
+        setTone(model.tone as WritingTone);
+        setTarget(model.target as WritingTarget);
+        setIncludeHTags(model.includeHashtags);
+        setHTags(model.hashtags ?? []);
+        setGptFourEnabled(model.gpt4);
+        setContext(model.context);
+        setLang(model.lang);
+      }
+    }
   }, [isPro]);
 
   const handleShareModel = async(model: Model): Promise<void> => {
@@ -427,20 +446,24 @@ const Home = (): ReactElement => {
                         Tone: {rau(model.tone, "tone-")} <br />
                         Sentiment: {rau(model.sentiment, "sentiment-")} <br />
                         Style: {rau(model.style, "style-")} <br />
-                        Target: {rau(model.target, "target-")}
+                        Target: {rau(model.target, "target-")} <br />
+                        Language: {getLang(model.lang)}
                       </CardDescription>
 
                       {model.shareLink && (
                         <Input
                           className="mt-2"
-                          value={`tweeets/app/${model.shareLink}`}
+                          value={`tweeets.app/?share=${model.shareLink}`}
                           disabled
                           readOnly />
                       )}
                     </CardHeader>
 
                     <CardFooter className="flex justify-end gap-2">
-                      <Button variant={"ghost"} size={"icon"} onClick={() => void handleShareModel(model)}>
+                      <Button variant={"ghost"} size={"icon"} onClick={() => {
+                        if (model.shareLink !== "") return;
+                        void handleShareModel(model);
+                      }}>
                         <Share2 size={16} />
                       </Button>
                       <Button variant={"destructive"} size={"icon"}>

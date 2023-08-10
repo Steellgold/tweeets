@@ -37,3 +37,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   return NextResponse.json(model, { status: 201 });
 }
+
+// GET ROUTE - SHARE LINK.
+// https://tweeets.app/share?={shareLink}
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const supabase = createRouteHandlerClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({}, { status: 401 });
+
+  const url = new URL(request.nextUrl);
+  const code = url.searchParams.get("code");
+  if (!code) return NextResponse.json({ data: [] }, { status: 400 });
+
+  const model = await prisma.model.findUnique({
+    where: { shareLink: code },
+    include: { user: false }
+  });
+
+  return NextResponse.json({ data: model }, { status: 200 });
+}
