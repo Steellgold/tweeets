@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,35 +8,54 @@ datasource db {
 }
 
 model User {
-  id     String  @id @default(cuid())
-  email  String  @unique
-  isPro  Boolean @default(false)
-  models Model[]
+  id           String        @id @default(cuid())
+  email        String        @unique
+  isPro        Boolean       @default(false)
+  fpDone       Boolean       @default(false)
+  priority     Boolean       @default(false)
+  models       Model[]
+  subscription Subscription?
+  fpTweets     fpTweets[]
+}
 
-  // First parameters of the account has been done ? 
-  fpDone   Boolean    @default(false)
-  // Tweets for take as an example
-  fpTweets fpTweets[]
+model Subscription {
+  id        String   @id @default(cuid())
+  createdAt DateTime @db.Timestamptz(6)
+  userId    String   @unique
+  plan      Plan
+  startAt   DateTime
+  endAt     DateTime
+  cusId     String   @unique
+  subId     String   @unique
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Model {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  name        String
-  description String   @default("")
-  shareLink   String   @unique @default("")
-  sentiment   String
-  style       String
-  tone        String
-  context     String
-  length      Int
+  id              String   @id @default(cuid())
+  createdAt       DateTime @db.Timestamptz(6)
+  userId          String
+  name            String
+  description     String   @default("")
+  shareLink       String   @unique @default("")
+  sentiment       String
+  style           String
+  tone            String
+  context         String
+  gpt4            Boolean  @default(false)
+  hashtags        String[]
+  includeHashtags Boolean  @default(false)
+  target          String
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model fpTweets {
   id      String  @id @default(cuid())
   content String
-  user    User?   @relation(fields: [userId], references: [id])
   userId  String?
+  user    User?   @relation(fields: [userId], references: [id])
+}
+
+enum Plan {
+  MONTHLY
+  YEARLY
 }

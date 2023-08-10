@@ -1,7 +1,7 @@
 type Prompt = "userDefault" | "userWithoutTweets" | "systemPrompt";
 import { Configuration, OpenAIApi } from "openai-edge";
 
-export const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+export const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_KEY }));
 
 const URLS: Record<Prompt, string> = {
   userDefault: process.env.USER_PROMPT_DEFAULT || "",

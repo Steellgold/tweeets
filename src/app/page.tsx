@@ -6,18 +6,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
 import type { WritingSentiment, WritingStyle, WritingTone, WritingTarget } from "@/lib/configs/generation/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/lib/components/ui/card";
-import { sentimentOptions, styleOptions, targetOptions, toneOptions } from "@/lib/configs/generation/types";
+import { sentimentOptions, styleOptions, targetOptions, testProSelected, toneOptions } from "@/lib/configs/generation/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
-import { ModelResponseSchema, UserResponseSchema, buildJsonModelString } from "@/lib/utils/schemas";
-import { Copy, FileInput, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
+import { ModelResponseSchema, ModelShareResponseSchema, UserResponseSchema, buildJsonModelString } from "@/lib/utils/schemas";
+import { Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { useState, type ReactElement, useEffect } from "react";
 import { exampleTexts } from "@/lib/configs/generation/ideas";
 import { useUserContext } from "@/lib/contexts/UserProvider";
-import { SiTwitter } from "@icons-pack/react-simple-icons";
+import { SiOpenai, SiTwitter } from "@icons-pack/react-simple-icons";
 import { Textarea } from "@/lib/components/ui/textarea";
-import { Slider } from "@/lib/components/ui/slider";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import { Badge } from "@/lib/components/ui/badge";
@@ -26,36 +25,51 @@ import { useMediaQuery } from "usehooks-ts";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
-import { tweet } from "@/lib/utils";
+import { gen, rau, tweet } from "@/lib/utils";
+import { readStream } from "@/lib/utils/stream";
+import { Toggle } from "@/lib/components/ui/toggle";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
 
-const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean }> => {
+const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean; priority: boolean }> => {
   const response = await fetch("/api/user");
   const schema = UserResponseSchema.safeParse(await response.json());
   const random = exampleTexts[Math.floor(Math.random() * exampleTexts.length)];
 
-  if (!schema.success) return { isPro: false, message: random, models: [], fpDone: false };
-  return { isPro: schema.data.isPro, message: random, models: schema.data.models || [], fpDone: schema.data.fpDone };
+  if (!schema.success) {
+    return { isPro: false, message: random, models: [], fpDone: false, priority: false };
+  }
+
+  return { isPro: schema.data.isPro, message: random, models: schema.data.models || [], fpDone: schema.data.fpDone, priority: schema.data.priority };
 };
 
 const Home = (): ReactElement => {
+  const { user } = useUserContext();
   const media = useMediaQuery("(max-width: 640px)");
+
   const [isPro, setIsPro] = useState(false);
+  const [isPriority, setPriority] = useState(false);
   const [models, setModels] = useState<Model[]>([]);
 
-  const [length, setLength] = useState(10);
-  const [isBlue, _] = useState(false);
   const [sentiment, setSentiment] = useState<WritingSentiment>("sentiment-neutral");
   const [style, setStyle] = useState<WritingStyle>("style-neutral");
   const [tone, setTone] = useState<WritingTone>("tone-neutral");
   const [target, setTarget] = useState<WritingTarget>("target-all");
+
   const [random, setRandom] = useState("");
-  const { user } = useUserContext();
+  const [context, setContext] = useState("");
+
+  const [gptFourEnabled, setGptFourEnabled] = useState<boolean>(false);
+
+  const [includeHTags, setIncludeHTags] = useState<boolean>(false);
+  const [hTags, setHTags] = useState<string[]>([]);
 
   const [answering, setAnswering] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
 
-  const [model, __] = useState<Model | null>(null);
   const [fpDone, setFpDone] = useState(true);
+
+  const [modelName, setModelName] = useState<string>("");
+  const [modelDescription, setModelDescription] = useState<string>("");
 
   useEffect(() => {
     void getData().then((data) => {
@@ -63,16 +77,48 @@ const Home = (): ReactElement => {
       setRandom(data.message);
       setModels(data.models ?? []);
       setFpDone(data.fpDone);
+      setPriority(data.priority);
     });
   }, [isPro]);
 
+  const handleShareModel = async(model: Model): Promise<void> => {
+    if (!user) return;
+    if (answering) return;
+
+    const response = await fetch("/api/model/share", { method: "POST", body: JSON.stringify({
+      link: gen(5),
+      modelId: model.id
+    }) });
+    const schema = ModelShareResponseSchema.safeParse(await response.json());
+    if (!schema.success) return;
+
+    const newModels = models.map((m) => {
+      if (m.id === model.id) m.shareLink = schema.data.shareLink;
+      return m;
+    });
+    setModels(newModels);
+  };
+
   const handleModelSave = async(): Promise<void> => {
     if (!user) return;
-    if (!model) return;
     if (answering) return;
     if (models.length === (isPro ? 50 : 3)) return;
 
-    const response = await fetch("/api/model", { method: "POST", body: buildJsonModelString(model) });
+    const response = await fetch("/api/model", { method: "POST", body: buildJsonModelString({
+      id: `model-${dayjs().unix()}`,
+      userId: user.id,
+      name: modelName,
+      description: modelDescription ?? null,
+      shareLink: null,
+      createdAt: dayjs().toDate().toDateString(),
+      sentiment,
+      style,
+      tone,
+      target,
+      context,
+      gpt4: gptFourEnabled,
+      includeHashtags: includeHTags, hashtags: hTags
+    }) });
     const schema = ModelResponseSchema.safeParse(await response.json());
 
     if (!schema.success) return;
@@ -84,6 +130,56 @@ const Home = (): ReactElement => {
     if (!user) return;
     setFpDone(true);
     await fetch("/api/user/fpdone", { method: "PUT" });
+  };
+
+  const handleGenerate = async(): Promise<void> => {
+    if (!user) return;
+    if (answering) return;
+    if (!testProSelected(isPro, [sentiment, style, tone, target])) return;
+
+    setAnswering(true);
+    setAnswer("");
+
+    const response = await fetch("/api/user/tweets/generate", {
+      method: "POST",
+      body: JSON.stringify({
+        tweetContext: context,
+        tweetSentiment: sentiment,
+        tweetTone: tone,
+        tweetStyle: style,
+        tweetTarget: target,
+        model: gptFourEnabled ? "gpt-4-turbo-32k" : "gpt-3.5-turbo-16k"
+      })
+    });
+
+    if (!response.ok || response.status !== 200 || response.body === null) {
+      setAnswering(false);
+      return;
+    }
+
+    let result = "";
+    await readStream(response.body, (chunk) => {
+      result += chunk;
+      setAnswer(result);
+    }).finally(() => {
+      if (result.startsWith("\"")) result = result.substring(1);
+      if (result.endsWith("\"")) result = result.substring(0, result.length - 1);
+      if (includeHTags && hTags.length > 0) result += " " + hTags.map((tag) => tag).join(" ");
+      setAnswer(result);
+    });
+
+    setAnswering(false);
+  };
+
+  const handleLoad = (model: Model): void => {
+    setSentiment(model.sentiment as WritingSentiment);
+    setStyle(model.style as WritingStyle);
+    setTone(model.tone as WritingTone);
+    setTarget(model.target as WritingTarget);
+    setIncludeHTags(model.includeHashtags);
+    setHTags(model.hashtags ?? []);
+    setGptFourEnabled(model.gpt4);
+    setContext(model.context);
   };
 
   return (
@@ -129,7 +225,12 @@ const Home = (): ReactElement => {
         <CardContent>
           <div className="mb-5">
             <Label htmlFor="context" className="mb-0.5">Context of the tweet</Label>
-            <Textarea id="context" placeholder={!random ? ". . ." : random} disabled={!user || answering} />
+            <Textarea
+              id="context"
+              placeholder={!random ? ". . ." : random}
+              disabled={!user || answering}
+              value={context}
+              onChange={(e) => setContext(e.target.value)} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
@@ -207,17 +308,39 @@ const Home = (): ReactElement => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 mt-1.5 items-center">
-            <div className="space-y-2">
-              <Label htmlFor="length">Length {length}/{isBlue ? 4000 : 280}</Label>
-              <Slider
-                id="length"
-                defaultValue={[length]}
-                max={isBlue ? (isPro ? 4000 : 280) : 280}
-                step={isBlue ? 25 : 1}
-                onValueChange={(value) => setLength(value[0])}
-                disabled={!user || answering} />
-            </div>
+          <div className="flex items-center gap-2 mt-4">
+            <Toggle aria-label="Include hashtags" onPressedChange={(value) => setIncludeHTags(value)}>
+              <Hash size={16} />
+            </Toggle>
+
+            <Input
+              placeholder={includeHTags ? "Ex: #buildinpublic, #firstproject" : "Hashtags (click on the toggle to enable)"}
+              disabled={!user || answering || !includeHTags}
+              value={hTags.join(", ")}
+              onChange={(e) => setHTags(e.target.value.split(", ").map((tag) => tag.trim()))} />
+          </div>
+
+          <div className="mt-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant={"outline"} size={"sm"} disabled={!user || answering}>
+                  <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-{gptFourEnabled ? "4" : "3"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Choose a model</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => void setGptFourEnabled(false)}>
+                  <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-3
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled={!isPriority} onClick={() => void setGptFourEnabled(true)}>
+                  <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-4
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span className="text-xs text-muted-foreground">
+              {!isPriority && <span className="text-xs text-muted-foreground">
+                GPT-4 is only aviailable for Pro users with a yearly subscription.</span>}
+            </span>
           </div>
         </CardContent>
 
@@ -268,18 +391,31 @@ const Home = (): ReactElement => {
                       {model.description && <CardDescription className="text-xs text-gray-400">{model.description}</CardDescription>}
                       <CardDescription className="text-xs text-gray-400">
                         Model created the:&nbsp;
-                        {dayjs(model.createdAt).format("DD/MM/YYYY")} at {dayjs(model.createdAt).format("HH:mm")}
+                        {dayjs(model.createdAt).format("DD/MM/YYYY")} at {dayjs(model.createdAt).format("HH:mm")} <br />
+                        <SiOpenai className="h-4 w-4 inline-block ml-1" /> {model.gpt4 ? "GPT-4" : "GPT-3"} <br />
+                        Tone: {rau(model.tone, "tone-")} <br />
+                        Sentiment: {rau(model.sentiment, "sentiment-")} <br />
+                        Style: {rau(model.style, "style-")} <br />
+                        Target: {rau(model.target, "target-")}
                       </CardDescription>
+
+                      {model.shareLink && (
+                        <Input
+                          className="mt-2"
+                          value={`tweeets/app/${model.shareLink}`}
+                          disabled
+                          readOnly />
+                      )}
                     </CardHeader>
 
                     <CardFooter className="flex justify-end gap-2">
-                      <Button variant={"ghost"} size={"icon"}>
+                      <Button variant={"ghost"} size={"icon"} onClick={() => void handleShareModel(model)}>
                         <Share2 size={16} />
                       </Button>
                       <Button variant={"destructive"} size={"icon"}>
                         <Trash2 size={16} />
                       </Button>
-                      <Button variant={"default"} size={"sm"}>
+                      <Button variant={"default"} size={"sm"} onClick={() => void handleLoad(model)}>
                         <FileInput size={16} />
                       </Button>
                     </CardFooter>
@@ -292,7 +428,7 @@ const Home = (): ReactElement => {
           <div className="flex gap-2">
             <Dialog>
               <DialogTrigger disabled={!user || answering}>
-                <Button size={media ? "icon" : "sm"} disabled={!user || answering}>
+                <Button size={media ? "icon" : "sm"} disabled={!user || answering || context == ""}>
                   {media ? <SaveAll /> : "Save"}
                 </Button>
               </DialogTrigger>
@@ -301,8 +437,18 @@ const Home = (): ReactElement => {
                   <DialogTitle>Save as template</DialogTitle>
                   <DialogDescription>
                     Save your parameters to generate tweets faster, and share them with your friends.
-                    <Input placeholder="Template name" className="mt-2" />
-                    <Textarea placeholder="Template description (optional)" className="mt-2" />
+                    <Input
+                      placeholder="Template name"
+                      className="mt-2"
+                      disabled={!user || answering}
+                      value={modelName}
+                      onChange={(e) => setModelName(e.target.value)} />
+                    <Textarea
+                      placeholder="Template description (optional)"
+                      className="mt-2"
+                      disabled={!user || answering}
+                      value={modelDescription}
+                      onChange={(e) => setModelDescription(e.target.value)} />
                   </DialogDescription>
 
                   <DialogFooter className="flex justify-end gap-2 mt-2">
@@ -314,9 +460,8 @@ const Home = (): ReactElement => {
               </DialogContent>
             </Dialog>
 
-            <Button size={media || answering ? "icon" : "sm"} disabled={!user || answering} onClick={() => {
-              void setAnswering(!answering);
-              void setAnswer("aaaaa melvynx the best");
+            <Button size={media || answering ? "icon" : "sm"} disabled={!user || answering || context == ""} onClick={() => {
+              void handleGenerate();
             }}>
               {answering ? <Loader2 className="animate-spin" /> : <>
                 {media ? <PenTool /> : "Generate"}
@@ -326,16 +471,16 @@ const Home = (): ReactElement => {
         </CardFooter>
       </Card>
 
-      {user && answering && answer !== "" ? (
+      {user && answer !== "" ? (
         <Card className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
           <CardHeader>
             <CardTitle>Generated tweet</CardTitle>
             <CardDescription>
-              Here is your generated tweet, you can copy it to your clipboard or save it as a template.
+              Here is your generated tweet, you can copy it to your clipboard or share on Twitter/X.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Textarea value={answer} className="max-h-[10rem]" />
+            <Textarea value={answer} className="max-h-72 h-fit h-[130px]" readOnly />
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
             <AlertDialog>
@@ -353,10 +498,7 @@ const Home = (): ReactElement => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => {
-                    void setAnswering(false);
-                    void setAnswer("");
-                  }}>
+                  <AlertDialogAction onClick={() => void setAnswer("")}>
                     Yes, delete
                   </AlertDialogAction>
                 </AlertDialogFooter>

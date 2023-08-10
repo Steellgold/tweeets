@@ -5,9 +5,12 @@ export type Model = {
   name: string;
   description?: string | null;
   shareLink?: string | null;
-  sentiment: string;
-  style: string;
-  tone: string;
+  sentiment: string | "sentiment-neutral";
+  style: string | "style-neutral";
+  tone: string | "tone-neutral";
+  target: string | "target-all";
+  includeHashtags: boolean;
+  hashtags?: string[] | null;
   context: string;
-  length: number;
+  gpt4: boolean;
 };

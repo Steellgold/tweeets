@@ -134,9 +134,6 @@ export const targetOptions: Props[] = [
 ];
 
 export const testProSelected = (isPro: boolean, selected: string[]): boolean => {
-  if (!isPro) {
-    return !selected.some((option) => proSelects.includes(option));
-  }
-
+  if (!isPro) return !selected.some((option) => proSelects.includes(option));
   return true;
 };

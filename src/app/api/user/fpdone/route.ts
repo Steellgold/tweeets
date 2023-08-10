@@ -16,9 +16,7 @@ export async function PUT(): Promise<NextResponse> {
       }
     });
 
-    const schema = z.object({
-      fpDone: z.boolean()
-    }).safeParse(data);
+    const schema = z.object({ fpDone: z.boolean() }).safeParse(data);
 
     if (!schema.success) return NextResponse.json({ fpDone: false });
     return NextResponse.json({ fpDone: true });
