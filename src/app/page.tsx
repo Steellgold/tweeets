@@ -11,7 +11,7 @@ import { sentimentOptions, styleOptions, targetOptions, testProSelected, toneOpt
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
 import { ModelResponseSchema, ModelShareResponseSchema, TweetResponseSchema, UserResponseSchema, buildJsonModelString,
   buildJsonTweetString } from "@/lib/utils/schemas";
-import { BookDown, BookUp, Coins, Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, StopCircle, Trash2, User } from "lucide-react";
+import { BookDown, BookUp, Coins, Copy, FileInput, Hash, Loader2, PenTool, SaveAll, Share2, Trash2, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/lib/components/ui/alert";
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { useState, type ReactElement, useEffect } from "react";
