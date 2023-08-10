@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const schema = ModelResponseSchema.safeParse(await request.json());
   if (!schema.success) return NextResponse.json(schema.error, { status: 400 });
 
-  const { name, description, shareLink, sentiment, tone, style, context, gpt4, includeHashtags, hashtags, target } = schema.data;
+  const { name, description, shareLink, sentiment, tone, style, context, gpt4, includeHashtags, hashtags, target, lang } = schema.data;
 
   const model = await prisma.model.create({
     data: {
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       includeHashtags,
       hashtags,
       target,
+      lang,
       user: { connect: { id: user.id } }
     }
   });

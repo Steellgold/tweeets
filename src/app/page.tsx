@@ -29,7 +29,6 @@ import { gen, rau, tweet } from "@/lib/utils";
 import { readStream } from "@/lib/utils/stream";
 import { Toggle } from "@/lib/components/ui/toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
-import { Combobox } from "@/lib/components/ui/combobox";
 import { langs } from "@/lib/utils/langs";
 
 const getData = async(): Promise<{ isPro: boolean; message: string; models?: Model[]; fpDone: boolean; priority: boolean }> => {
@@ -45,6 +44,11 @@ const getData = async(): Promise<{ isPro: boolean; message: string; models?: Mod
   return { isPro: schema.data.isPro, message: random, models: schema.data.models || [], fpDone: schema.data.fpDone, priority: schema.data.priority };
 };
 
+const navigatorLanguage = (): string => {
+  if (typeof navigator === "undefined") return "en";
+  return navigator.language.split("-")[0];
+};
+
 const Home = (): ReactElement => {
   const { user } = useUserContext();
   const media = useMediaQuery("(max-width: 640px)");
@@ -57,7 +61,7 @@ const Home = (): ReactElement => {
   const [style, setStyle] = useState<WritingStyle>("style-neutral");
   const [tone, setTone] = useState<WritingTone>("tone-neutral");
   const [target, setTarget] = useState<WritingTarget>("target-all");
-  const [lang, setLang] = useState<string>("en");
+  const [lang, setLang] = useState<string>(navigatorLanguage);
 
   const [random, setRandom] = useState("");
   const [context, setContext] = useState("");
@@ -154,7 +158,7 @@ const Home = (): ReactElement => {
         tweetTone: tone,
         tweetStyle: style,
         tweetTarget: target,
-        lang,
+        tweetLang: lang,
         model: gptFourEnabled ? "gpt-4-turbo-32k" : "gpt-3.5-turbo-16k"
       })
     });
@@ -318,19 +322,22 @@ const Home = (): ReactElement => {
 
           <div className="mt-4">
             <Label htmlFor="lang">Generate the tweet in: </Label>
+            {lang == "ru" && (
+              <CardDescription className="text-xs text-muted-foreground mb-2">
+                Write your context in Russian for a better result. <br />
+                Для получения лучшего результата напишите свой контекст на русском языке.
+              </CardDescription>
+            )}
             <Select
-              defaultValue={langs[0].value}
-              value={langs[0].value}
-              onValueChange={() => setLang(langs[0].value)}
-              disabled={!user || answering}>
-              <SelectTrigger id="lang">
-                {langs[0].label}
+              defaultValue={lang}
+              value={lang}
+              onValueChange={(value) => setLang(value)} disabled={!user || answering}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a language" />
               </SelectTrigger>
               <SelectContent>
                 {langs.map((lang) => (
-                  <SelectItem key={lang.value} id={lang.value} value={lang.value} disabled={!isPro || answering}>
-                    {lang.label}
-                  </SelectItem>
+                  <SelectItem key={lang.value} id={lang.value} value={lang.value}>{lang.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
