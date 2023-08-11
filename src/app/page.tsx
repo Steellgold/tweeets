@@ -299,6 +299,23 @@ const Home = (): ReactElement => {
     }
   };
 
+  const handleModelDelete = async(model: Model): Promise<void> => {
+    if (!user) return;
+    if (answering) return;
+    if (models.length === 0) return;
+    if (models.find((m) => m.id === model.id) === undefined) return;
+
+    const newModels = models.filter((m) => m.id !== model.id);
+    setModels(newModels);
+
+    const response = await fetch("/api/model", {
+      method: "DELETE",
+      body: JSON.stringify({ id: model.id })
+    });
+
+    if (!response.ok || response.status !== 200 || response.body === null) return;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center mt-3 md:mt-12 py-2 px-3">
       {!user && (
@@ -563,12 +580,12 @@ const Home = (): ReactElement => {
 
                     <CardFooter className="flex justify-end gap-2">
                       <Button variant={"ghost"} size={"icon"} onClick={() => {
-                        if (model.shareLink !== "") return;
+                        if (model.shareLink !== null) return;
                         void handleShareModel(model);
                       }}>
                         <Share2 size={16} />
                       </Button>
-                      <Button variant={"destructive"} size={"icon"}>
+                      <Button variant={"destructive"} size={"icon"} onClick={() => void handleModelDelete(model)}>
                         <Trash2 size={16} />
                       </Button>
                       <Button variant={"default"} size={"sm"} onClick={() => void handleLoad(model)}>

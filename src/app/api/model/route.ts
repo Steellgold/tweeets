@@ -56,3 +56,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   return NextResponse.json(model, { status: 200 });
 }
+
+export async function DELETE(params: { id: string }): Promise<NextResponse> {
+  const supabase = createRouteHandlerClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({}, { status: 401 });
+
+  const model = await prisma.model.findUnique({
+    where: { id: params.id },
+    include: { user: false }
+  });
+
+  if (!model) return NextResponse.json({}, { status: 404 });
+  if (model.userId !== user.id) return NextResponse.json({}, { status: 401 });
+  await prisma.model.delete({ where: { id: params.id } });
+  return NextResponse.json({}, { status: 204 });
+}
