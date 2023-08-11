@@ -38,7 +38,7 @@ model Model {
   userId          String
   name            String
   description     String   @default("")
-  shareLink       String   @unique @default("")
+  shareLink       String?  @unique @default("")
   sentiment       String
   style           String
   tone            String
