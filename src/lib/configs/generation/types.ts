@@ -73,6 +73,9 @@ type Props = {
 
 export const sentimentOptions: Props[] = [
   { key: "sentiment-neutral", value: "Neutral" },
+  { key: "sentiment-exhilarated", value: "Exhilarated", isPro: true },
+  { key: "sentiment-grateful", value: "Grateful", isPro: true },
+  { key: "sentiment-adventurous", value: "Adventurous", isPro: true },
   { key: "sentiment-joyful", value: "Joyful" },
   { key: "sentiment-sad", value: "Sad" },
   { key: "sentiment-energetic", value: "Energetic" },
@@ -84,21 +87,18 @@ export const sentimentOptions: Props[] = [
   { key: "sentiment-thoughtful", value: "Thoughtful" },
   { key: "sentiment-motivational", value: "Motivational" },
   { key: "sentiment-appreciative", value: "Appreciative" },
-  { key: "sentiment-curious", value: "Curious" },
-  { key: "sentiment-exhilarated", value: "Exhilarated", isPro: true },
-  { key: "sentiment-grateful", value: "Grateful", isPro: true },
-  { key: "sentiment-adventurous", value: "Adventurous", isPro: true }
+  { key: "sentiment-curious", value: "Curious" }
 ];
 
 export const styleOptions: Props[] = [
   { key: "style-neutral", value: "Neutral" },
+  { key: "style-informative", value: "Informative", isPro: true },
   { key: "style-friendly", value: "Friendly", isPro: true },
+  { key: "style-poetic", value: "Poetic", isPro: true },
   { key: "style-formal", value: "Formal" },
   { key: "style-humorous", value: "Humorous" },
-  { key: "style-informative", value: "Informative", isPro: true },
   { key: "style-inspirational", value: "Inspirational" },
   { key: "style-educational", value: "Educational" },
-  { key: "style-poetic", value: "Poetic", isPro: true },
   { key: "style-controversial", value: "Controversial" },
   { key: "style-sentimental", value: "Sentimental" },
   { key: "style-mysterious", value: "Mysterious" },
@@ -108,15 +108,15 @@ export const styleOptions: Props[] = [
 
 export const toneOptions: Props[] = [
   { key: "tone-neutral", value: "Neutral" },
+  { key: "tone-appreciative", value: "Appreciative", isPro: true },
+  { key: "tone-curious", value: "Curious", isPro: true },
+  { key: "tone-motivational", value: "Motivational", isPro: true },
   { key: "tone-optimistic", value: "Optimistic" },
   { key: "tone-pessimistic", value: "Pessimistic" },
   { key: "tone-angry", value: "Angry" },
   { key: "tone-joyful", value: "Joyful" },
   { key: "tone-sad", value: "Sad" },
-  { key: "tone-energetic", value: "Energetic" },
-  { key: "tone-appreciative", value: "Appreciative", isPro: true },
-  { key: "tone-curious", value: "Curious", isPro: true },
-  { key: "tone-motivational", value: "Motivational", isPro: true }
+  { key: "tone-energetic", value: "Energetic" }
 ];
 
 export const targetOptions: Props[] = [

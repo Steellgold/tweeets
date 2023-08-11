@@ -14,6 +14,11 @@ import { Gem, Twitter } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { UserNBResponseSchema } from "@/lib/utils/schemas";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { SiOpenai } from "@icons-pack/react-simple-icons";
+import { Badge } from "../ui/badge";
 
 const getData = async(): Promise<{ isPro: boolean }> => {
   const response = await fetch("/api/user");
@@ -65,32 +70,60 @@ export const Navbar = (): ReactElement => {
         {user ? (
           <>
             {!isPro && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+              <AlertDialog>
+                <AlertDialogTrigger>
                   <Button variant={"outline"} className="text-blue-300 hover:text-blue-300">
                     <Gem size={20} className="mr-2 text-blue-300" />
                     Upgrade
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Choose a plan</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => void handleUpgrade("yearly")} className="flex flex-col justify-start">
-                    <span className="flex">Yearly <strong>・</strong> 64.99$</span>
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">
-                      Save <strong>20%</strong> and <br />
-                      access to <strong>GPT-4</strong>, <br />
-                    </DropdownMenuLabel>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void handleUpgrade("monthly")} className="flex flex-col justify-start">
-                    <span className="flex">Monthly <strong>・</strong> 6.99$</span>
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">
-                      Up to 50 tweets <br />
-                      per month
-                    </DropdownMenuLabel>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+                    <AlertDialogDescription className="text-muted-foreground">
+                      With <strong>Tweeets Pro</strong> you get access to premium selections of contexts and more usage per month
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="flex flex-col space-y-2">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex gap-2 items-center">Yearly Plan <Badge className="ml-2">-20%</Badge></CardTitle>
+                        {/* Le span doit être barré */}
+                        <CardDescription>For <strong className="text-gray-400">64,99$/year</strong></CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex gap-2">
+                          You can generate your tweets with <span className="flex gap-2 items-center"><SiOpenai size={16} /> GPT-4</span>
+                        </div>
+
+                        <Button variant={"outline"} className="mt-2" onClick={() => {
+                          void handleUpgrade("yearly");
+                        }}>
+                            Upgrade
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Monthly Plan</CardTitle>
+                        <CardDescription>For <strong className="text-gray-400">6,99$/month</strong></CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                          You get all features of Tweeets Pro but no access to GPT-4
+                        <Button variant={"outline"} className="mt-2" onClick={() => {
+                          void handleUpgrade("monthly");
+                        }}>
+                            Upgrade
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger>
