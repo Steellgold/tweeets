@@ -396,7 +396,7 @@ const Home = (): ReactElement => {
                 <SelectTrigger id="sentiment">
                   <SelectValue placeholder="Select a sentiment" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="!overflow-scroll max-h-[300px]">
                   {sentimentOptions.map((option) => (
                     <SelectItem key={option.key} id={option.key} value={option.key} disabled={option.isPro && !isPro || answering}>
                       {option.value} {!isPro && option.isPro && <Badge variant={"pro"}>Pro</Badge>}
@@ -414,7 +414,7 @@ const Home = (): ReactElement => {
                 <SelectTrigger id="style">
                   <SelectValue placeholder="Select a writing style" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="!overflow-scroll max-h-[300px]">
                   {styleOptions.map((option) => (
                     <SelectItem key={option.key} id={option.key} value={option.key} disabled={option.isPro && !isPro || answering}>
                       {option.value} {!isPro && option.isPro && <Badge variant={"pro"}>Pro</Badge>}
@@ -432,7 +432,7 @@ const Home = (): ReactElement => {
                 <SelectTrigger id="tone">
                   <SelectValue placeholder="Select a tone" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="!overflow-scroll max-h-[300px]">
                   {toneOptions.map((option) => (
                     <SelectItem key={option.key} id={option.key} value={option.key} disabled={option.isPro && !isPro || answering}>
                       {option.value} {!isPro && option.isPro && <Badge variant={"pro"}>Pro</Badge>}
@@ -450,7 +450,7 @@ const Home = (): ReactElement => {
                 <SelectTrigger id="tone">
                   <SelectValue placeholder="Select a tone" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="!overflow-scroll max-h-[300px]">
                   {targetOptions.map((option) => (
                     <SelectItem key={option.key} id={option.key} value={option.key} disabled={option.isPro && !isPro || answering}>
                       {option.value} {!isPro && option.isPro && <Badge variant={"pro"}>Pro</Badge>}
@@ -476,7 +476,7 @@ const Home = (): ReactElement => {
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="!overflow-scroll max-h-[300px]">
                 {langs.map((lang) => (
                   <SelectItem key={lang.value} id={lang.value} value={lang.value}>{lang.label}</SelectItem>
                 ))}
