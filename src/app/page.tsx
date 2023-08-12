@@ -32,6 +32,7 @@ import { readStream } from "@/lib/utils/stream";
 import { Toggle } from "@/lib/components/ui/toggle";
 import { getLang, langs } from "@/lib/utils/langs";
 import Image from "next/image";
+import { toast, Toaster } from "sonner";
 
 type Response = {
   isPro: boolean;
@@ -318,6 +319,8 @@ const Home = (): ReactElement => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-3 md:mt-12 py-2 px-3">
+      <Toaster />
+
       {!user && (
         <Alert className="w-full sm:w-[20rem] md:w-[25rem] lg:w-[30rem] xl:w-[35rem] mb-4">
           <User className="h-4 w-4" />
@@ -687,7 +690,12 @@ const Home = (): ReactElement => {
             <Button variant={"default"} size={"sm"} onClick={() => void handleSave()}>
               <BookDown size={16} />&nbsp;&nbsp;Save
             </Button>
-            <Button variant={"default"} size={"icon"}>
+            <Button variant={"default"} size={"icon"} onClick={() => {
+              void navigator.clipboard.writeText(answer);
+              toast.success("Copied to clipboard", {
+                icon: <Copy size={16} />
+              });
+            }}>
               <Copy size={16} />
             </Button>
             <Link target="_blank" href={tweet(answer)} className={buttonVariants({ variant: "default", size: "icon" })}>
