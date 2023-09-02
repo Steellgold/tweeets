@@ -8,74 +8,10 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  isPro        Boolean       @default(false)
-  fpDone       Boolean       @default(true)
-  priority     Boolean       @default(false)
-  models       Model[]
-  subscription Subscription?
-  fpTweets     fpTweets[]
-  usage        Int           @default(0)
-  tweets       Tweet[]
-}
-
-model Subscription {
-  id        String   @id @default(cuid())
-  createdAt String
-  userId    String   @unique
-  plan      Plan
-  startAt   DateTime
-  endAt     DateTime
-  cusId     String   @unique
-  subId     String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Model {
-  id              String   @id @default(cuid())
-  createdAt       String
-  userId          String
-  name            String
-  description     String   @default("")
-  shareLink       String?  @unique @default("")
-  sentiment       String
-  style           String
-  tone            String
-  context         String
-  gpt4            Boolean  @default(false)
-  hashtags        String[]
-  includeHashtags Boolean  @default(false)
-  target          String
-  lang            String   @default("en")
-  user            User     @relation(fields: [userId], references: [id])
-}
-
-model Tweet {
-  id              String   @id @default(cuid())
-  createdAt       String
-  userId          String
-  sentiment       String
-  style           String
-  tone            String
-  context         String
-  gpt4            Boolean  @default(false)
-  hashtags        String[]
-  includeHashtags Boolean  @default(false)
-  target          String
-  lang            String   @default("en")
-  result          String
-  user            User     @relation(fields: [userId], references: [id])
-}
-
-model fpTweets {
-  id      String  @id @default(cuid())
-  content String
-  userId  String?
-  user    User?   @relation(fields: [userId], references: [id])
-}
-
-enum Plan {
-  MONTHLY
-  YEARLY
+  id       String  @id @default(cuid())
+  email    String  @unique
+  isPro    Boolean @default(false)
+  fpDone   Boolean @default(true)
+  priority Boolean @default(false)
+  usage    Int     @default(0)
 }
