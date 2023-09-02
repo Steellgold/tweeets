@@ -3,23 +3,35 @@
 import { Button } from "@/lib/components/ui/button";
 import { CardContent, CardFooter } from "@/lib/components/ui/card";
 import { Checkbox } from "@/lib/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/lib/components/ui/dropdown-menu";
 import { Input } from "@/lib/components/ui/input";
 import { Textarea } from "@/lib/components/ui/textarea";
 import { useState, type ReactElement } from "react";
-import { SiOpenai } from "@icons-pack/react-simple-icons";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
+import type { Emotion, Style, Target, Tone } from "@/lib/configs/generation/types";
+import { emotions, getEmotion, getStyle, getTarget, getTone, styles, targets, tones } from "@/lib/configs/generation/types";
+import TweetsList from "./tweets";
+import AlertDescription from "@/lib/components/alert-description";
+import { Label } from "@/lib/components/ui/label";
+import { langs, type Lang } from "@/lib/utils/langs";
+import { Coins } from "lucide-react";
 
 const Generator = (): ReactElement => {
   const [addInstructions, setAddInstructions] = useState(false);
   const [addNegativeInstructions, setAddNegativeInstructions] = useState(false);
   const [gptVersion, setGptVersion] = useState<"3" | "4">("3");
 
+  const [emotion, setEmotion] = useState<Emotion>("emotion-default");
+  const [style, setStyle] = useState<Style>("style-default");
+  const [tone, setTone] = useState<Tone>("tone-default");
+  const [target, setTarget] = useState<Target>("target-all");
+  const [lang, setLang] = useState<Lang>("en-US");
+
   return (
     <>
       <CardContent>
         <Textarea placeholder="Enter your tweet content here" />
 
-        <div className="flex gap-4 items-center mt-2">
+        <div className="flex gap-4 items-center mt-4">
           <Checkbox onCheckedChange={(checked: boolean) => setAddInstructions(checked)} />
           <Input placeholder="Customize the instructions" disabled={!addInstructions} />
         </div>
@@ -29,26 +41,172 @@ const Generator = (): ReactElement => {
           <Input placeholder="Customize the negative instructions" disabled={!addNegativeInstructions} />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className="mt-2" asChild>
-            <Button variant={"outline"} size={"sm"}>
-              <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-{gptVersion}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>Choose a model</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => void setGptVersion("3")}>
-              <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-3
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => void setGptVersion("4")}>
-              <SiOpenai className="h-4 w-4" />&nbsp;&nbsp;GPT-4
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="emotion" className="flex gap-1.5">
+              Emotion
+              <AlertDescription
+                title={
+                  <span className="text-primary">
+                    What is the <kbd className="bg-primary text-primary-foreground rounded-md px-1.5 py-0.5">{emotion}</kbd>&nbsp;?
+                  </span>
+                }
+                description={getEmotion(emotion).description}
+              />
+            </Label>
+
+            <Select
+              value={emotion}
+              defaultValue={"emotion-default"}
+              onValueChange={(value: Emotion) => setEmotion(value)}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Select a emotion" />
+              </SelectTrigger>
+
+              <SelectContent className="!overflow-scroll max-h-[300px]">
+                {emotions.map((emotion) => (
+                  <SelectItem key={emotion.key} id={emotion.key} value={emotion.key}>{emotion.value}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="style" className="flex gap-1.5">
+              Style
+              <AlertDescription
+                title={
+                  <span className="text-primary">
+                    What is the <kbd className="bg-primary text-primary-foreground rounded-md px-1.5 py-0.5">{style}</kbd>&nbsp;?
+                  </span>
+                }
+                description={getStyle(style).description}
+              />
+            </Label>
+
+            <Select
+              value={style}
+              defaultValue={"style-default"}
+              onValueChange={(value: Style) => setStyle(value)}>
+              <SelectTrigger className="w-full md:w-[180px]" id="style">
+                <SelectValue placeholder="Select a style" />
+              </SelectTrigger>
+
+              <SelectContent className="!overflow-scroll max-h-[300px]">
+                {styles.map((style) => (
+                  <SelectItem key={style.key} id={style.key} value={style.key}>{style.value}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="tone" className="flex gap-1.5">
+              Tone
+              <AlertDescription
+                title={
+                  <span className="text-primary">
+                    What is the <kbd className="bg-primary text-primary-foreground rounded-md px-1.5 py-0.5">{tone}</kbd>&nbsp;?
+                  </span>
+                }
+                description={getTone(tone).description}
+              />
+            </Label>
+            <Select
+              value={tone}
+              defaultValue={"tone-default"}
+              onValueChange={(value: Tone) => setTone(value)}>
+              <SelectTrigger className="w-full md:w-[180px]" id="tone">
+                <SelectValue placeholder="Select a tone" />
+              </SelectTrigger>
+
+              <SelectContent className="!overflow-scroll max-h-[300px]">
+                {tones.map((tone) => (
+                  <SelectItem key={tone.key} id={tone.key} value={tone.key}>
+                    {tone.value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="target" className="flex gap-1.5">
+              Target
+              <AlertDescription
+                title={
+                  <span className="text-primary">
+                    What is the <kbd className="bg-primary text-primary-foreground rounded-md px-1.5 py-0.5">{target}</kbd>&nbsp;?
+                  </span>
+                }
+                description={getTarget(target).description}
+              />
+            </Label>
+            <Select
+              value={target}
+              defaultValue={"target-all"}
+              onValueChange={(value: Target) => setTarget(value)}>
+              <SelectTrigger className="w-full md:w-[180px]" id="target">
+                <SelectValue placeholder="Select a target" />
+              </SelectTrigger>
+
+              <SelectContent className="!overflow-scroll max-h-[300px]">
+                {targets.map((target) => (
+                  <SelectItem key={target.key} id={target.key} value={target.key}>{target.value}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="gpt-version" className="flex gap-1.5">GPT Version</Label>
+
+            <Select
+              value={gptVersion}
+              defaultValue={"3"}
+              onValueChange={(value: "3" | "4") => setGptVersion(value)}>
+              <SelectTrigger className="w-full md:w-[180px]" id="gpt-version">
+                <SelectValue placeholder="Select a GPT version" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem key={"3"} id={"3"} value={"3"}>GPT-3</SelectItem>
+                <SelectItem key={"4"} id={"4"} value={"4"}>GPT-4</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="lang" className="flex gap-1.5">Language</Label>
+            <Select
+              value={lang}
+              defaultValue={"en-US"}
+              onValueChange={(value: Lang) => setLang(value)}>
+              <SelectTrigger className="w-full md:w-[180px]" id="target">
+                <SelectValue placeholder="Select a language" />
+              </SelectTrigger>
+
+              <SelectContent className="!overflow-scroll max-h-[300px]">
+                {langs.map((target) => (
+                  <SelectItem key={target.key} id={target.key} value={target.key}>{target.value}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardContent>
 
-      <CardFooter>
-        <Button>Generate</Button>
+      <CardFooter className="flex justify-between gap-2">
+        <div className="flex gap-2">
+          <Button size={"sm"}>Generate</Button>
+          <TweetsList newCount={0} />
+        </div>
+        <Button variant={"link"} size={"sm"}>
+          <Coins size={20} />
+          <span className="ml-2">Buy more credits</span>
+        </Button>
       </CardFooter>
     </>
   );
