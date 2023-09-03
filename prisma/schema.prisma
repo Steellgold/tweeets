@@ -8,10 +8,123 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  email    String  @unique
-  isPro    Boolean @default(false)
-  fpDone   Boolean @default(true)
-  priority Boolean @default(false)
-  usage    Int     @default(0)
+  id         String   @id @default(cuid())
+  email      String   @unique
+  credits    Int      @default(0)
+  tweets     Tweets[]
+  saveTweets Boolean  @default(true)
+}
+
+enum Emotion {
+  DEFAULT
+  ENTHUSIASM
+  MELANCHOLY
+  JOY
+  ANXIETY
+  CONFIDENCE
+  WONDER
+  ANGER
+  COMPASSION
+  EXHAUSTION
+  CRITICAL_THINKING
+}
+
+enum Style {
+  DEFAULT
+  INFORMATIVE
+  POETIC
+  HUMOROUS
+  FORMAL
+  PERSUASIVE
+  DESCRIPTIVE
+  SCIENTIFIC
+  NARRATIVE
+  EDUCATIONAL
+}
+
+enum Tone {
+  DEFAULT
+  OPTIMISTIC
+  IRONIC
+  AUTHORITATIVE
+  EMPHATIC
+  DETACHED
+  SATIRICAL
+  REFLECTIVE
+  INTIMATE
+  ENGAGED
+  POSITIVE
+}
+
+enum Target {
+  ALL
+  ENTERPRISES
+  PROFESSIONALS
+  PARTICULARS
+  ENTREPRENEURS
+  STUDENTS
+  CHILDREN
+  TEENAGERS
+  ADULTS
+  SENIORS
+  PARENTS
+}
+
+enum Lang {
+  id
+  da
+  de
+  en_GB
+  en_US
+  es_ES
+  fr
+  hr
+  it
+  lt
+  hu
+  nl
+  no
+  pl
+  pt_BR
+  ro
+  fi
+  sv_SE
+  vi
+  tr
+  cs
+  el
+  bg
+  ru
+  uk
+  hi
+  th
+  zh_CN
+  ja
+  zh_TW
+  ko
+  ar
+}
+
+model Tweets {
+  id                   String   @id @default(cuid())
+  user                 User     @relation(fields: [userId], references: [id])
+  userId               String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  context              String
+  generated            String
+  emotion              Emotion
+  style                Style
+  tone                 Tone
+  target               Target
+  lang                 Lang
+  gptModel             String
+  instructions         String?
+  negativeInstructions String?
+  costCredits          Int
+  isPublished          Boolean  @default(false)
+  isShared             Boolean  @default(false)
+  isFavorited          Boolean  @default(false)
+  sharedTemplateSlug   String?
+  tweetUrl             String?
 }
