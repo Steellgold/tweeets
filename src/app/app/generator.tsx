@@ -16,6 +16,7 @@ import { langs, type Lang } from "@/lib/configs/generation/langs";
 import { Coins } from "lucide-react";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { cn } from "@/lib/utils";
+import BuyCredits from "./credits";
 
 const Generator = (): ReactElement => {
   const { user } = useUserContext();
@@ -243,10 +244,7 @@ const Generator = (): ReactElement => {
           <Button size={"sm"}>Generate</Button>
           <TweetsList newCount={0} />
         </div>
-        <Button variant={"link"} size={"sm"}>
-          <Coins size={20} />
-          <span className="ml-2">Buy more credits</span>
-        </Button>
+        <BuyCredits />
       </CardFooter>
     </>
   );
