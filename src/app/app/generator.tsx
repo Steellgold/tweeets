@@ -13,7 +13,6 @@ import TweetsList from "./tweets";
 import AlertDescription from "@/lib/components/alert-description";
 import { Label } from "@/lib/components/ui/label";
 import { langs, type Lang } from "@/lib/configs/generation/langs";
-import { Coins } from "lucide-react";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { cn } from "@/lib/utils";
 import BuyCredits from "./credits";

@@ -36,7 +36,7 @@ const BuyCredits = (): ReactElement => {
             </div>
           </CardSpotlight>
 
-          <CardSpotlight>
+          <CardSpotlight special>
             <div className="flex justify-between items-center">
               <div className="flex flex-col space-y-2">
                 <CardTitle className="flex gap-2">100 credits <Badge>Best value</Badge></CardTitle>
