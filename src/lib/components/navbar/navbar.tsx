@@ -40,7 +40,7 @@ export const Navbar = (): ReactElement => {
           <div className="flex items-center space-x-4">
             <Skeleton className="h-8 w-8 rounded-full" />
             <div className="space-y-2">
-              <Skeleton className="h-2 w-[56px]" />
+              <Skeleton className="h-4 w-[56px]" />
               <Skeleton className="h-2 w-[86px]" />
             </div>
           </div>

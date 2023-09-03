@@ -24,7 +24,7 @@ export const useUserContext = (): ContextType => {
 
 export const UserProvider: Component<PropsWithChildren> = ({ children }) => {
   const supabase = createClientComponentClient();
-  const [user, setUser] = useState<User | null | "loading">(null);
+  const [user, setUser] = useState<User | null | "loading">("loading");
   const values = { user, setUser };
 
   useEffect(() => {
