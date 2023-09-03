@@ -7,17 +7,26 @@ import { Input } from "@/lib/components/ui/input";
 import { Textarea } from "@/lib/components/ui/textarea";
 import { useState, type ReactElement } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
-import type { Emotion, Style, Target, Tone } from "@/lib/configs/generation/types";
-import { emotions, getEmotion, getStyle, getTarget, getTone, styles, targets, tones } from "@/lib/configs/generation/types";
+import type { Emoji, Emotion, Style, Target, Tone } from "@/lib/configs/generation/types";
+import { emojis, emotions, getEmotion, getStyle, getTarget, getTone, styles, targets, tones } from "@/lib/configs/generation/types";
 import TweetsList from "./tweets";
 import AlertDescription from "@/lib/components/alert-description";
 import { Label } from "@/lib/components/ui/label";
-import { langs, type Lang } from "@/lib/utils/langs";
+import { langs, type Lang } from "@/lib/configs/generation/langs";
 import { Coins } from "lucide-react";
+import { useUserContext } from "@/lib/contexts/UserProvider";
+import { cn } from "@/lib/utils";
 
 const Generator = (): ReactElement => {
+  const { user } = useUserContext();
+
   const [addInstructions, setAddInstructions] = useState(false);
-  const [addNegativeInstructions, setAddNegativeInstructions] = useState(false);
+  // const [instructions, setInstructions] = useState("");
+  const [addNInstructions, setAddNInstructions] = useState(false);
+  // const [negativeInstructions, setNegativeInstructions] = useState("");
+  const [addEmojis, setAddEmojis] = useState(false);
+  const [_emojis, setEmojis] = useState<Emoji>("emoji-default");
+
   const [gptVersion, setGptVersion] = useState<"3" | "4">("3");
 
   const [emotion, setEmotion] = useState<Emotion>("emotion-default");
@@ -29,16 +38,47 @@ const Generator = (): ReactElement => {
   return (
     <>
       <CardContent>
-        <Textarea placeholder="Enter your tweet content here" />
+        <Textarea placeholder="Enter your tweet content here" disabled={!user} className="resize-none" />
 
         <div className="flex gap-4 items-center mt-4">
-          <Checkbox onCheckedChange={(checked: boolean) => setAddInstructions(checked)} />
+          <Checkbox onCheckedChange={(checked: boolean) => setAddInstructions(checked)} disabled={!user} defaultChecked={addInstructions} />
           <Input placeholder="Customize the instructions" disabled={!addInstructions} />
         </div>
 
         <div className="flex gap-4 items-center mt-2">
-          <Checkbox onCheckedChange={(checked: boolean) => setAddNegativeInstructions(checked)} />
-          <Input placeholder="Customize the negative instructions" disabled={!addNegativeInstructions} />
+          <Checkbox onCheckedChange={(checked: boolean) => setAddNInstructions(checked)} disabled={!user} defaultChecked={addNInstructions} />
+          <Input placeholder="Customize the negative instructions" disabled={!addNInstructions} />
+        </div>
+
+        <div>
+          <Label htmlFor="emojis" className={cn({ "flex gap-1.5 mt-4": true, "hidden": !user || !addEmojis })}>
+            Emojis
+            <AlertDescription
+              title={<span className="text-primary">What are emojis?</span>}
+              description="Add the emojis you want, separating them with a comma, or leave blank if you want to use any existing emoji!"
+            />
+          </Label>
+          <div className="flex gap-4 items-center mt-2">
+            <Checkbox onCheckedChange={(checked: boolean) => setAddEmojis(checked)} disabled={!user} defaultChecked={addEmojis} />
+            <div className="flex gap-2 items-center w-full">
+              <Input id="emojis" placeholder="Add emojis to your tweet" disabled={!addEmojis} />
+              <Select
+                value={_emojis}
+                defaultValue={"emoji-default"}
+                onValueChange={(value: Emoji) => setEmojis(value)}
+                disabled={!addEmojis}>
+                <SelectTrigger className="w-full md:w-[380px]">
+                  <SelectValue placeholder="Select an emoji level" />
+                </SelectTrigger>
+
+                <SelectContent className="!overflow-scroll max-h-[300px]">
+                  {emojis.map((emoji) => (
+                    <SelectItem key={emoji.key} id={emoji.key} value={emoji.key}>{emoji.value}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mt-4">

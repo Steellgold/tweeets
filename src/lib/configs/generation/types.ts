@@ -13,6 +13,8 @@ export type Tone = "tone-default" | "tone-optimistic" | "tone-ironic" | "tone-au
 
 export type Target = "target-all" | "target-enterprises" | "target-professionals" | "target-particulars" | "target-entrepreneurs" | "target-students" | "target-children" | "target-teenagers" | "target-adults" | "target-seniors" | "target-parents";
 
+export type Emoji = "emoji-default" | "emoji-reasonable" | "emoji-exaggeration" | "emoji-party";
+
 export const emotions: Props[] = [
   { key: "emotion-default", value: "No emotion", description: "This category encompasses all possible emotions." },
   { key: "emotion-enthusiasm", value: "Enthusiasm", description: "Enthusiasm is a writing style that conveys a deep sense of excitement and optimism, it is often used to inspire and motivate." },
@@ -91,3 +93,10 @@ export const getTarget = (key: string): Props => {
   if (!target) throw new Error(`Target ${key} not found`);
   return target;
 };
+
+export const emojis: Props[] = [
+  { key: "emoji-default", value: "Few emojis", description: "This category encompasses all possible emojis." },
+  { key: "emoji-reasonable", value: "Reasonable use of emojis", description: "Reasonable use of emojis" },
+  { key: "emoji-exaggeration", value: "Exaggeration of emojis", description: "Exaggeration of emojis" },
+  { key: "emoji-party", value: "It's the party 🎊", description: "It's the party 🎊" }
+];
