@@ -98,7 +98,8 @@ const Generator = (): ReactElement => {
             <Select
               value={emotion}
               defaultValue={"emotion-default"}
-              onValueChange={(value: Emotion) => setEmotion(value)}>
+              onValueChange={(value: Emotion) => setEmotion(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Select a emotion" />
               </SelectTrigger>
@@ -127,7 +128,8 @@ const Generator = (): ReactElement => {
             <Select
               value={style}
               defaultValue={"style-default"}
-              onValueChange={(value: Style) => setStyle(value)}>
+              onValueChange={(value: Style) => setStyle(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]" id="style">
                 <SelectValue placeholder="Select a style" />
               </SelectTrigger>
@@ -155,7 +157,8 @@ const Generator = (): ReactElement => {
             <Select
               value={tone}
               defaultValue={"tone-default"}
-              onValueChange={(value: Tone) => setTone(value)}>
+              onValueChange={(value: Tone) => setTone(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]" id="tone">
                 <SelectValue placeholder="Select a tone" />
               </SelectTrigger>
@@ -187,7 +190,8 @@ const Generator = (): ReactElement => {
             <Select
               value={target}
               defaultValue={"target-all"}
-              onValueChange={(value: Target) => setTarget(value)}>
+              onValueChange={(value: Target) => setTarget(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]" id="target">
                 <SelectValue placeholder="Select a target" />
               </SelectTrigger>
@@ -206,7 +210,8 @@ const Generator = (): ReactElement => {
             <Select
               value={gptVersion}
               defaultValue={"3"}
-              onValueChange={(value: "3" | "4") => setGptVersion(value)}>
+              onValueChange={(value: "3" | "4") => setGptVersion(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]" id="gpt-version">
                 <SelectValue placeholder="Select a GPT version" />
               </SelectTrigger>
@@ -223,7 +228,8 @@ const Generator = (): ReactElement => {
             <Select
               value={lang}
               defaultValue={"en-US"}
-              onValueChange={(value: Lang) => setLang(value)}>
+              onValueChange={(value: Lang) => setLang(value)}
+              disabled={!user}>
               <SelectTrigger className="w-full md:w-[180px]" id="target">
                 <SelectValue placeholder="Select a language" />
               </SelectTrigger>
@@ -240,7 +246,7 @@ const Generator = (): ReactElement => {
 
       <CardFooter className="flex justify-between gap-2">
         <div className="flex gap-2">
-          <Button size={"sm"}>Generate</Button>
+          <Button size={"sm"} disabled={!user}>Generate</Button>
           <TweetsList newCount={0} />
         </div>
         <BuyCredits />

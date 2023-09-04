@@ -6,14 +6,17 @@ import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { CardDescription, CardTitle } from "@/lib/components/ui/card";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
+import { useUserContext } from "@/lib/contexts/UserProvider";
 import { ArrowRight, Coins } from "lucide-react";
 import type { ReactElement } from "react";
 
 const BuyCredits = (): ReactElement => {
+  const { user } = useUserContext();
+
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <Button variant={"link"} size={"sm"}>
+        <Button variant={"link"} size={"sm"} disabled={!user}>
           <Coins size={20} />
           <span className="ml-2">Buy more credits</span>
         </Button>

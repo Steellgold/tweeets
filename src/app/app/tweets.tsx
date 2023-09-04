@@ -4,6 +4,7 @@ import { Badge } from "@/lib/components/ui/badge";
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/lib/components/ui/card";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
+import { useUserContext } from "@/lib/contexts/UserProvider";
 import { SiOpenai, SiTwitter } from "@icons-pack/react-simple-icons";
 import { Download, Flag, MessageCircle, PenTool, Share2, Smile, Star, Target } from "lucide-react";
 import Link from "next/link";
@@ -14,11 +15,12 @@ type TweetsListProps = {
 };
 
 const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
+  const { user } = useUserContext();
 
   return (
     <Sheet>
       <SheetTrigger>
-        <Button variant={"secondary"} size={"sm"} className="flex gap-1">
+        <Button variant={"secondary"} size={"sm"} className="flex gap-1" disabled={!user}>
           All generated tweets
           {newCount > 0 && (
             <Badge className="mt-1">{newCount} new</Badge>
