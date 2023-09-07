@@ -9,7 +9,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 type ContextType = {
   user: User | null | "loading";
   setUser: (value: User | null | "loading") => void;
-};
+}
 
 const UserContext = createContext<ContextType | null>(null);
 
@@ -25,7 +25,6 @@ export const useUserContext = (): ContextType => {
 export const UserProvider: Component<PropsWithChildren> = ({ children }) => {
   const supabase = createClientComponentClient();
   const [user, setUser] = useState<User | null | "loading">("loading");
-  const values = { user, setUser };
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((_event, session) => {
@@ -33,5 +32,5 @@ export const UserProvider: Component<PropsWithChildren> = ({ children }) => {
     });
   }, [supabase.auth]);
 
-  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };
