@@ -66,7 +66,7 @@ export const Navbar = (): ReactElement => {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-60">
+            <DropdownMenuContent className="w-48">
               <DropdownMenuLabel>{user.user_metadata.full_name}</DropdownMenuLabel>
               <DropdownMenuLabel className="-mt-3 text-gray-400">{user.user_metadata.email}</DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -74,7 +74,9 @@ export const Navbar = (): ReactElement => {
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                Settings
+                <Link href={"/invite"}>
+                  Invite friends
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {

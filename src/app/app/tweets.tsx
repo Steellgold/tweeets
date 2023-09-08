@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { SiOpenai, SiTwitter } from "@icons-pack/react-simple-icons";
-import { Download, Flag, MessageCircle, PenTool, Share2, Smile, Star, Target } from "lucide-react";
+import { Flag, ListRestart, MessageCircle, PenTool, Share2, Smile, Target } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
@@ -89,14 +89,11 @@ const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
             </CardContent>
 
             <CardFooter className="flex gap-2">
-              <Button variant={"secondary"}>
-                <Download size={20} />
+              <Button variant={"outline"}>
+                <ListRestart size={18} />
               </Button>
-              <Button variant={"secondary"}>
-                <Share2 size={20} />
-              </Button>
-              <Button variant={"star"}>
-                <Star size={20} fill="#fff" />
+              <Button variant={"outline"}>
+                <Share2 size={18} />
               </Button>
             </CardFooter>
           </Card>

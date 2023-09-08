@@ -16,14 +16,15 @@ import { langs, type Lang } from "@/lib/configs/generation/langs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { cn } from "@/lib/utils";
 import BuyCredits from "./credits";
+import Generate from "./generate";
 
 const Generator = (): ReactElement => {
   const { user } = useUserContext();
 
   const [addInstructions, setAddInstructions] = useState(false);
-  // const [instructions, setInstructions] = useState("");
+  const [_, setInstructions] = useState("");
   const [addNInstructions, setAddNInstructions] = useState(false);
-  // const [negativeInstructions, setNegativeInstructions] = useState("");
+  const [__, setNegativeInstructions] = useState("");
   const [addEmojis, setAddEmojis] = useState(false);
   const [_emojis, setEmojis] = useState<Emoji>("emoji-default");
 
@@ -42,12 +43,13 @@ const Generator = (): ReactElement => {
 
         <div className="flex gap-4 items-center mt-4">
           <Checkbox onCheckedChange={(checked: boolean) => setAddInstructions(checked)} disabled={!user} defaultChecked={addInstructions} />
-          <Input placeholder="Customize the instructions" disabled={!addInstructions} />
+          <Input placeholder="Customize the instructions" disabled={!addInstructions} onChange={(event) => setInstructions(event.target.value)} />
         </div>
 
         <div className="flex gap-4 items-center mt-2">
           <Checkbox onCheckedChange={(checked: boolean) => setAddNInstructions(checked)} disabled={!user} defaultChecked={addNInstructions} />
-          <Input placeholder="Customize the negative instructions" disabled={!addNInstructions} />
+          <Input placeholder="Customize the negative instructions" disabled={!addNInstructions}
+            onChange={(event) => setNegativeInstructions(event.target.value)} />
         </div>
 
         <div>
@@ -246,7 +248,7 @@ const Generator = (): ReactElement => {
 
       <CardFooter className="flex justify-between gap-2">
         <div className="flex gap-2">
-          <Button size={"sm"} disabled={!user}>Generate</Button>
+          <Generate />
           <TweetsList newCount={0} />
         </div>
         <BuyCredits />

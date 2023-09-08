@@ -30,7 +30,7 @@ const CardSpotlight = ({ className = "", style = {}, children, special = false }
   return (
     <div className={cn({
       "rounded-lg relative p-3 flex flex-col gap-4 shadow-lg bg-zinc-950 border border-zinc-900 bg-cover": true,
-      "bg-gradient-to-br from-zinc-900 to-zinc-950": special,
+      "bg-gradient-to-br from-zinc-900 to-zinc-950 border-zinc-700": special,
     }, className)} style={style} ref={cardRef} onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="absolute inset-0 transition-all duration-200 rounded-lg opacity-0 pointer-events-none" style={{ opacity, background: `radial-gradient(350px circle at ${position.x}px ${position.y}px, #ffffff10, transparent)` }}>
       </div>

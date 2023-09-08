@@ -13,6 +13,8 @@ model User {
   credits    Int      @default(0)
   tweets     Tweets[]
   saveTweets Boolean  @default(true)
+  invitedBy  String?
+  invite     Invite?
 }
 
 enum Emotion {
@@ -127,4 +129,16 @@ model Tweets {
   isFavorited          Boolean  @default(false)
   sharedTemplateSlug   String?
   tweetUrl             String?
+}
+
+model Invite {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  email      String   @unique
+  used       Int      @default(0)
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+  views      Int      @default(0)
+  isVerified Boolean  @default(false)
 }
