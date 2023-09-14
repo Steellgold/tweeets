@@ -94,13 +94,13 @@ const BuyCredits = (): ReactElement => {
           </CardSpotlight>
         </div>
 
-        <Separator className="my-2" />
+        {/* <Separator className="my-2" />
 
         <CardDescription className="text-muted-foreground text-center">
           <span className="text-black dark:text-white">
             You don&apos;t want to pay? We totally understand you! That&apos;s why you can earn credits by inviting your friends.&nbsp;
             <Link href={"/invite"} className="text-blue-500 hover:underline hover:text-blue-600">More information</Link></span>
-        </CardDescription>
+        </CardDescription> */}
 
         <AlertDialogFooter>
           <AlertDialogCancel>Close</AlertDialogCancel>
