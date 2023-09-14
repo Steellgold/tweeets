@@ -1,12 +1,11 @@
-type Prompt = "userDefault" | "userWithoutTweets" | "systemPrompt";
+type Prompt = "user" | "system";
 import { Configuration, OpenAIApi } from "openai-edge";
 
 export const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_KEY }));
 
 const URLS: Record<Prompt, string> = {
-  userDefault: process.env.USER_PROMPT_DEFAULT || "",
-  userWithoutTweets: process.env.USER_PROMPT_WT || "",
-  systemPrompt: process.env.SYSTEM_PROMPT || ""
+  user: process.env.USER_PROMPT || "",
+  system: process.env.SYSTEM_PROMPT || ""
 };
 
 export const getPrompt = async(prompt: Prompt): Promise<string> => {

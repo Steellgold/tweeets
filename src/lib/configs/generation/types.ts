@@ -1,3 +1,5 @@
+import { Tone as DBTone, Target as DBTarget, Emotion as DBEmotion, Style as DBStyle } from "@prisma/client";
+
 /* eslint-disable max-len */
 type Props = {
   key: string;
@@ -12,8 +14,6 @@ export type Style = "style-default" | "style-informative" | "style-poetic" | "st
 export type Tone = "tone-default" | "tone-optimistic" | "tone-ironic" | "tone-authoritative" | "tone-emphatic" | "tone-detached" | "tone-satirical" | "tone-reflective" | "tone-intimate" | "tone-engaged" | "tone-positive";
 
 export type Target = "target-all" | "target-enterprises" | "target-professionals" | "target-particulars" | "target-entrepreneurs" | "target-students" | "target-children" | "target-teenagers" | "target-adults" | "target-seniors" | "target-parents";
-
-export type Emoji = "emoji-default" | "emoji-reasonable" | "emoji-exaggeration" | "emoji-party";
 
 export const emotions: Props[] = [
   { key: "emotion-default", value: "No emotion", description: "This category encompasses all possible emotions." },
@@ -35,6 +35,64 @@ export const getEmotion = (key: Emotion): Props => {
   return emotion;
 };
 
+export const stringToEmotion = (emotion: string): DBEmotion => {
+  switch (emotion) {
+    case "emotion-default":
+      return DBEmotion.DEFAULT;
+    case "emotion-enthusiasm":
+      return DBEmotion.ENTHUSIASM;
+    case "emotion-melancholy":
+      return DBEmotion.MELANCHOLY;
+    case "emotion-joy":
+      return DBEmotion.JOY;
+    case "emotion-anxiety":
+      return DBEmotion.ANXIETY;
+    case "emotion-confidence":
+      return DBEmotion.CONFIDENCE;
+    case "emotion-wonder":
+      return DBEmotion.WONDER;
+    case "emotion-anger":
+      return DBEmotion.ANGER;
+    case "emotion-compassion":
+      return DBEmotion.COMPASSION;
+    case "emotion-exhaustion":
+      return DBEmotion.EXHAUSTION;
+    case "emotion-critical-thinking":
+      return DBEmotion.CRITICAL_THINKING;
+    default:
+      return DBEmotion.DEFAULT;
+  }
+};
+
+export const emotionToString = (emotion: DBEmotion): Emotion => {
+  switch (emotion) {
+    case DBEmotion.DEFAULT:
+      return "emotion-default";
+    case DBEmotion.ENTHUSIASM:
+      return "emotion-enthusiasm";
+    case DBEmotion.MELANCHOLY:
+      return "emotion-melancholy";
+    case DBEmotion.JOY:
+      return "emotion-joy";
+    case DBEmotion.ANXIETY:
+      return "emotion-anxiety";
+    case DBEmotion.CONFIDENCE:
+      return "emotion-confidence";
+    case DBEmotion.WONDER:
+      return "emotion-wonder";
+    case DBEmotion.ANGER:
+      return "emotion-anger";
+    case DBEmotion.COMPASSION:
+      return "emotion-compassion";
+    case DBEmotion.EXHAUSTION:
+      return "emotion-exhaustion";
+    case DBEmotion.CRITICAL_THINKING:
+      return "emotion-critical-thinking";
+    default:
+      return "emotion-default";
+  }
+};
+
 export const styles: Props[] = [
   { key: "style-default", value: "Default style", description: "This category encompasses all possible writing styles." },
   { key: "style-informative", value: "Informative", description: "Informative Style is a way of writing that aims to convey facts in a clear and concise manner." },
@@ -52,6 +110,60 @@ export const getStyle = (key: Style): Props => {
   const style = styles.find((style) => style.key === key);
   if (!style) throw new Error(`Style ${key} not found`);
   return style;
+};
+
+export const stringToStyle = (style: string): DBStyle => {
+  switch (style) {
+    case "style-default":
+      return DBStyle.DEFAULT;
+    case "style-informative":
+      return DBStyle.INFORMATIVE;
+    case "style-poetic":
+      return DBStyle.POETIC;
+    case "style-humorous":
+      return DBStyle.HUMOROUS;
+    case "style-formal":
+      return DBStyle.FORMAL;
+    case "style-persuasive":
+      return DBStyle.PERSUASIVE;
+    case "style-descriptive":
+      return DBStyle.DESCRIPTIVE;
+    case "style-scientific":
+      return DBStyle.SCIENTIFIC;
+    case "style-narrative":
+      return DBStyle.NARRATIVE;
+    case "style-educational":
+      return DBStyle.EDUCATIONAL;
+    default:
+      return DBStyle.DEFAULT;
+  }
+};
+
+export const styleToString = (style: DBStyle): Style => {
+  switch (style) {
+    case DBStyle.DEFAULT:
+      return "style-default";
+    case DBStyle.INFORMATIVE:
+      return "style-informative";
+    case DBStyle.POETIC:
+      return "style-poetic";
+    case DBStyle.HUMOROUS:
+      return "style-humorous";
+    case DBStyle.FORMAL:
+      return "style-formal";
+    case DBStyle.PERSUASIVE:
+      return "style-persuasive";
+    case DBStyle.DESCRIPTIVE:
+      return "style-descriptive";
+    case DBStyle.SCIENTIFIC:
+      return "style-scientific";
+    case DBStyle.NARRATIVE:
+      return "style-narrative";
+    case DBStyle.EDUCATIONAL:
+      return "style-educational";
+    default:
+      return "style-default";
+  }
 };
 
 export const tones: Props[] = [
@@ -74,6 +186,64 @@ export const getTone = (key: Tone): Props => {
   return tone;
 };
 
+export const stringToTone = (tone: string): DBTone => {
+  switch (tone) {
+    case "tone-default":
+      return DBTone.DEFAULT;
+    case "tone-optimistic":
+      return DBTone.OPTIMISTIC;
+    case "tone-ironic":
+      return DBTone.IRONIC;
+    case "tone-authoritative":
+      return DBTone.AUTHORITATIVE;
+    case "tone-emphatic":
+      return DBTone.EMPHATIC;
+    case "tone-detached":
+      return DBTone.DETACHED;
+    case "tone-satirical":
+      return DBTone.SATIRICAL;
+    case "tone-reflective":
+      return DBTone.REFLECTIVE;
+    case "tone-intimate":
+      return DBTone.INTIMATE;
+    case "tone-engaged":
+      return DBTone.ENGAGED;
+    case "tone-positive":
+      return DBTone.POSITIVE;
+    default:
+      return DBTone.DEFAULT;
+  }
+};
+
+export const toneToString = (tone: DBTone): Tone => {
+  switch (tone) {
+    case DBTone.DEFAULT:
+      return "tone-default";
+    case DBTone.OPTIMISTIC:
+      return "tone-optimistic";
+    case DBTone.IRONIC:
+      return "tone-ironic";
+    case DBTone.AUTHORITATIVE:
+      return "tone-authoritative";
+    case DBTone.EMPHATIC:
+      return "tone-emphatic";
+    case DBTone.DETACHED:
+      return "tone-detached";
+    case DBTone.SATIRICAL:
+      return "tone-satirical";
+    case DBTone.REFLECTIVE:
+      return "tone-reflective";
+    case DBTone.INTIMATE:
+      return "tone-intimate";
+    case DBTone.ENGAGED:
+      return "tone-engaged";
+    case DBTone.POSITIVE:
+      return "tone-positive";
+    default:
+      throw new Error("Tone not found");
+  }
+};
+
 export const targets: Props[] = [
   { key: "target-all", value: "All audiences", description: "The 'All' category encompasses all possible target audiences, making it a versatile choice for comprehensive communication." },
   { key: "target-enterprises", value: "Enterprises", description: "The 'Enterprises' category includes businesses and large organizations, making it ideal for B2B communication strategies." },
@@ -94,9 +264,60 @@ export const getTarget = (key: string): Props => {
   return target;
 };
 
-export const emojis: Props[] = [
-  { key: "emoji-default", value: "Few emojis", description: "This category encompasses all possible emojis." },
-  { key: "emoji-reasonable", value: "Reasonable use of emojis", description: "Reasonable use of emojis" },
-  { key: "emoji-exaggeration", value: "Exaggeration of emojis", description: "Exaggeration of emojis" },
-  { key: "emoji-party", value: "It's the party 🎊", description: "It's the party 🎊" }
-];
+export const stringToTarget = (target: string | DBTarget): DBTarget => {
+  switch (target) {
+    case "target-all":
+      return DBTarget.ALL;
+    case "target-enterprises":
+      return DBTarget.ENTERPRISES;
+    case "target-professionals":
+      return DBTarget.PROFESSIONALS;
+    case "target-particulars":
+      return DBTarget.PARTICULARS;
+    case "target-entrepreneurs":
+      return DBTarget.ENTREPRENEURS;
+    case "target-students":
+      return DBTarget.STUDENTS;
+    case "target-children":
+      return DBTarget.CHILDREN;
+    case "target-teenagers":
+      return DBTarget.TEENAGERS;
+    case "target-adults":
+      return DBTarget.ADULTS;
+    case "target-seniors":
+      return DBTarget.SENIORS;
+    case "target-parents":
+      return DBTarget.PARENTS;
+    default:
+      throw new Error(`Target ${target} not found`);
+  }
+};
+
+export const targetToString = (target: DBTarget): string => {
+  switch (target) {
+    case DBTarget.ALL:
+      return "target-all";
+    case DBTarget.ENTERPRISES:
+      return "target-enterprises";
+    case DBTarget.PROFESSIONALS:
+      return "target-professionals";
+    case DBTarget.PARTICULARS:
+      return "target-particulars";
+    case DBTarget.ENTREPRENEURS:
+      return "target-entrepreneurs";
+    case DBTarget.STUDENTS:
+      return "target-students";
+    case DBTarget.CHILDREN:
+      return "target-children";
+    case DBTarget.TEENAGERS:
+      return "target-teenagers";
+    case DBTarget.ADULTS:
+      return "target-adults";
+    case DBTarget.SENIORS:
+      return "target-seniors";
+    case DBTarget.PARENTS:
+      return "target-parents";
+    default:
+      throw new Error("Target not found");
+  }
+};

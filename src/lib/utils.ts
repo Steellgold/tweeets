@@ -5,7 +5,7 @@ export const cn = (...inputs: ClassValue[]): string => {
   return twMerge(clsx(inputs));
 };
 
-export const tweet = (content: string): string => {
+export const toTweetUrl = (content: string): string => {
   return `https://twitter.com/share?text=${encodeURIComponent(content)}`;
 };
 

@@ -13,10 +13,33 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuTrigger } from "../ui/dropdown-menu";
 import type { ReactElement } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { Badge } from "../ui/badge";
+import { useLocalStorage } from "usehooks-ts";
+import { toast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
 
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
   const { user, setUser } = useUserContext();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const [isAutoSaveTweets, setIsAutoSaveTweets] = useLocalStorage<boolean>("auto-save-tweets", true);
+
+  const toggleAutoSaveTweets = (): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    setIsAutoSaveTweets((prev) => !prev);
+    toast({
+      title: `Auto-save tweets ${isAutoSaveTweets ? "disabled" : "enabled"}`,
+      description: isAutoSaveTweets ? "Your tweets will no longer be saved automatically." : "Your tweets will now be saved automatically.",
+      action: (
+        <ToastAction altText="Undo" onClick={() => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          setIsAutoSaveTweets((prev) => !prev);
+        }}>
+          Undo
+        </ToastAction>
+      )
+    });
+  };
 
   return (
     <nav className={cn("mx-auto mt-3 flex max-w-screen-xl items-center justify-between px-5")} suppressHydrationWarning>
@@ -73,10 +96,18 @@ export const Navbar = (): ReactElement => {
               <DropdownMenuItem>
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href={"/invite"}>
+              <DropdownMenuItem className="flex flex-col items-start" disabled>
+                <div>
                   Invite friends
-                </Link>
+                  <Badge variant={"blue"} className="ml-2">Soon</Badge>
+                </div>
+                <span className="text-muted-foreground text-xs font-normal items-start">
+                  Invite your friends and get free credits
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={toggleAutoSaveTweets}>
+                    Auto-save tweets
+                <Badge variant={isAutoSaveTweets ? "green" : "red"} className="ml-2">{isAutoSaveTweets ? "On" : "Off"}</Badge>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => {

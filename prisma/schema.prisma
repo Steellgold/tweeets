@@ -107,28 +107,28 @@ enum Lang {
   ar
 }
 
+enum TWEEETS_VERSION_GENERATED {
+  V1
+  V2
+}
+
 model Tweets {
-  id                   String   @id @default(cuid())
-  user                 User     @relation(fields: [userId], references: [id])
-  userId               String
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  context              String
-  generated            String
-  emotion              Emotion
-  style                Style
-  tone                 Tone
-  target               Target
-  lang                 Lang
-  gptModel             String
-  instructions         String?
-  negativeInstructions String?
-  costCredits          Int
-  isPublished          Boolean  @default(false)
-  isShared             Boolean  @default(false)
-  isFavorited          Boolean  @default(false)
-  sharedTemplateSlug   String?
-  tweetUrl             String?
+  id                 String                    @id @default(cuid())
+  user               User                      @relation(fields: [userId], references: [id])
+  userId             String
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  context            String
+  generated          String
+  emotion            Emotion
+  style              Style
+  tone               Tone
+  target             Target
+  lang               Lang
+  gpt                Int
+  isShared           Boolean                   @default(false)
+  sharedTemplateSlug String?
+  v                  TWEEETS_VERSION_GENERATED @default(V1)
 }
 
 model Invite {

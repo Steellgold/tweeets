@@ -8,6 +8,7 @@ import { Navbar } from "@/lib/components/navbar/navbar";
 import { UserProvider } from "@/lib/contexts/UserProvider";
 import { ThemeProvider } from "@/lib/components/ui/theme-provider";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/lib/components/ui/toaster";
 
 export { metadata } from "@/lib/configs/metadata";
 
@@ -18,6 +19,7 @@ const RootLayout: Component<PropsWithChildren> = ({ children }) => {
     <html lang="en" suppressHydrationWarning>
       <body className={cn("bg-white dark:bg-[#090909]", os)}>
         <Analytics />
+        <Toaster />
 
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <UserProvider>

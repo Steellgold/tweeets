@@ -26,7 +26,7 @@ const Landing = (): ReactElement => {
 
       <div className="flex flex-col items-center w-full px-4">
         <CardSpotlight
-          className="w-full mt-8 animate-fade-up animate-delay-200 animate-duration-500 aspect-[16/9] md:aspect-[8/5]"
+          className="w-full mt-8 animate-fade-up animate-delay-200 animate-duration-500 aspect-[8/5]"
           style={{ backgroundImage: "url(/assets/cards/cover.png)" }}>
         </CardSpotlight>
       </div>

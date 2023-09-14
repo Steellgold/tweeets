@@ -3,12 +3,6 @@ import type { Emotion, Style, Target, Tone } from "@/lib/configs/generation/type
 
 export type TweetProps = {
   tweetContext: string;
-  aiInstructions: string | null;
-  aiNegativeInstructions: string | null;
-  emojies: {
-    list: string[];
-    count: "few" | "reasonable" | "exaggerated" | "party";
-  } | null;
   emotion: Emotion;
   style: Style;
   tone: Tone;
