@@ -75,7 +75,7 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
           method: "POST",
           body: JSON.stringify({
             tw,
-            gTweet
+            tweet: gTweet
           })
         });
       }
@@ -125,14 +125,22 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
         </div>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Close</AlertDialogCancel>
+          <AlertDialogCancel disabled={waiting || !user || isLoading || regenLocked}>
+            Close
+          </AlertDialogCancel>
 
           <TooltipProvider>
             <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <Link className={buttonVariants({ variant: "outline" })} href={toTweetUrl(gTweet)} target={"_blank"}>
-                  <Twitter size={18} />
-                </Link>
+              <TooltipTrigger asChild disabled={waiting || !user || isLoading || regenLocked}>
+                {gTweet.length > 0 ? (
+                  <Link className={buttonVariants({ variant: "outline" })} href={toTweetUrl(gTweet)} target={"_blank"}>
+                    <Twitter size={18} />
+                  </Link>
+                ) : (
+                  <Button variant={"outline"} disabled={waiting || !user || isLoading || regenLocked}>
+                    <Twitter size={18} />
+                  </Button>
+                )}
               </TooltipTrigger>
               <TooltipContent>
                 Share on Twitter
@@ -140,8 +148,8 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
             </Tooltip>
 
             <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild onClick={() => ctc(gTweet)}>
-                <Button variant={"outline"}>
+              <TooltipTrigger asChild onClick={() => ctc(gTweet)} disabled={waiting || !user || isLoading || regenLocked}>
+                <Button variant={"outline"} disabled={waiting || !user || isLoading || regenLocked}>
                   <Copy size={18} />
                 </Button>
               </TooltipTrigger>

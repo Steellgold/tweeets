@@ -26,6 +26,8 @@ const Generator = (): ReactElement => {
   const [target, setTarget] = useState<Target>("target-all");
   const [lang, setLang] = useState<Lang>("en-US");
 
+  const [newNotReadCount, setNewNotReadCount] = useState<number>(0);
+
   return (
     <>
       <CardContent>
@@ -201,18 +203,22 @@ const Generator = (): ReactElement => {
 
       <CardFooter className="flex justify-between gap-2">
         <div className="flex gap-2">
-          <Generate
-            tw={{
-              tweetContext,
-              emotion,
-              gpt,
-              lang,
-              style,
-              target,
-              tone
-            }}
-          />
-          <TweetsList newCount={0} />
+          <div onClick={() => setNewNotReadCount(newNotReadCount + 1)}>
+            <Generate
+              tw={{
+                tweetContext,
+                emotion,
+                gpt,
+                lang,
+                style,
+                target,
+                tone
+              }}
+            />
+          </div>
+          <div onClick={() => setNewNotReadCount(0)}>
+            <TweetsList newCount={newNotReadCount} />
+          </div>
         </div>
         <BuyCredits />
       </CardFooter>
