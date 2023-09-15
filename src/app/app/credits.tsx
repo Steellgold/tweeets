@@ -7,20 +7,40 @@ import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { CardDescription, CardTitle } from "@/lib/components/ui/card";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
-import { Separator } from "@/lib/components/ui/separator";
 import { Skeleton } from "@/lib/components/ui/skeleton";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { fetcher } from "@/lib/utils/fetcher";
 import type { User } from "@prisma/client";
-import { ArrowRight, Coins } from "lucide-react";
-import Link from "next/link";
-import type { ReactElement } from "react";
+import { ArrowRight, Coins, Loader2 } from "lucide-react";
+import { useState, type ReactElement } from "react";
 import useSwr from "swr";
+import { z } from "zod";
 
 const BuyCredits = (): ReactElement => {
   const { user } = useUserContext();
 
   const { data, isLoading } = useSwr<User>("/api/user", fetcher);
+
+  const [isBuying, setIsBuying] = useState<50 | 100 | 300 | null>(null);
+
+  const handleBuyCredits = async(type: 50 | 100 | 300): Promise<void> => {
+    if (!user || isLoading || !data) return;
+
+    setIsBuying(type);
+    const res = await fetch(`/api/stripe/create-checkout-session?count=${type}`);
+
+    const success = z.object({
+      url: z.string()
+    }).safeParse(await res.json());
+
+    if (!success.success) {
+      setIsBuying(null);
+      return;
+    }
+
+    const { url } = success.data;
+    window.location.href = url;
+  };
 
   return (
     <AlertDialog>
@@ -58,8 +78,12 @@ const BuyCredits = (): ReactElement => {
                   The smallest pack of credits for only <span className="text-white">4.99$</span>
                 </CardDescription>
               </div>
-              <Button variant={"outline"} className="group">
-                <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+              <Button variant={"outline"} className="group" onClick={() => void handleBuyCredits(50)} disabled={isBuying !== null}>
+                {isBuying === 50 ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+                )}
               </Button>
             </div>
           </CardSpotlight>
@@ -72,9 +96,13 @@ const BuyCredits = (): ReactElement => {
                   The best value pack of credits for only <span className="text-white">9.99$</span>
                 </CardDescription>
               </div>
-              <Button variant={"outline"} className="group">
+              <Button variant={"outline"} className="group" onClick={() => void handleBuyCredits(100)} disabled={isBuying !== null}>
                 Buy&nbsp;
-                <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+                {isBuying === 100 ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+                )}
               </Button>
             </div>
           </CardSpotlight>
@@ -87,8 +115,12 @@ const BuyCredits = (): ReactElement => {
                   The biggest pack of credits for only <span className="text-white">19.99$</span>
                 </CardDescription>
               </div>
-              <Button variant={"outline"} className="group">
-                <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+              <Button variant={"outline"} className="group" onClick={() => void handleBuyCredits(300)} disabled={isBuying !== null}>
+                {isBuying === 300 ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform duration-100" />
+                )}
               </Button>
             </div>
           </CardSpotlight>

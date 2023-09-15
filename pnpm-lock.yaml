@@ -132,8 +132,8 @@ dependencies:
     specifier: ^7.45.4
     version: 7.45.4(react@18.2.0)
   stripe:
-    specifier: ^12.17.0
-    version: 12.17.0
+    specifier: ^13.5.0
+    version: 13.5.0
   swr:
     specifier: ^2.2.2
     version: 2.2.2(react@18.2.0)
@@ -4864,8 +4864,8 @@ packages:
       acorn: 8.10.0
     dev: true
 
-  /stripe@12.17.0:
-    resolution: {integrity: sha512-f8GhS2LQlGCDZ1Akyu57txgSWyLUEYf0yZYS7x2aTKJXVua5lLmmgfJFFYHfTgEdS5P6rurf0Ghcf/HVLggv5g==}
+  /stripe@13.5.0:
+    resolution: {integrity: sha512-odGQbvkDVxR7ldxXth7kWaUv6M31bsPMYKCBR8oIIRDoiR4MfxWaLdz5h7QQDsGtelZugqx7AEVoC6twST+0VQ==}
     engines: {node: '>=12.*'}
     dependencies:
       '@types/node': 20.4.8
