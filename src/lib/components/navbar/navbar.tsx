@@ -17,6 +17,7 @@ import { Badge } from "../ui/badge";
 import { useLocalStorage } from "usehooks-ts";
 import { toast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
+import { Feedback } from "./feedback";
 
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
@@ -48,6 +49,8 @@ export const Navbar = (): ReactElement => {
       </Link>
 
       <div className="flex h-5 items-center space-x-2 text-sm">
+        <Feedback />
+
         {!user && (
           <Button variant={"twitter"} onClick={() => {
             void supabase.auth.signInWithOAuth({ provider: "twitter", options: {

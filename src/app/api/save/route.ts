@@ -46,6 +46,7 @@ export const POST = async(request: NextRequest): Promise<NextResponse> => {
       target: stringToTarget(schema.data.tw.target),
       lang: stringToLang(schema.data.tw.lang),
       gpt: schema.data.tw.gpt,
+      v: "V2",
       user: {
         connect: {
           id: user.id

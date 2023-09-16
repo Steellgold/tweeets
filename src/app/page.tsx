@@ -1,5 +1,6 @@
 import { buttonVariants } from "@/lib/components/ui/button";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
+import { cn } from "@/lib/utils";
 import { PenSquare } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
@@ -8,27 +9,33 @@ const Landing = (): ReactElement => {
   return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-normal text-center text-black dark:text-white">
-          Tweet <span className="font-semibold">like a</span><br />
-          <span className="font-semibold">pro</span> with <span className="text-[#cecc63] font-bold">Tweeets</span>
-        </h1>
-        <p className="mt-3 text-center text-gray-500 dark:text-gray-400">
-          A simple, powerful, and beautiful tweet ai writer.
-        </p>
+        <div className="flex flex-col items-center w-full px-4">
+          <h1 className={cn(
+            "text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent",
+            "bg-gradient-to-r from-zinc-400 to-zinc-300"
+          )}>
+              Revolutionize the way you tweet.
+          </h1>
 
-        <div className="mt-5 flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0">
-          <Link href={"/app"} className={buttonVariants({ variant: "outline" })}>
-            <PenSquare size={20} className="mr-2" />
-            Start writing
-          </Link>
+          <p className="md:text-xl text-zinc-400 mx-auto w-[75%] text-center">
+              Tweeets is a new way to tweet. Write your tweets in a distraction-free environment, and save them for later.
+          </p>
         </div>
-      </div>
 
-      <div className="flex flex-col items-center w-full px-4">
-        <CardSpotlight
-          className="w-full mt-8 animate-fade-up animate-delay-200 animate-duration-500 aspect-[8/5]"
-          style={{ backgroundImage: "url(/assets/cards/cover.png)" }}>
-        </CardSpotlight>
+        <Link href="/app" className={cn(
+          buttonVariants({ variant: "outline", size: "lg" }),
+          "mt-8 mb-8"
+        )}>
+          <PenSquare size={18} />&nbsp;
+            Get started
+        </Link>
+
+        <div className="flex flex-col items-center w-full px-4">
+          <CardSpotlight
+            className="w-full animate-fade-up animate-delay-200 animate-duration-500 aspect-[8/5]"
+            style={{ backgroundImage: "url(/assets/cards/cover.png)" }}>
+          </CardSpotlight>
+        </div>
       </div>
     </div>
   );
