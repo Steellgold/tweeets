@@ -23,7 +23,10 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
   if (schema.success) {
     await prisma.user.update({
       where: { id: schema.data.userId },
-      data: { credits: { increment: parseInt(getPriceIdCreditsCountKeyByValue(schema.data.priceId) ?? priceIdByType["50"]) } }
+      data: {
+        credits: { increment: parseInt(getPriceIdCreditsCountKeyByValue(schema.data.priceId) ?? priceIdByType["50"]) },
+        isFreeCredit: false
+      }
     });
   }
 

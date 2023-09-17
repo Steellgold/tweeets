@@ -32,11 +32,19 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [_, copy] = useCopyToClipboard();
   const ctc = (text: string): void => {
-    copy(text);
-    toast({
-      title: "Tweet copied to clipboard!",
-      description: "You can now paste it on Twitter."
-    });
+    copy(text)
+      .then(() => {
+        toast({
+          title: "Tweet copied to clipboard!",
+          description: "You can now paste it on Twitter."
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "An error occurred while copying your tweet.",
+          description: "Please try again."
+        });
+      });
   };
 
   const generateTweet = async(): Promise<void> => {
