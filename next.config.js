@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["api.producthunt.com", "pbs.twimg.com"],
+    domains: ["pbs.twimg.com"],
   }
 }
 

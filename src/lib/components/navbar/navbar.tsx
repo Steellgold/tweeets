@@ -22,6 +22,7 @@ import { Feedback } from "./feedback";
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
   const { user, setUser } = useUserContext();
+  console.log(user);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const [isAutoSaveTweets, setIsAutoSaveTweets] = useLocalStorage<boolean>("auto-save-tweets", true);
 
@@ -76,7 +77,7 @@ export const Navbar = (): ReactElement => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Button variant={"ghost"} className="flex">
-                {user.user_metadata.avatar_url ? (
+                {user && user.user_metadata.avatar_url ? (
                   <Avatar className="w-8 h-8 mr-2">
                     <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.user_name} />
                     <AvatarFallback>@</AvatarFallback>
