@@ -11,7 +11,9 @@ export const GET = async(): Promise<NextResponse> => {
 
   const data = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { id: true, email: true, credits: true, saveTweets: true, tweets: true }
+    select: { id: true, email: true, credits: true, saveTweets: true, tweets: {
+      orderBy: { createdAt: "desc" }
+    } }
   });
 
   return NextResponse.json(data);

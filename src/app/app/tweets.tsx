@@ -8,15 +8,17 @@ import { useUserContext } from "@/lib/contexts/UserProvider";
 import { fetcher } from "@/lib/utils/fetcher";
 import { SiOpenai, SiTwitter } from "@icons-pack/react-simple-icons";
 import type { Prisma } from "@prisma/client";
-import { Flag, ListRestart, MessageCircle, PenTool, Share2, Smile, Target } from "lucide-react";
-import Link from "next/link";
-import type { ReactElement } from "react";
+import { Flag, ListRestart, MessageCircle, PenLine, PenTool, Share2, Smile, Target } from "lucide-react";
+import { useState, type ReactElement } from "react";
 import useSWR from "swr";
 import dayjs from "dayjs";
 import { getLang, langToString } from "@/lib/configs/generation/langs";
 import { emotionToString, getEmotion, getStyle, getTarget, getTone, styleToString, targetToString, toneToString }
   from "@/lib/configs/generation/types";
 import { Skeleton } from "@/lib/components/ui/skeleton";
+import { Textarea } from "@/lib/components/ui/textarea";
+import Link from "next/link";
+import { toTweetUrl } from "@/lib/utils";
 
 type UserIncludeAll = Prisma.UserGetPayload<{
   include: { tweets: true };
@@ -29,6 +31,8 @@ type TweetsListProps = {
 const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
   const { user } = useUserContext();
   const { data, isLoading } = useSWR<UserIncludeAll>("/api/user", fetcher);
+
+  const [filter, setFilter] = useState<string>("");
 
   return (
     <Sheet>
@@ -50,27 +54,28 @@ const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
         <SheetHeader>
           <SheetTitle>List of generated tweets</SheetTitle>
           <SheetDescription>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus repellat mollitia nobis ipsam labore saepe...
+            Here is the list of all your generated tweets.
           </SheetDescription>
         </SheetHeader>
 
-        {!isLoading && data?.tweets && data.tweets.length > 0 && data.tweets.map((tweet) => (
+        <Textarea
+          placeholder="Search for a content"
+          className="resize-none mt-4 h-10"
+          disabled={!user || isLoading || data?.tweets.length == 0}
+          onChange={(event) => {
+            setFilter(event.target.value);
+          }} />
+
+        {!isLoading && data?.tweets && data.tweets.length > 0 && data.tweets.filter((tweet) => tweet.generated.includes(filter)).map((tweet) => (
           <div key={tweet.id}>
             <Card className="mt-4">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <CardTitle className="text-base">Generated Tweet</CardTitle>
-                    <CardDescription className="text-sm">
-                      Generated on {dayjs(tweet.createdAt).format("DD MMM YYYY")}
-                      &nbsp;at {dayjs(tweet.createdAt).format("HH:mm")}
-                    </CardDescription>
-                  </div>
-                  <div>
-                    <Link href={"https://twitter.com/"} className={buttonVariants({ variant: "ghost", size: "icon" })}>
-                      <SiTwitter size={20} />
-                    </Link>
-                  </div>
+                <div className="flex flex-col">
+                  <CardTitle className="text-base">Generated Tweet</CardTitle>
+                  <CardDescription className="text-sm">
+                    Generated on {dayjs(tweet.createdAt).format("DD MMM YYYY")}
+                    &nbsp;at {dayjs(tweet.createdAt).format("HH:mm")}
+                  </CardDescription>
                 </div>
               </CardHeader>
               <CardContent>
@@ -117,6 +122,19 @@ const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
                 </Button>
                 <Button variant={"outline"}>
                   <Share2 size={18} />
+                </Button>
+                <Link className={buttonVariants({ variant: "outline" })} href={toTweetUrl(tweet.generated)} target={"_blank"}>
+                  <SiTwitter size={18} />
+                </Link>
+                <Button variant={"outline"} disabled>
+                  {data.tweets.indexOf(tweet) == 0 ? (
+                    <>
+                      <PenLine size={18} />&nbsp;
+                      Edit (Coming soon)
+                    </>
+                  ) : (
+                    <PenLine size={18} />
+                  )}
                 </Button>
               </CardFooter>
             </Card>

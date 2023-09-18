@@ -32,22 +32,9 @@ const Landing = (): ReactElement => {
           buttonVariants({ variant: "outline", size: "lg" }),
           "mt-8 mb-8 relative"
         )}>
-          {!user && (
-            <>
-              <PenSquare size={18} />&nbsp;Get started
-            </>
-          )}
-          {user && (
-            <>
-              <Globe size={18} />&nbsp;Go to app
-            </>
-          )}
-
-          {!user && (
-            <Badge variant={"dnh"} className="border-[#262626] border-2 mt-4 absolute right-7.5 -top-8">
-              5 free credits
-            </Badge>
-          )}
+          {!user && <><PenSquare size={18} />&nbsp;Get started</>}
+          {user && <><Globe size={18} />&nbsp;Go to app</>}
+          {!user && <Badge variant={"dnh"} className="border-[#262626] border-2 mt-4 absolute right-7.5 -top-8">5 free credits</Badge>}
         </Link>
 
         <div className="flex flex-col items-center w-full px-4">
