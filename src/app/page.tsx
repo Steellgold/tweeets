@@ -11,8 +11,8 @@ const Landing = (): ReactElement => {
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col items-center w-full px-4">
           <h1 className={cn(
-            "text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent",
-            "bg-gradient-to-r from-zinc-400 to-zinc-300"
+            "text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl bg-clip-text text-transparent",
+            "bg-gradient-to-r from-zinc-500 via-zinc-300 to-zinc-500"
           )}>
               Revolutionize the way you tweet.
           </h1>
