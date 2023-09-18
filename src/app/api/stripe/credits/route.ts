@@ -30,5 +30,5 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
     });
   }
 
-  return NextResponse.redirect(requestUrl.origin);
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL ?? ""}/app`);
 };
