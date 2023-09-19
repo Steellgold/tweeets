@@ -36,6 +36,8 @@ const Generator = (): ReactElement => {
           disabled={!user}
           minLength={10}
           className="resize-none"
+          lw8={tweetContext == "lw8"}
+          supabase={tweetContext == "supabase"}
           onChange={(event) => setContext(event.target.value)} />
 
         <div className="flex flex-col sm:flex-row gap-3 mt-4">
