@@ -22,7 +22,6 @@ import { Feedback } from "./feedback";
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
   const { user, setUser } = useUserContext();
-  console.log(user);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const [isAutoSaveTweets, setIsAutoSaveTweets] = useLocalStorage<boolean>("auto-save-tweets", true);
 
