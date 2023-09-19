@@ -5,7 +5,7 @@ import { buttonVariants } from "@/lib/components/ui/button";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { cn } from "@/lib/utils";
-import { Globe, PenSquare } from "lucide-react";
+import { PenSquare } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
@@ -15,6 +15,15 @@ const Landing = (): ReactElement => {
   return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center">
+        <span className="relative inline-block w-fit mx-auto overflow-hidden rounded-full p-[1px]">
+          <span className="absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#71717a_0%,#27272a_50%,#71717a_100%)]" />
+          <div className={cn(
+            "flex gap-1 h-full w-full items-center justify-center rounded-full bg-zinc-950 px-3 py-1 text-sm text-zinc-200 backdrop-blur-3xl"
+          )}>
+            <p>Tweeets now work with a credit system.</p>
+          </div>
+        </span>
+
         <div className="flex flex-col items-center w-full px-4">
           <h1 className={cn(
             "text-2xl font-bold tracking-tighter sm:text-5xl xl:text-6xl bg-clip-text text-transparent",
@@ -32,8 +41,7 @@ const Landing = (): ReactElement => {
           buttonVariants({ variant: "outline", size: "lg" }),
           "mt-8 mb-8 relative"
         )}>
-          {!user && <><PenSquare size={18} />&nbsp;Get started</>}
-          {user && <><Globe size={18} />&nbsp;Go to app</>}
+          <PenSquare size={18} className="mr-3" />{user ? "Write a tweet" : "Get started"}
           {!user && <Badge variant={"dnh"} className="border-[#262626] border-2 mt-4 absolute right-7.5 -top-8">5 free credits</Badge>}
         </Link>
 
