@@ -6,10 +6,27 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2023-08-16"
 });
 
-export const priceIdByType = {
-  50: "price_1NmJhdEEDyBTUKxwRNIYh5rw",
-  100: "price_1NmJhdEEDyBTUKxw2Sj4FYe1",
-  300: "price_1NsPwgEEDyBTUKxw4EoTWZq8"
+export const priceIdByType: Record<"50" | "100" | "300", {
+  "prod": string;
+  "dev": string;
+}> = {
+  50: {
+    "dev": "price_1NmJhdEEDyBTUKxwRNIYh5rw",
+    "prod": "price_1NsSN2EEDyBTUKxwSBUrqwLL"
+  },
+  100: {
+    "dev": "price_1NmJhdEEDyBTUKxw2Sj4FYe1",
+    "prod": "price_1NsSN2EEDyBTUKxwJGNbBqui"
+  },
+  300: {
+    "dev": "price_1NsPwgEEDyBTUKxw4EoTWZq8",
+    "prod": "price_1NsSN2EEDyBTUKxwPvUnEHia"
+  }
+};
+
+export const getStripePriceId = (type: 50 | 100 | 300): string => {
+  if (process.env.NODE_ENV === "development") return priceIdByType[type].dev;
+  return priceIdByType[type].prod;
 };
 
 export const pricesByType = {
@@ -19,8 +36,13 @@ export const pricesByType = {
 };
 
 export const getPriceIdCreditsCountKeyByValue = (value: string): string | undefined => {
-  return Object.keys(priceIdByType).find(key => priceIdByType[key as "50" | "100" | "300"] === value);
+  if (process.env.NODE_ENV === "development") {
+    return Object.keys(priceIdByType).find((key) => priceIdByType[key as "50" | "100" | "300"].dev === value);
+  }
+
+  return Object.keys(priceIdByType).find((key) => priceIdByType[key as "50" | "100" | "300"].prod === value);
 };
+
 
 export const createPaymentLink = async(type: 50 | 100 | 300, user: { email: string; id: string }): Promise<string> => {
   const session = await stripe.checkout.sessions.create({
@@ -29,13 +51,13 @@ export const createPaymentLink = async(type: 50 | 100 | 300, user: { email: stri
     allow_promotion_codes: true,
     line_items: [
       {
-        price: priceIdByType[type],
+        price: getStripePriceId(type),
         quantity: 1
       }
     ],
     metadata: {
       userId: user.id,
-      priceId: priceIdByType[type]
+      priceId: getStripePriceId(type)
     },
     mode: "payment",
     success_url: `${process.env.NEXT_PUBLIC_URL ?? ""}/api/stripe/credits?session_id={CHECKOUT_SESSION_ID}`,

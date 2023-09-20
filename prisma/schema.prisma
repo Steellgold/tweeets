@@ -15,7 +15,6 @@ model User {
   credits      Int        @default(0)
   isFreeCredit Boolean    @default(true)
   tweets       Tweets[]
-  saveTweets   Boolean    @default(true)
   invitedBy    String?
   invite       Invite?
   payments     Payments[]

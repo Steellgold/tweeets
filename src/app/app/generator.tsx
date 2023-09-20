@@ -7,15 +7,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Emotion, Style, Target, Tone } from "@/lib/configs/generation/types";
 import { emotions, getEmotion, getStyle, getTarget, getTone, styles, targets, tones } from "@/lib/configs/generation/types";
 import TweetsList from "./tweets";
-import AlertDescription from "@/lib/components/alert-description";
 import { Label } from "@/lib/components/ui/label";
 import { langs, type Lang } from "@/lib/configs/generation/langs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import BuyCredits from "./credits";
+import { Alert, AlertDescription as AD, AlertTitle } from "@/lib/components/ui/alert";
 import Generate from "./generate";
+import useSWR from "swr";
+import { AlertTriangle } from "lucide-react";
+import AlertDescription from "@/lib/components/alert-description";
+
+type UserProps = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  email: string;
+  credits: number;
+  isFreeCredit: boolean;
+  tweets: any[];
+  invitedBy: string;
+  invite: any;
+  payments: any[];
+}
 
 const Generator = (): ReactElement => {
   const { user } = useUserContext();
+  const { data, isLoading } = useSWR<UserProps>("/api/user");
 
   const [gpt, setGPT] = useState<3 | 4>(3);
 
@@ -201,6 +218,16 @@ const Generator = (): ReactElement => {
             </Select>
           </div>
         </div>
+
+        {!isLoading && gpt == 4 && data?.isFreeCredit && (
+          <Alert className="mt-3" variant="yellow">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Ooops!</AlertTitle>
+            <AD>
+              GPT-4 is only available for users that have bought credits. <br />You can generate this tweet but it will use automatically GPT-3.
+            </AD>
+          </Alert>
+        )}
       </CardContent>
 
       <CardFooter className="flex justify-between gap-2">
@@ -210,7 +237,7 @@ const Generator = (): ReactElement => {
               tw={{
                 tweetContext,
                 emotion,
-                gpt,
+                gpt: parseInt(gpt == 3 ? "3" : data?.isFreeCredit ? "3" : "4") as 3 | 4,
                 lang,
                 style,
                 target,

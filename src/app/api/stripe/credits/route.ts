@@ -1,4 +1,4 @@
-import { getPriceIdCreditsCountKeyByValue, getReceiptUrl, priceIdByType, stripe } from "@/lib/utils/stripe";
+import { getPriceIdCreditsCountKeyByValue, getReceiptUrl, getStripePriceId, stripe } from "@/lib/utils/stripe";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -34,7 +34,7 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
     await prisma.user.update({
       where: { id: schema.data.userId },
       data: {
-        credits: { increment: parseInt(getPriceIdCreditsCountKeyByValue(schema.data.priceId) ?? priceIdByType["50"]) },
+        credits: { increment: parseInt(getPriceIdCreditsCountKeyByValue(schema.data.priceId) ?? getStripePriceId(50)) },
         isFreeCredit: false,
         payments: {
           update: {
