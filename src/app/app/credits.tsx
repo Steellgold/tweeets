@@ -4,7 +4,7 @@
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger } from "@/lib/components/ui/alert-dialog";
 import { Badge } from "@/lib/components/ui/badge";
-import { Button } from "@/lib/components/ui/button";
+import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { CardDescription, CardTitle } from "@/lib/components/ui/card";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
 import { Skeleton } from "@/lib/components/ui/skeleton";
@@ -12,6 +12,7 @@ import { useUserContext } from "@/lib/contexts/UserProvider";
 import { fetcher } from "@/lib/utils/fetcher";
 import type { User } from "@prisma/client";
 import { ArrowRight, Coins, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import useSwr from "swr";
 import { z } from "zod";
@@ -112,7 +113,7 @@ const BuyCredits = (): ReactElement => {
               <div className="flex flex-col space-y-2">
                 <CardTitle className="text-lg ml-2">300 credits</CardTitle>
                 <CardDescription className="text-sm ml-2">
-                  The biggest pack of credits for only <span className="text-white">19.99$</span>
+                  The biggest pack of credits for only <span className="text-white">14.99$</span>
                 </CardDescription>
               </div>
               <Button variant={"outline"} className="group" onClick={() => void handleBuyCredits(300)} disabled={isBuying !== null}>
@@ -135,6 +136,9 @@ const BuyCredits = (): ReactElement => {
         </CardDescription> */}
 
         <AlertDialogFooter>
+          <Link className={buttonVariants({ variant: "outline" })} href={"/billing"}>
+            Transactions
+          </Link>
           <AlertDialogCancel>Close</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

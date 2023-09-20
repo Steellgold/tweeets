@@ -1,4 +1,4 @@
-import { getPriceIdCreditsCountKeyByValue, priceIdByType, stripe } from "@/lib/utils/stripe";
+import { getPriceIdCreditsCountKeyByValue, getReceiptUrl, priceIdByType, stripe } from "@/lib/utils/stripe";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -11,8 +11,6 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
   if (!sessionid) return NextResponse.json({ error: "Session id is undefined" });
 
   const session = await stripe.checkout.sessions.retrieve(sessionid);
-  if (session.status !== "complete" || session.payment_status !== "paid") return NextResponse.redirect(requestUrl.origin);
-
   const metadata = session.metadata;
 
   const schema = z.object({
@@ -20,12 +18,33 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
     priceId: z.string()
   }).safeParse(metadata);
 
-  if (schema.success) {
+  if (session.status !== "complete" || session.payment_status !== "paid") {
+    console.log("Payment failed 💔");
+    await prisma.payments.update({
+      where: { referenceId: sessionid || "" },
+      data: { status: "FAILED" }
+    });
+  }
+
+  if (schema.success && session.status === "complete" && session.payment_status === "paid") {
+    console.log("Payment completed 💖");
+    const receiptUrl = await getReceiptUrl(session.payment_intent?.toString() || null);
+    console.log("Your receipt url is (saved in database/billing page):", receiptUrl);
+
     await prisma.user.update({
       where: { id: schema.data.userId },
       data: {
         credits: { increment: parseInt(getPriceIdCreditsCountKeyByValue(schema.data.priceId) ?? priceIdByType["50"]) },
-        isFreeCredit: false
+        isFreeCredit: false,
+        payments: {
+          update: {
+            where: { referenceId: sessionid || "" },
+            data: {
+              status: "COMPLETED",
+              invoiceUrl: receiptUrl
+            }
+          }
+        }
       }
     });
   }

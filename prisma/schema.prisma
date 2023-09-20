@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-  email        String   @unique
-  credits      Int      @default(0)
-  isFreeCredit Boolean  @default(true)
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+  email        String     @unique
+  credits      Int        @default(0)
+  isFreeCredit Boolean    @default(true)
   tweets       Tweets[]
-  saveTweets   Boolean  @default(true)
+  saveTweets   Boolean    @default(true)
   invitedBy    String?
   invite       Invite?
+  payments     Payments[]
 }
 
 enum Emotion {
@@ -144,4 +145,24 @@ model Invite {
   userId     String   @unique
   views      Int      @default(0)
   isVerified Boolean  @default(false)
+}
+
+enum PAYMENT_STATUS {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Payments {
+  id          String         @id @default(cuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id])
+  userId      String
+  amount      Int
+  referenceId String?        @unique
+  currency    String
+  status      PAYMENT_STATUS @default(PENDING)
+  email       String?
+  invoiceUrl  String?
 }

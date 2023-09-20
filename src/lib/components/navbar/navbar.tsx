@@ -96,8 +96,11 @@ export const Navbar = (): ReactElement => {
               <DropdownMenuLabel>{user.user_metadata.full_name}</DropdownMenuLabel>
               <DropdownMenuLabel className="-mt-3 text-gray-400">{user.user_metadata.email}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                Billing
+              {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+              <DropdownMenuItem asChild>
+                <Link href={"/billing"} className="cursor-pointer">
+                  Billing
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="flex flex-col items-start" disabled>
                 <div>
@@ -109,7 +112,7 @@ export const Navbar = (): ReactElement => {
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={toggleAutoSaveTweets}>
-                    Auto-save tweets
+                Auto-save tweets
                 <Badge variant={isAutoSaveTweets ? "green" : "red"} className="ml-2">{isAutoSaveTweets ? "On" : "Off"}</Badge>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -117,7 +120,7 @@ export const Navbar = (): ReactElement => {
                 void supabase.auth.signOut().then(() => {
                   setUser(null);
                 });
-              }} className="hover:text-red-500">
+              }}>
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
