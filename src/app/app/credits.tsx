@@ -17,7 +17,7 @@ import { useState, type ReactElement } from "react";
 import useSwr from "swr";
 import { z } from "zod";
 
-const BuyCredits = (): ReactElement => {
+const BuyCredits = ({ showT = true } : { showT?: boolean }): ReactElement => {
   const { user } = useUserContext();
 
   const { data, isLoading } = useSwr<User>("/api/user", fetcher);
@@ -136,9 +136,11 @@ const BuyCredits = (): ReactElement => {
         </CardDescription> */}
 
         <AlertDialogFooter>
-          <Link className={buttonVariants({ variant: "outline" })} href={"/billing"}>
-            Transactions
-          </Link>
+          {showT && (
+            <Link className={buttonVariants({ variant: "outline" })} href={"/billing"}>
+              Transactions
+            </Link>
+          )}
           <AlertDialogCancel>Close</AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -48,7 +48,7 @@ const TweetsListClassed = ({ data: tweets }: { data: UserIncludeAll["tweets"] })
             ) || (
               <>
                 {tweets.map((tweet) => (
-                  <Tweet key={tweet.id} {...tweet} first={index == 0} />
+                  <Tweet key={tweet.id} {...tweet} first={tweets[0].id == tweet.id} />
                 ))}
               </>
             )}
