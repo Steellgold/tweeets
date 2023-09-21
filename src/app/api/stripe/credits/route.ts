@@ -1,8 +1,9 @@
-import { getPriceIdCreditsCountKeyByValue, getReceiptUrl, getStripePriceId, stripe } from "@/lib/utils/stripe";
+import { getReceiptUrl, stripe } from "@/lib/utils/stripe";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/utils/database";
+import { getPriceIdCreditsCountKeyByValue, getStripePriceId } from "@/lib/utils/stripe.utils";
 
 export const GET = async(request: NextRequest): Promise<NextResponse> => {
   const requestUrl = new URL(request.url);

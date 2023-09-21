@@ -113,7 +113,7 @@ export const stringToLang = (lang: string): DBLang => {
   }
 };
 
-export const langToString = (lang: DBLang): string => {
+export const langToString = (lang: DBLang): Lang => {
   switch (lang) {
     case "id":
       return "id";

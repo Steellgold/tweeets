@@ -22,18 +22,15 @@ import { Feedback } from "./feedback";
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
   const { user, setUser } = useUserContext();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const [isAutoSaveTweets, setIsAutoSaveTweets] = useLocalStorage<boolean>("auto-save-tweets", true);
 
   const toggleAutoSaveTweets = (): void => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     setIsAutoSaveTweets((prev) => !prev);
     toast({
       title: `Auto-save tweets ${isAutoSaveTweets ? "disabled" : "enabled"}`,
       description: isAutoSaveTweets ? "Your tweets will no longer be saved automatically." : "Your tweets will now be saved automatically.",
       action: (
         <ToastAction altText="Undo" onClick={() => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           setIsAutoSaveTweets((prev) => !prev);
         }}>
           Undo
@@ -120,7 +117,7 @@ export const Navbar = (): ReactElement => {
                 void supabase.auth.signOut().then(() => {
                   setUser(null);
                 });
-              }}>
+              }} className="cursor-pointer">
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -58,8 +58,6 @@ export const POST = async(request: NextRequest): Promise<NextResponse | Streamin
     where: { id: user.id }
   });
 
-  console.log(schema.data.tw.gpt);
-
   const res = await openai.createChatCompletion({
     messages,
     model: schema.data.tw.gpt === 4 ? "gpt-4" : "gpt-3.5-turbo",

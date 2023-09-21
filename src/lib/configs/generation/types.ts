@@ -267,6 +267,7 @@ export const getTarget = (key: string): Props => {
 export const stringToTarget = (target: string | DBTarget): DBTarget => {
   switch (target) {
     case "target-all":
+    case "ALL":
       return DBTarget.ALL;
     case "target-enterprises":
       return DBTarget.ENTERPRISES;
@@ -293,7 +294,7 @@ export const stringToTarget = (target: string | DBTarget): DBTarget => {
   }
 };
 
-export const targetToString = (target: DBTarget): string => {
+export const targetToString = (target: DBTarget): Target => {
   switch (target) {
     case DBTarget.ALL:
       return "target-all";

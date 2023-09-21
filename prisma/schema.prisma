@@ -12,12 +12,17 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @default(now()) @updatedAt
   email        String     @unique
-  credits      Int        @default(0)
+  credits      Int        @default(5)
   isFreeCredit Boolean    @default(true)
   tweets       Tweets[]
   invitedBy    String?
   invite       Invite?
   payments     Payments[]
+
+  // DATA FOR MODEL SHARING:
+  pictureUrl String? @unique
+  username   String  @default("Anonymous User")
+  arobase    String  @unique @default(cuid())
 }
 
 enum Emotion {
@@ -117,7 +122,7 @@ enum TWEEETS_VERSION_GENERATED {
 
 model Tweets {
   id                 String                    @id @default(cuid())
-  user               User                      @relation(fields: [userId], references: [id])
+  user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
   createdAt          DateTime                  @default(now())
   updatedAt          DateTime                  @updatedAt
@@ -130,7 +135,7 @@ model Tweets {
   lang               Lang
   gpt                Int
   isShared           Boolean                   @default(false)
-  sharedTemplateSlug String?
+  sharedTemplateSlug String?                   @unique
   v                  TWEEETS_VERSION_GENERATED @default(V1)
 }
 
@@ -140,7 +145,7 @@ model Invite {
   updatedAt  DateTime @updatedAt
   email      String   @unique
   used       Int      @default(0)
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String   @unique
   views      Int      @default(0)
   isVerified Boolean  @default(false)
@@ -156,7 +161,7 @@ model Payments {
   id          String         @id @default(cuid())
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  user        User           @relation(fields: [userId], references: [id])
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   amount      Int
   referenceId String?        @unique

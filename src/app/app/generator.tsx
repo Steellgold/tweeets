@@ -1,37 +1,46 @@
 "use client";
 
-import { CardContent, CardFooter } from "@/lib/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/lib/components/ui/card";
 import { Textarea } from "@/lib/components/ui/textarea";
-import { useState, type ReactElement } from "react";
+import { useState, type ReactElement, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/ui/select";
 import type { Emotion, Style, Target, Tone } from "@/lib/configs/generation/types";
-import { emotions, getEmotion, getStyle, getTarget, getTone, styles, targets, tones } from "@/lib/configs/generation/types";
+import {
+  emotions, styles, targets, tones,
+  getStyle, getEmotion, getTarget, getTone,
+  toneToString, emotionToString, styleToString, targetToString,
+  stringToTone, stringToEmotion, stringToStyle, stringToTarget
+} from "@/lib/configs/generation/types";
 import TweetsList from "./tweets";
 import { Label } from "@/lib/components/ui/label";
-import { langs, type Lang } from "@/lib/configs/generation/langs";
+import { langs, type Lang, langToString, stringToLang } from "@/lib/configs/generation/langs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import BuyCredits from "./credits";
 import { Alert, AlertDescription as AD, AlertTitle } from "@/lib/components/ui/alert";
 import Generate from "./generate";
 import useSWR from "swr";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import AlertDescription from "@/lib/components/alert-description";
+import { z } from "zod";
+import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
+import { Button, buttonVariants } from "@/lib/components/ui/button";
+import Link from "next/link";
+import { SiTwitter } from "@icons-pack/react-simple-icons";
 
 type UserProps = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  email: string;
-  credits: number;
   isFreeCredit: boolean;
-  tweets: any[];
-  invitedBy: string;
-  invite: any;
-  payments: any[];
+}
+
+type SharedUserProps = {
+  name: string;
+  arobase: string;
+  pictureUrl: string;
 }
 
 const Generator = (): ReactElement => {
   const { user } = useUserContext();
+  const [sharedUser, setSharedUser] = useState<SharedUserProps | null>(null);
+
   const { data, isLoading } = useSWR<UserProps>("/api/user");
 
   const [gpt, setGPT] = useState<3 | 4>(3);
@@ -45,14 +54,108 @@ const Generator = (): ReactElement => {
 
   const [newNotReadCount, setNewNotReadCount] = useState<number>(0);
 
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    const fetchData = async(model: string): Promise<void> => {
+      const response = await fetch("/api/share?model=" + model);
+
+      const schema = z.object({
+        model: z.object({
+          tone: z.string(),
+          style: z.string(),
+          emotion: z.string(),
+          target: z.string(),
+          lang: z.string(),
+          gpt: z.number(),
+          tweetContext: z.string(),
+          by: z.object({
+            name: z.string(),
+            arobase: z.string(),
+            pictureUrl: z.string()
+          })
+        })
+      }).safeParse(await response.json());
+
+      if (!schema.success) return;
+      setTone(toneToString(stringToTone(schema.data.model.tone)));
+      setStyle(styleToString(stringToStyle(schema.data.model.style)));
+      setEmotion(emotionToString(stringToEmotion(schema.data.model.emotion)));
+      setTarget(targetToString(stringToTarget(schema.data.model.target)));
+      setLang(langToString(stringToLang(schema.data.model.lang)));
+      setGPT(schema.data.model.gpt as 3 | 4);
+      setContext(schema.data.model.tweetContext);
+      setSharedUser(schema.data.model.by);
+    };
+
+    if (params.has("model")) {
+      void fetchData(params.get("model") as string);
+    }
+  }, []);
+
+  const clearShare = (): void => {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    params.delete("model");
+    window.history.replaceState({}, "", url.toString());
+
+    setTone("tone-default");
+    setStyle("style-default");
+    setEmotion("emotion-default");
+    setTarget("target-all");
+    setLang("en-US");
+    setGPT(3);
+    setContext("");
+    setSharedUser(null);
+  };
+
   return (
     <>
       <CardContent>
+        {sharedUser && (
+          <Card className="flex justify-between p-3 mb-3">
+            <div className="flex flex-col space-y-1">
+              <span className="text-muted-foreground text-xs">model shared by</span>
+              <div className="flex items-center gap-1">
+                {sharedUser.pictureUrl ? (
+                  <Avatar className="w-8 h-8 mr-2">
+                    <AvatarImage src={sharedUser.pictureUrl} alt={sharedUser.name} />
+                    <AvatarFallback>@</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <Avatar className="w-8 h-8 mr-2">
+                    <AvatarFallback>@</AvatarFallback>
+                  </Avatar>
+                )}
+
+                <span>
+                  {sharedUser.name} <span className="text-gray-400">(@{sharedUser.arobase})</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => {
+                clearShare();
+              }}>
+                <Trash2 className="h-5 w-5" />
+              </Button>
+              <Link
+                className={buttonVariants({ variant: "twitter" })}
+                href={`https://twitter.com/${sharedUser.arobase}`}>
+                <SiTwitter className="h-5 w-5" />
+              </Link>
+            </div>
+          </Card>
+        )}
         <Textarea
           placeholder="Enter your tweet content here"
           disabled={!user}
           minLength={10}
           className="resize-none"
+          value={tweetContext}
           lw8={tweetContext == "lw8"}
           supabase={tweetContext == "supabase"}
           onChange={(event) => setContext(event.target.value)} />
