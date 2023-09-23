@@ -52,8 +52,6 @@ const Generator = (): ReactElement => {
   const [target, setTarget] = useState<Target>("target-all");
   const [lang, setLang] = useState<Lang>("en-US");
 
-  const [newNotReadCount, setNewNotReadCount] = useState<number>(0);
-
   useEffect(() => {
     const url = new URL(window.location.href);
     const params = url.searchParams;
@@ -137,15 +135,15 @@ const Generator = (): ReactElement => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={() => {
+              <Button variant="outline" size={"sm"} onClick={() => {
                 clearShare();
               }}>
-                <Trash2 className="h-5 w-5" />
+                <Trash2 className="h-4 w-4" />
               </Button>
               <Link
-                className={buttonVariants({ variant: "twitter" })}
+                className={buttonVariants({ variant: "twitter", size: "sm" })}
                 href={`https://twitter.com/${sharedUser.arobase}`}>
-                <SiTwitter className="h-5 w-5" />
+                <SiTwitter className="h-4 w-4" />
               </Link>
             </div>
           </Card>
@@ -156,8 +154,6 @@ const Generator = (): ReactElement => {
           minLength={10}
           className="resize-none"
           value={tweetContext}
-          lw8={tweetContext == "lw8"}
-          supabase={tweetContext == "supabase"}
           onChange={(event) => setContext(event.target.value)} />
 
         <div className="flex flex-col sm:flex-row gap-3 mt-4">
@@ -335,22 +331,18 @@ const Generator = (): ReactElement => {
 
       <CardFooter className="flex justify-between gap-2">
         <div className="flex gap-2">
-          <div onClick={() => setNewNotReadCount(newNotReadCount + 1)}>
-            <Generate
-              tw={{
-                tweetContext,
-                emotion,
-                gpt: parseInt(gpt == 3 ? "3" : data?.isFreeCredit ? "3" : "4") as 3 | 4,
-                lang,
-                style,
-                target,
-                tone
-              }}
-            />
-          </div>
-          <div onClick={() => setNewNotReadCount(0)}>
-            <TweetsList newCount={newNotReadCount} />
-          </div>
+          <Generate
+            tw={{
+              tweetContext,
+              emotion,
+              gpt: parseInt(gpt == 3 ? "3" : data?.isFreeCredit ? "3" : "4") as 3 | 4,
+              lang,
+              style,
+              target,
+              tone
+            }}
+          />
+          <TweetsList />
         </div>
         <BuyCredits />
       </CardFooter>

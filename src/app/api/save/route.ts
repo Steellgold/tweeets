@@ -55,5 +55,6 @@ export const POST = async(request: NextRequest): Promise<NextResponse> => {
     }
   });
 
+  await prisma.$disconnect();
   return NextResponse.json({ tweet: res });
 };

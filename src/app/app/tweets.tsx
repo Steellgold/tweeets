@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/lib/components/ui/sheet";
 import { useUserContext } from "@/lib/contexts/UserProvider";
@@ -16,11 +15,7 @@ type UserIncludeAll = Prisma.UserGetPayload<{
   include: { tweets: true };
 }>
 
-type TweetsListProps = {
-  newCount: number;
-};
-
-const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
+const TweetsList = (): ReactElement => {
   const { user } = useUserContext();
   const { data, isLoading } = useSWR<UserIncludeAll>("/api/user", fetcher);
 
@@ -30,15 +25,16 @@ const TweetsList = ({ newCount }: TweetsListProps): ReactElement => {
     <Sheet>
       <SheetTrigger disabled={!user || isLoading || data?.tweets.length == 0}>
         {isLoading ? (
-          <Button variant={"outline"} size={"sm"} className="flex gap-1" disabled={!user || isLoading}>
+          <Button variant={"outline"} size={"sm"} className="flex gap-1" disabled={
+            !user
+            || isLoading
+            || data?.tweets.length == 0
+          }>
             <Skeleton className="w-[100px] h-[20px] rounded-full" />
           </Button>
         ) : (
           <Button variant={"secondary"} size={"sm"} className="flex gap-1" disabled={!user || isLoading || data?.tweets.length == 0}>
             All generated tweets
-            {newCount > 0 && (
-              <Badge className="mt-1">{newCount} new</Badge>
-            )}
           </Button>
         )}
       </SheetTrigger>

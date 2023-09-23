@@ -11,7 +11,7 @@ import { useUserContext } from "@/lib/contexts/UserProvider";
 import { cn, toTweetUrl } from "@/lib/utils";
 import type { Component } from "@/lib/utils/component";
 import { fetcher } from "@/lib/utils/fetcher";
-import { readStream } from "@/lib/utils/stream";
+import { readStreamValue } from "@/lib/utils/stream";
 import type { User } from "@prisma/client";
 import { Copy, Loader2Icon, RefreshCcw, Twitter } from "lucide-react";
 import Link from "next/link";
@@ -32,18 +32,9 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [_, copy] = useCopyToClipboard();
   const ctc = (text: string): void => {
-    copy(text)
-      .then(() => {
-        toast({
-          title: "Tweet copied to clipboard!",
-          description: "You can now paste it on Twitter."
-        });
-      })
+    copy(text).then(() => toast({ title: "Tweet copied to clipboard!", description: "You can now paste it on Twitter." }))
       .catch(() => {
-        toast({
-          title: "An error occurred while copying your tweet.",
-          description: "Please try again."
-        });
+        toast({ title: "An error occurred while copying your tweet.", description: "Please try again." });
       });
   };
 
@@ -52,51 +43,51 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
     setRegenLocked(true);
     setTweet("");
 
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      body: JSON.stringify({
-        tw
-      })
-    });
+    const res = await fetch("/api/generate", { method: "POST", body: JSON.stringify({ tw }) });
 
     if (!res.ok || res.status !== 200 || res.body == null) {
       setWaiting(false);
       setTweet("An error occurred while generating your tweet.");
       return;
-    } else {
-      setWaiting(false);
     }
 
-    let result = "";
-    await readStream(res.body, (chunk) => {
-      result += chunk;
-      setTweet(result);
-    }).finally(() => {
-      result = result.replace(/#\w+\s?/g, "");
-      result = result.replace(/^"/, "");
+    setTweet(await readStreamValue(res.body));
+    console.log("tweet generated", gTweet);
+    if (isAutoSaveTweets) {
+      console.log("auto save");
 
-      setTweet(result);
-      setRegenLocked(false);
+      void fetch("/api/save", {
+        method: "POST",
+        body: JSON.stringify({
+          tw,
+          tweet: gTweet
+        })
+      });
+    }
 
-      if (isAutoSaveTweets) {
-        void fetch("/api/save", {
-          method: "POST",
-          body: JSON.stringify({
-            tw,
-            tweet: gTweet
-          })
-        });
-      }
-    });
+    setWaiting(false);
+    setRegenLocked(false);
   };
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger disabled={!user || isLoading}>
+      <AlertDialogTrigger disabled={
+        !user
+        || isLoading
+        || regenLocked
+        || tw.tweetContext.length === 0
+        || tw.tweetContext.trim().length === 0
+        || tw.tweetContext.trim().replace(/[.,\\/#!$%\\^&\\*;:{}=\-_`~()]/g, "").length < 10
+      }>
         {!isLoading ? (
           <Button size={"sm"} variant={
             user && data && data.credits > 0 ? "default" : "destructive"
-          } disabled={!user || data?.credits == 0} onClick={() => void generateTweet()}>
+          } disabled={
+            !user || data?.credits == 0
+              || tw.tweetContext.length === 0
+              || tw.tweetContext.trim().length === 0
+              || tw.tweetContext.trim().replace(/[.,\\/#!$%\\^&\\*;:{}=\-_`~()]/g, "").length < 10
+          } onClick={() => void generateTweet()}>
             {user && data && data.credits > 0 ? "Generate" : "Out of credits"}
           </Button>
         ) : (
