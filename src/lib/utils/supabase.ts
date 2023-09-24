@@ -9,72 +9,143 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      Tweets: {
+      Invite: {
         Row: {
-          context: string;
-          costCredits: number;
           createdAt: string;
-          emotion: Database["public"]["Enums"]["Emotion"];
-          generated: string;
-          gptModel: string;
+          email: string;
           id: string;
-          instructions: string | null;
-          isFavorited: boolean;
-          isPublished: boolean;
-          isShared: boolean;
-          lang: Database["public"]["Enums"]["Lang"];
-          negativeInstructions: string | null;
-          sharedTemplateSlug: string | null;
-          style: Database["public"]["Enums"]["Style"];
-          target: Database["public"]["Enums"]["Target"];
-          tone: Database["public"]["Enums"]["Tone"];
-          tweetUrl: string | null;
+          isVerified: boolean;
+          updatedAt: string;
+          used: number;
+          userId: string;
+          views: number;
+        };
+        Insert: {
+          createdAt?: string;
+          email: string;
+          id: string;
+          isVerified?: boolean;
+          updatedAt: string;
+          used?: number;
+          userId: string;
+          views?: number;
+        };
+        Update: {
+          createdAt?: string;
+          email?: string;
+          id?: string;
+          isVerified?: boolean;
+          updatedAt?: string;
+          used?: number;
+          userId?: string;
+          views?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Invite_userId_fkey";
+            columns: ["userId"];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      Payments: {
+        Row: {
+          amount: number;
+          createdAt: string;
+          currency: string;
+          email: string | null;
+          id: string;
+          invoiceUrl: string | null;
+          referenceId: string | null;
+          status: Database["public"]["Enums"]["PAYMENT_STATUS"];
           updatedAt: string;
           userId: string;
         };
         Insert: {
-          context: string;
-          costCredits: number;
+          amount: number;
           createdAt?: string;
-          emotion: Database["public"]["Enums"]["Emotion"];
-          generated: string;
-          gptModel: string;
+          currency: string;
+          email?: string | null;
           id: string;
-          instructions?: string | null;
-          isFavorited?: boolean;
-          isPublished?: boolean;
-          isShared?: boolean;
-          lang: Database["public"]["Enums"]["Lang"];
-          negativeInstructions?: string | null;
-          sharedTemplateSlug?: string | null;
-          style: Database["public"]["Enums"]["Style"];
-          target: Database["public"]["Enums"]["Target"];
-          tone: Database["public"]["Enums"]["Tone"];
-          tweetUrl?: string | null;
+          invoiceUrl?: string | null;
+          referenceId?: string | null;
+          status?: Database["public"]["Enums"]["PAYMENT_STATUS"];
           updatedAt: string;
           userId: string;
         };
         Update: {
+          amount?: number;
+          createdAt?: string;
+          currency?: string;
+          email?: string | null;
+          id?: string;
+          invoiceUrl?: string | null;
+          referenceId?: string | null;
+          status?: Database["public"]["Enums"]["PAYMENT_STATUS"];
+          updatedAt?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "Payments_userId_fkey";
+            columns: ["userId"];
+            referencedRelation: "User";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      Tweets: {
+        Row: {
+          context: string;
+          createdAt: string;
+          emotion: Database["public"]["Enums"]["Emotion"];
+          generated: string;
+          gpt: number;
+          id: string;
+          isShared: boolean;
+          lang: Database["public"]["Enums"]["Lang"];
+          sharedTemplateSlug: string | null;
+          style: Database["public"]["Enums"]["Style"];
+          target: Database["public"]["Enums"]["Target"];
+          tone: Database["public"]["Enums"]["Tone"];
+          updatedAt: string;
+          userId: string;
+          v: Database["public"]["Enums"]["TWEEETS_VERSION_GENERATED"];
+        };
+        Insert: {
           context?: string;
-          costCredits?: number;
           createdAt?: string;
           emotion?: Database["public"]["Enums"]["Emotion"];
           generated?: string;
-          gptModel?: string;
-          id?: string;
-          instructions?: string | null;
-          isFavorited?: boolean;
-          isPublished?: boolean;
+          gpt?: number;
+          id: string;
           isShared?: boolean;
           lang?: Database["public"]["Enums"]["Lang"];
-          negativeInstructions?: string | null;
           sharedTemplateSlug?: string | null;
           style?: Database["public"]["Enums"]["Style"];
           target?: Database["public"]["Enums"]["Target"];
           tone?: Database["public"]["Enums"]["Tone"];
-          tweetUrl?: string | null;
+          updatedAt?: string;
+          userId: string;
+          v?: Database["public"]["Enums"]["TWEEETS_VERSION_GENERATED"];
+        };
+        Update: {
+          context?: string;
+          createdAt?: string;
+          emotion?: Database["public"]["Enums"]["Emotion"];
+          generated?: string;
+          gpt?: number;
+          id?: string;
+          isShared?: boolean;
+          lang?: Database["public"]["Enums"]["Lang"];
+          sharedTemplateSlug?: string | null;
+          style?: Database["public"]["Enums"]["Style"];
+          target?: Database["public"]["Enums"]["Target"];
+          tone?: Database["public"]["Enums"]["Tone"];
           updatedAt?: string;
           userId?: string;
+          v?: Database["public"]["Enums"]["TWEEETS_VERSION_GENERATED"];
         };
         Relationships: [
           {
@@ -87,22 +158,40 @@ export interface Database {
       };
       User: {
         Row: {
+          arobase: string;
+          createdAt: string;
           credits: number;
           email: string;
           id: string;
-          saveTweets: boolean;
+          invitedBy: string | null;
+          isFreeCredit: boolean;
+          pictureUrl: string | null;
+          updatedAt: string;
+          username: string;
         };
         Insert: {
+          arobase: string;
+          createdAt?: string;
           credits?: number;
           email: string;
           id: string;
-          saveTweets?: boolean;
+          invitedBy?: string | null;
+          isFreeCredit?: boolean;
+          pictureUrl?: string | null;
+          updatedAt?: string;
+          username?: string;
         };
         Update: {
+          arobase?: string;
+          createdAt?: string;
           credits?: number;
           email?: string;
           id?: string;
-          saveTweets?: boolean;
+          invitedBy?: string | null;
+          isFreeCredit?: boolean;
+          pictureUrl?: string | null;
+          updatedAt?: string;
+          username?: string;
         };
         Relationships: [];
       };
@@ -159,6 +248,7 @@ export interface Database {
         | "zh_TW"
         | "ko"
         | "ar";
+      PAYMENT_STATUS: "PENDING" | "COMPLETED" | "FAILED";
       Style:
         | "DEFAULT"
         | "INFORMATIVE"
@@ -194,6 +284,7 @@ export interface Database {
         | "INTIMATE"
         | "ENGAGED"
         | "POSITIVE";
+      TWEEETS_VERSION_GENERATED: "V1" | "V2";
     };
     CompositeTypes: {
       [_ in never]: never

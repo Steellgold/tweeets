@@ -58,3 +58,29 @@ export const POST = async(request: NextRequest): Promise<NextResponse> => {
   await prisma.$disconnect();
   return NextResponse.json({ tweet: res });
 };
+
+export const DELETE = async(request: NextRequest): Promise<NextResponse> => {
+  const supabase = createRouteHandlerClient<Database>({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ data: null });
+
+  const schema = z.object({
+    id: z.string()
+  }).safeParse(await request.json());
+
+  if (!schema.success) {
+    console.log(schema.error);
+    return NextResponse.json({ data: null });
+  }
+
+  const res = await prisma.tweets.delete({
+    where: {
+      id: schema.data.id,
+      userId: user.id
+    }
+  });
+
+  await prisma.$disconnect();
+  console.log(res);
+  return NextResponse.json({ deleted: true });
+};

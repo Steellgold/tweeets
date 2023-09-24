@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "@/lib/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/lib/components/ui/card";
 import { SiOpenai, SiTwitter } from "@icons-pack/react-simple-icons";
 import { Book, Brain, Clipboard, ExternalLink, Flag, ListRestart, Loader2, MessageCircle, PenLine, PenTool, Share2, Smile, Target,
+  Trash,
   XCircle } from "lucide-react";
 import { useState, type ReactElement } from "react";
 import dayjs from "dayjs";
@@ -17,6 +18,10 @@ import { z } from "zod";
 import { toast } from "@/lib/components/ui/use-toast";
 import { Input } from "@/lib/components/ui/input";
 import { Badge } from "@/lib/components/ui/badge";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
+} from "@/lib/components/ui/alert-dialog";
 
 type TweetProps = Prisma.TweetsGetPayload<{
   include: { user: false };
@@ -28,6 +33,7 @@ const Tweet = ({
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState(sharedTemplateSlug);
   const [isSharedState, setIsSharedState] = useState(isShared);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const share = async(): Promise<void> => {
     setIsSharing(true);
@@ -68,6 +74,33 @@ const Tweet = ({
     setIsSharing(false);
     setIsSharedState(!isSharedState);
   };
+
+  const deleteTweet = async(): Promise<void> => {
+    setIsDeleted(true);
+    const res = await fetch("/api/save", {
+      method: "DELETE",
+      body: JSON.stringify({ id }),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const schema = z.object({ deleted: z.boolean() }).safeParse(await res.json());
+
+    if (!schema.success) {
+      toast({ title: "Oh no!", description: "Something went wrong while deleting your tweet." });
+      setIsDeleted(false);
+      return;
+    }
+
+    if (schema.data.deleted) {
+      toast({ title: "Deleted!", description: "Your tweet has been deleted." });
+      setIsDeleted(true);
+    } else {
+      toast({ title: "Oh no!", description: "Something went wrong while deleting your tweet." });
+      setIsDeleted(false);
+    }
+  };
+
+  if (isDeleted) return (<></>);
 
   return (
     <div>
@@ -158,6 +191,30 @@ const Tweet = ({
           <Link className={buttonVariants({ variant: "outline" })} href={toTweetUrl(generated)} target={"_blank"}>
             <SiTwitter size={18} />
           </Link>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">
+                <Trash size={18} />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your
+                  generated tweet.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => {
+                  void deleteTweet();
+                }} className={buttonVariants({ variant: "destructive" })}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button variant={"outline"} disabled>
             {first ? (
               <>

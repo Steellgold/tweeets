@@ -24,6 +24,7 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
   const { data, isLoading } = useSwr<User>("/api/user", fetcher);
   const [waiting, setWaiting] = useState<boolean>(false);
   const [regenLocked, setRegenLocked] = useState<boolean>(true);
+  const [regen, setRegen] = useState<boolean>(false);
   const [gTweet, setTweet] = useState<string>("");
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -36,6 +37,16 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
       .catch(() => {
         toast({ title: "An error occurred while copying your tweet.", description: "Please try again." });
       });
+  };
+
+  const saveTweet = async(tw: TweetProps, tweet: string): Promise<void> => {
+    await fetch("/api/save", {
+      method: "POST",
+      body: JSON.stringify({
+        tw,
+        tweet
+      })
+    });
   };
 
   const generateTweet = async(): Promise<void> => {
@@ -51,21 +62,12 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
       return;
     }
 
-    setTweet(await readStreamValue(res.body));
-    console.log("tweet generated", gTweet);
-    if (isAutoSaveTweets) {
-      console.log("auto save");
+    const GENERATEDTWEET = await readStreamValue(res.body);
 
-      void fetch("/api/save", {
-        method: "POST",
-        body: JSON.stringify({
-          tw,
-          tweet: gTweet
-        })
-      });
-    }
-
+    setTweet(GENERATEDTWEET);
     setWaiting(false);
+
+    if (isAutoSaveTweets && !regen && GENERATEDTWEET) await saveTweet(tw, GENERATEDTWEET);
     setRegenLocked(false);
   };
 
@@ -74,7 +76,6 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
       <AlertDialogTrigger disabled={
         !user
         || isLoading
-        || regenLocked
         || tw.tweetContext.length === 0
         || tw.tweetContext.trim().length === 0
         || tw.tweetContext.trim().replace(/[.,\\/#!$%\\^&\\*;:{}=\-_`~()]/g, "").length < 10
@@ -159,7 +160,10 @@ const Generate: Component<{ tw: TweetProps }> = ({ tw }): ReactElement => {
 
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild disabled={waiting || !user || isLoading || regenLocked}>
-                <Button variant={"outline"} onClick={() => void generateTweet()} disabled={waiting || !user || isLoading || regenLocked}>
+                <Button variant={"outline"} onClick={() => {
+                  setRegen(true);
+                  void generateTweet();
+                }} disabled={waiting || !user || isLoading || regenLocked}>
                   <RefreshCcw size={18} />
                 </Button>
               </TooltipTrigger>

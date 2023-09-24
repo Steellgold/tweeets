@@ -6,7 +6,7 @@ export const cn = (...inputs: ClassValue[]): string => {
 };
 
 export const toTweetUrl = (content: string): string => {
-  return `https://twitter.com/share?text=${encodeURIComponent(content + " #withTweeets.app")}`;
+  return `https://twitter.com/share?text=${encodeURIComponent(content + " #withTweeets")}`;
 };
 
 export const tejlesHashtags = (text: string): string => {

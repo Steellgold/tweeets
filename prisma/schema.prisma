@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -125,15 +126,15 @@ model Tweets {
   user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
   createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @updatedAt
-  context            String
-  generated          String
-  emotion            Emotion
-  style              Style
-  tone               Tone
-  target             Target
-  lang               Lang
-  gpt                Int
+  updatedAt          DateTime                  @default(now()) @updatedAt
+  context            String                    @default("")
+  generated          String                    @default("")
+  emotion            Emotion                   @default(DEFAULT)
+  style              Style                     @default(DEFAULT)
+  tone               Tone                      @default(DEFAULT)
+  target             Target                    @default(ALL)
+  lang               Lang                      @default(en_US)
+  gpt                Int                       @default(3)
   isShared           Boolean                   @default(false)
   sharedTemplateSlug String?                   @unique
   v                  TWEEETS_VERSION_GENERATED @default(V1)
