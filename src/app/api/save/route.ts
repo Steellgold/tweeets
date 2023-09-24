@@ -73,7 +73,7 @@ export const DELETE = async(request: NextRequest): Promise<NextResponse> => {
     return NextResponse.json({ data: null });
   }
 
-  const res = await prisma.tweets.delete({
+  await prisma.tweets.delete({
     where: {
       id: schema.data.id,
       userId: user.id
@@ -81,6 +81,5 @@ export const DELETE = async(request: NextRequest): Promise<NextResponse> => {
   });
 
   await prisma.$disconnect();
-  console.log(res);
   return NextResponse.json({ deleted: true });
 };
