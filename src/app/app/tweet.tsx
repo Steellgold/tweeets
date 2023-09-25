@@ -35,7 +35,7 @@ const Tweet = ({
   const [shareUrl, setShareUrl] = useState(sharedTemplateSlug);
   const [isSharedState, setIsSharedState] = useState(isShared);
   const [isDeleted, setIsDeleted] = useState(false);
-  const { tweet, setTweet } = useLoadTweetStore();
+  const { setTweet } = useLoadTweetStore();
 
   const share = async(): Promise<void> => {
     setIsSharing(true);
