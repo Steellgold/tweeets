@@ -1,20 +1,32 @@
+/* eslint-disable camelcase */
 "use client";
 
-import { Badge } from "@/lib/components/ui/badge";
-import { buttonVariants } from "@/lib/components/ui/button";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
 import { useUserContext } from "@/lib/contexts/UserProvider";
-import { cn } from "@/lib/utils";
-import { PenSquare } from "lucide-react";
-import Link from "next/link";
+import { buttonVariants } from "@/lib/components/ui/button";
+import { Badge } from "@/lib/components/ui/badge";
+import { Kaushan_Script } from "next/font/google";
 import type { ReactElement } from "react";
+import { PenSquare } from "lucide-react";
+import { cn, intify } from "@/lib/utils";
+import Link from "next/link";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils/fetcher";
+
+const ks = Kaushan_Script({ style: "normal", weight: "400", subsets: ["latin"] });
+
+type Stats = {
+  usersCount: number;
+  tweetsCount: number;
+}
 
 const Landing = (): ReactElement => {
   const { user } = useUserContext();
+  const { data, isLoading } = useSWR<Stats>("/api/stats", fetcher);
 
   return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl" suppressHydrationWarning>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center mb-10">
         <span className="relative inline-block w-fit mx-auto overflow-hidden rounded-full p-[1px]">
           <span className="absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#71717a_0%,#27272a_50%,#71717a_100%)]" />
           <div className={cn(
@@ -54,12 +66,20 @@ const Landing = (): ReactElement => {
           <CardSpotlight className="w-full mt-8" hoverEffect={false}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-8 mb-8 select-none">
               <div className="flex flex-col items-center w-full px-4">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">1k+</h1>
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
+                  {/* Last data from 25/09/2023 */}
+                  {isLoading ? intify(1100) : intify(data?.tweetsCount || 1100)}
+                  <span className={ks.className}>+</span>
+                </h1>
                 <p className="md:text-xl text-zinc-400 mx-auto text-center">tweets generated.</p>
               </div>
 
               <div className="flex flex-col items-center w-full px-4">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">170+</h1>
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
+                  {/* Last data from 25/09/2023 */}
+                  {isLoading ? intify(180) : intify(data?.usersCount || 180)}
+                  <span className={ks.className}>+</span>
+                </h1>
                 <p className="md:text-xl text-zinc-400 mx-auto text-center">users registered.</p>
               </div>
             </div>

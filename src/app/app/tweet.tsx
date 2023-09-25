@@ -22,6 +22,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from "@/lib/components/ui/alert-dialog";
+import { useLoadTweetStore } from "@/lib/store/load-tweet/load-tweet.store";
 
 type TweetProps = Prisma.TweetsGetPayload<{
   include: { user: false };
@@ -34,6 +35,8 @@ const Tweet = ({
   const [shareUrl, setShareUrl] = useState(sharedTemplateSlug);
   const [isSharedState, setIsSharedState] = useState(isShared);
   const [isDeleted, setIsDeleted] = useState(false);
+  const { tweet, setTweet } = useLoadTweetStore();
+  console.log(tweet);
 
   const share = async(): Promise<void> => {
     setIsSharing(true);
@@ -181,9 +184,38 @@ const Tweet = ({
         )}
 
         <CardFooter className="flex gap-2 pt-0 mt-2">
-          <Button variant={"outline"}>
-            <ListRestart size={18} />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant={"outline"}>
+                <ListRestart size={18} />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will replace your current parameters with the ones from this tweet.
+                  Are you absolutely sure?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => {
+                  setTweet({
+                    tweetContext: context,
+                    emotion: emotionToString(emotion),
+                    style: styleToString(style),
+                    tone: toneToString(tone),
+                    target: targetToString(target),
+                    gpt: gpt as 3 | 4,
+                    lang: langToString(lang)
+                  });
+                }} className={buttonVariants({ variant: "destructive" })}>
+                    Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button variant={"outline"} disabled={isSharing} onClick={() => void share()}>
             {!isSharedState && <>{isSharing ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}</>}
             {isSharedState && <>{isSharing ? <Loader2 size={18} className="animate-spin" /> : <XCircle size={18} />}</>}

@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar"
 import { Button, buttonVariants } from "@/lib/components/ui/button";
 import Link from "next/link";
 import { SiTwitter } from "@icons-pack/react-simple-icons";
+import { useLoadTweetStore } from "@/lib/store/load-tweet/load-tweet.store";
 
 type UserProps = {
   isFreeCredit: boolean;
@@ -42,8 +43,7 @@ const Generator = (): ReactElement => {
   const [sharedUser, setSharedUser] = useState<SharedUserProps | null>(null);
 
   const { data, isLoading } = useSWR<UserProps>("/api/user");
-
-  const [gpt, setGPT] = useState<3 | 4>(3);
+  const { tweet, setTweet } = useLoadTweetStore();
 
   const [tweetContext, setContext] = useState("");
   const [emotion, setEmotion] = useState<Emotion>("emotion-default");
@@ -51,6 +51,19 @@ const Generator = (): ReactElement => {
   const [tone, setTone] = useState<Tone>("tone-default");
   const [target, setTarget] = useState<Target>("target-all");
   const [lang, setLang] = useState<Lang>("en-US");
+  const [gpt, setGPT] = useState<3 | 4>(3);
+  const [loadFromModel, setIsLoadedFromModel] = useState(false);
+
+  useEffect(() => {
+    setIsLoadedFromModel(tweet !== null);
+    setContext(tweet?.tweetContext ?? "");
+    setEmotion(tweet?.emotion ?? "emotion-default");
+    setStyle(tweet?.style ?? "style-default");
+    setTone(tweet?.tone ?? "tone-default");
+    setTarget(tweet?.target ?? "target-all");
+    setLang(tweet?.lang ?? "en-US");
+    setGPT(tweet?.gpt ?? 3);
+  }, [tweet]);
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -148,6 +161,22 @@ const Generator = (): ReactElement => {
             </div>
           </Card>
         )}
+
+        {loadFromModel && (
+          <Card className="flex justify-between items-center p-3 mb-3">
+            <span className="text-muted-foreground">
+              You are using one of your old tweets.
+            </span>
+
+            <Button variant="outline" size={"sm"} onClick={() => {
+              setIsLoadedFromModel(false);
+              setTweet(null);
+            }}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </Card>
+        )}
+
         <Textarea
           placeholder="Enter your tweet content here"
           disabled={!user}
