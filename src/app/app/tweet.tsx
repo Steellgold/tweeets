@@ -36,7 +36,6 @@ const Tweet = ({
   const [isSharedState, setIsSharedState] = useState(isShared);
   const [isDeleted, setIsDeleted] = useState(false);
   const { tweet, setTweet } = useLoadTweetStore();
-  console.log(tweet);
 
   const share = async(): Promise<void> => {
     setIsSharing(true);
