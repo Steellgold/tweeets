@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
-    "test:unit": "vitest --ui"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
