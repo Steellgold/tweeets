@@ -10,66 +10,20 @@ datasource db {
 
 model User {
   id           String     @id @default(cuid())
-  email        String     @unique
-  arobase      String?    @unique
   createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+  email        String     @unique
   credits      Int        @default(5)
-  invitedBy    String?
   isFreeCredit Boolean    @default(true)
-  pictureUrl   String?    @unique
-  updatedAt    DateTime   @default(now())
-  username     String     @default("Anonymous User")
-  Invite       Invite?
-  Payments     Payments[]
-  Tweets       Tweets[]
-}
+  tweets       Tweets[]
+  invitedBy    String?
+  invite       Invite?
+  payments     Payments[]
 
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Invite {
-  id         String   @id
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime
-  email      String   @unique
-  used       Int      @default(0)
-  userId     String   @unique
-  views      Int      @default(0)
-  isVerified Boolean  @default(false)
-  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Payments {
-  id          String         @id
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime
-  userId      String
-  amount      Int
-  referenceId String?        @unique
-  currency    String
-  status      PAYMENT_STATUS @default(PENDING)
-  email       String?
-  invoiceUrl  String?
-  User        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Tweets {
-  id                 String                    @id
-  userId             String
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @default(now())
-  context            String                    @default("")
-  generated          String                    @default("")
-  emotion            Emotion                   @default(DEFAULT)
-  style              Style                     @default(DEFAULT)
-  tone               Tone                      @default(DEFAULT)
-  target             Target                    @default(ALL)
-  lang               Lang                      @default(en_US)
-  gpt                Int                       @default(3)
-  isShared           Boolean                   @default(false)
-  sharedTemplateSlug String?                   @unique
-  v                  TWEEETS_VERSION_GENERATED @default(V1)
-  User               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // DATA FOR MODEL SHARING:
+  pictureUrl String? @unique
+  username   String  @default("Anonymous User")
+  arobase    String  @unique @default(cuid())
 }
 
 enum Emotion {
@@ -84,6 +38,47 @@ enum Emotion {
   COMPASSION
   EXHAUSTION
   CRITICAL_THINKING
+}
+
+enum Style {
+  DEFAULT
+  INFORMATIVE
+  POETIC
+  HUMOROUS
+  FORMAL
+  PERSUASIVE
+  DESCRIPTIVE
+  SCIENTIFIC
+  NARRATIVE
+  EDUCATIONAL
+}
+
+enum Tone {
+  DEFAULT
+  OPTIMISTIC
+  IRONIC
+  AUTHORITATIVE
+  EMPHATIC
+  DETACHED
+  SATIRICAL
+  REFLECTIVE
+  INTIMATE
+  ENGAGED
+  POSITIVE
+}
+
+enum Target {
+  ALL
+  ENTERPRISES
+  PROFESSIONALS
+  PARTICULARS
+  ENTREPRENEURS
+  STUDENTS
+  CHILDREN
+  TEENAGERS
+  ADULTS
+  SENIORS
+  PARENTS
 }
 
 enum Lang {
@@ -121,54 +116,58 @@ enum Lang {
   ar
 }
 
+enum TWEEETS_VERSION_GENERATED {
+  V1
+  V2
+}
+
+model Tweets {
+  id                 String                    @id @default(cuid())
+  user               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @default(now()) @updatedAt
+  context            String                    @default("")
+  generated          String                    @default("")
+  emotion            Emotion                   @default(DEFAULT)
+  style              Style                     @default(DEFAULT)
+  tone               Tone                      @default(DEFAULT)
+  target             Target                    @default(ALL)
+  lang               Lang                      @default(en_US)
+  gpt                Int                       @default(3)
+  isShared           Boolean                   @default(false)
+  sharedTemplateSlug String?                   @unique
+  v                  TWEEETS_VERSION_GENERATED @default(V1)
+}
+
+model Invite {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  email      String   @unique
+  used       Int      @default(0)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @unique
+  views      Int      @default(0)
+  isVerified Boolean  @default(false)
+}
+
 enum PAYMENT_STATUS {
   PENDING
   COMPLETED
   FAILED
 }
 
-enum Style {
-  DEFAULT
-  INFORMATIVE
-  POETIC
-  HUMOROUS
-  FORMAL
-  PERSUASIVE
-  DESCRIPTIVE
-  SCIENTIFIC
-  NARRATIVE
-  EDUCATIONAL
-}
-
-enum TWEEETS_VERSION_GENERATED {
-  V1
-  V2
-}
-
-enum Target {
-  ALL
-  ENTERPRISES
-  PROFESSIONALS
-  PARTICULARS
-  ENTREPRENEURS
-  STUDENTS
-  CHILDREN
-  TEENAGERS
-  ADULTS
-  SENIORS
-  PARENTS
-}
-
-enum Tone {
-  DEFAULT
-  OPTIMISTIC
-  IRONIC
-  AUTHORITATIVE
-  EMPHATIC
-  DETACHED
-  SATIRICAL
-  REFLECTIVE
-  INTIMATE
-  ENGAGED
-  POSITIVE
+model Payments {
+  id          String         @id @default(cuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  amount      Int
+  referenceId String?        @unique
+  currency    String
+  status      PAYMENT_STATUS @default(PENDING)
+  email       String?
+  invoiceUrl  String?
 }
