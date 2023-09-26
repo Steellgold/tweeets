@@ -5,8 +5,8 @@ export const cn = (...inputs: ClassValue[]): string => {
   return twMerge(clsx(inputs));
 };
 
-export const tweet = (content: string): string => {
-  return `https://twitter.com/share?text=${encodeURIComponent(content)}`;
+export const toTweetUrl = (content: string): string => {
+  return `https://twitter.com/share?text=${encodeURIComponent(content + " #withTweeets")}`;
 };
 
 export const tejlesHashtags = (text: string): string => {
@@ -27,4 +27,16 @@ export const gen = (count: number): string => {
   }
 
   return result.join("");
+};
+
+export const intify = (num: number): string => {
+  if (num > 999 && num < 1000000) {
+    return (num / 1000).toFixed(1) + "K";
+  } else if (num > 1000000) {
+    return (num / 1000000).toFixed(1) + "M";
+  } else if (num < 900) {
+    return num.toString() + " ";
+  }
+
+  return num.toString();
 };

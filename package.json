@@ -6,13 +6,13 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
-    "test:unit": "vitest --ui"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
     "@icons-pack/react-simple-icons": "^8.0.1",
-    "@prisma/client": "^5.1.1",
+    "@prisma/client": "^5.2.0",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.4",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -26,6 +26,7 @@
     "@radix-ui/react-slider": "^1.1.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
+    "@radix-ui/react-toast": "^1.1.4",
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.6",
     "@supabase/auth-helpers-nextjs": "^0.7.4",
@@ -51,14 +52,16 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.45.4",
-    "sonner": "^0.6.2",
-    "stripe": "^12.17.0",
+    "resend": "^1.0.0",
+    "stripe": "^13.5.0",
+    "swr": "^2.2.2",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
     "typescript": "5.1.6",
     "usehooks-ts": "^2.9.1",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@bluzzi/eslint-config": "1.1.0",
@@ -67,13 +70,16 @@
     "@vitest/ui": "^0.34.1",
     "encoding": "^0.1.13",
     "happy-dom": "^10.8.0",
-    "prisma": "^5.1.0",
+    "prisma": "^5.2.0",
     "vitest": "^0.34.1"
   },
   "eslintConfig": {
     "ignorePatterns": [
       "src/lib/components/ui/*"
     ],
+    "rules": {
+      "@typescript-eslint/ban-ts-comment": "off"
+    },
     "extends": [
       "@bluzzi",
       "next/core-web-vitals"

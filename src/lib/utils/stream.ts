@@ -13,3 +13,15 @@ export const readStream = async(stream: ReadableStream, onChunkValue?: (chunkVal
     onChunkValue?.(chunkValue);
   }
 };
+
+export const readStreamValue = async(stream: ReadableStream): Promise<string> => {
+  let value = "";
+  await readStream(stream, (chunkValue) => {
+    value += chunkValue;
+  });
+
+  return value
+    .replace(/[\r\n]+/g, "\n")
+    .replace(/\n+/g, "\n")
+    .trim();
+};

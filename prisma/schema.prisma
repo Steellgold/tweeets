@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -13,27 +14,16 @@ model User {
   isPro        Boolean       @default(false)
   fpDone       Boolean       @default(true)
   priority     Boolean       @default(false)
-  models       Model[]
-  subscription Subscription?
-  fpTweets     fpTweets[]
   usage        Int           @default(0)
-  tweets       Tweet[]
+  Model        Model[]
+  Subscription Subscription?
+  Tweet        Tweet[]
+  fpTweets     fpTweets[]
 }
 
-model Subscription {
-  id        String   @id @default(cuid())
-  createdAt String
-  userId    String   @unique
-  plan      Plan
-  startAt   DateTime
-  endAt     DateTime
-  cusId     String   @unique
-  subId     String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-}
-
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Model {
-  id              String   @id @default(cuid())
+  id              String   @id
   createdAt       String
   userId          String
   name            String
@@ -48,11 +38,24 @@ model Model {
   includeHashtags Boolean  @default(false)
   target          String
   lang            String   @default("en")
-  user            User     @relation(fields: [userId], references: [id])
+  User            User     @relation(fields: [userId], references: [id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Subscription {
+  id        String   @id
+  createdAt String
+  userId    String   @unique
+  plan      Plan
+  startAt   DateTime
+  endAt     DateTime
+  cusId     String   @unique
+  subId     String   @unique
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Tweet {
-  id              String   @id @default(cuid())
+  id              String   @id
   createdAt       String
   userId          String
   sentiment       String
@@ -65,14 +68,15 @@ model Tweet {
   target          String
   lang            String   @default("en")
   result          String
-  user            User     @relation(fields: [userId], references: [id])
+  User            User     @relation(fields: [userId], references: [id])
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model fpTweets {
-  id      String  @id @default(cuid())
+  id      String  @id
   content String
   userId  String?
-  user    User?   @relation(fields: [userId], references: [id])
+  User    User?   @relation(fields: [userId], references: [id])
 }
 
 enum Plan {

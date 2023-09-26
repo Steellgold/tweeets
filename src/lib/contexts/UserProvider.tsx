@@ -1,14 +1,15 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { Component } from "../utils/component";
 import type { User } from "@supabase/supabase-js";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 type ContextType = {
-  user: User | null;
-  setUser: (value: User | null) => void;
-};
+  user: User | null | "loading";
+  setUser: (value: User | null | "loading") => void;
+}
 
 const UserContext = createContext<ContextType | null>(null);
 
@@ -22,8 +23,14 @@ export const useUserContext = (): ContextType => {
 };
 
 export const UserProvider: Component<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const values = { user, setUser };
+  const supabase = createClientComponentClient();
+  const [user, setUser] = useState<User | null | "loading">("loading");
 
-  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+  }, [supabase.auth]);
+
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };
