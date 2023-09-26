@@ -23,9 +23,10 @@ const TweetsList = (): ReactElement => {
   const { user } = useUserContext();
 
   const [listTweets, setListTweets] = useState<Prisma.TweetsGetPayload<{ include: { user: false } } | null>[]>([]);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, isLoading } = useSWR<UserIncludeAll>("/api/user", fetcher);
-  if (data && !isLoading && !listTweets.length) setListTweets(data.tweets);
+  if (data && !isLoading && !listTweets) setListTweets(data.tweets);
 
   if (user && user !== "loading") {
     supabase.channel(`tweets:${user.id}`)

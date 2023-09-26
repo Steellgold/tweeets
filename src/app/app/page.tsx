@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardDescription, CardHeader, CardTitle } from "@/lib/components/ui/card";
 import type { ReactElement } from "react";
 import Generator from "./generator";
