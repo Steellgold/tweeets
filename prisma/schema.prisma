@@ -9,77 +9,166 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  isPro        Boolean       @default(false)
-  fpDone       Boolean       @default(true)
-  priority     Boolean       @default(false)
-  usage        Int           @default(0)
-  Model        Model[]
-  Subscription Subscription?
-  Tweet        Tweet[]
-  fpTweets     fpTweets[]
+  id           String     @id @default(cuid())
+  email        String     @unique
+  arobase      String?    @unique
+  createdAt    DateTime   @default(now())
+  credits      Int        @default(5)
+  invitedBy    String?
+  isFreeCredit Boolean    @default(true)
+  pictureUrl   String?    @unique
+  updatedAt    DateTime   @default(now())
+  username     String     @default("Anonymous User")
+  Invite       Invite?
+  Payments     Payments[]
+  Tweets       Tweets[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Model {
-  id              String   @id
-  createdAt       String
-  userId          String
-  name            String
-  description     String   @default("")
-  shareLink       String?  @unique @default("")
-  sentiment       String
-  style           String
-  tone            String
-  context         String
-  gpt4            Boolean  @default(false)
-  hashtags        String[]
-  includeHashtags Boolean  @default(false)
-  target          String
-  lang            String   @default("en")
-  User            User     @relation(fields: [userId], references: [id])
+model Invite {
+  id         String   @id
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  email      String   @unique
+  used       Int      @default(0)
+  userId     String   @unique
+  views      Int      @default(0)
+  isVerified Boolean  @default(false)
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Subscription {
-  id        String   @id
-  createdAt String
-  userId    String   @unique
-  plan      Plan
-  startAt   DateTime
-  endAt     DateTime
-  cusId     String   @unique
-  subId     String   @unique
-  User      User     @relation(fields: [userId], references: [id])
-}
-
-model Tweet {
-  id              String   @id
-  createdAt       String
-  userId          String
-  sentiment       String
-  style           String
-  tone            String
-  context         String
-  gpt4            Boolean  @default(false)
-  hashtags        String[]
-  includeHashtags Boolean  @default(false)
-  target          String
-  lang            String   @default("en")
-  result          String
-  User            User     @relation(fields: [userId], references: [id])
+model Payments {
+  id          String         @id
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime
+  userId      String
+  amount      Int
+  referenceId String?        @unique
+  currency    String
+  status      PAYMENT_STATUS @default(PENDING)
+  email       String?
+  invoiceUrl  String?
+  User        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model fpTweets {
-  id      String  @id
-  content String
-  userId  String?
-  User    User?   @relation(fields: [userId], references: [id])
+model Tweets {
+  id                 String                    @id
+  userId             String
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @default(now())
+  context            String                    @default("")
+  generated          String                    @default("")
+  emotion            Emotion                   @default(DEFAULT)
+  style              Style                     @default(DEFAULT)
+  tone               Tone                      @default(DEFAULT)
+  target             Target                    @default(ALL)
+  lang               Lang                      @default(en_US)
+  gpt                Int                       @default(3)
+  isShared           Boolean                   @default(false)
+  sharedTemplateSlug String?                   @unique
+  v                  TWEEETS_VERSION_GENERATED @default(V1)
+  User               User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Plan {
-  MONTHLY
-  YEARLY
+enum Emotion {
+  DEFAULT
+  ENTHUSIASM
+  MELANCHOLY
+  JOY
+  ANXIETY
+  CONFIDENCE
+  WONDER
+  ANGER
+  COMPASSION
+  EXHAUSTION
+  CRITICAL_THINKING
+}
+
+enum Lang {
+  id
+  da
+  de
+  en_GB
+  en_US
+  es_ES
+  fr
+  hr
+  it
+  lt
+  hu
+  nl
+  no
+  pl
+  pt_BR
+  ro
+  fi
+  sv_SE
+  vi
+  tr
+  cs
+  el
+  bg
+  ru
+  uk
+  hi
+  th
+  zh_CN
+  ja
+  zh_TW
+  ko
+  ar
+}
+
+enum PAYMENT_STATUS {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum Style {
+  DEFAULT
+  INFORMATIVE
+  POETIC
+  HUMOROUS
+  FORMAL
+  PERSUASIVE
+  DESCRIPTIVE
+  SCIENTIFIC
+  NARRATIVE
+  EDUCATIONAL
+}
+
+enum TWEEETS_VERSION_GENERATED {
+  V1
+  V2
+}
+
+enum Target {
+  ALL
+  ENTERPRISES
+  PROFESSIONALS
+  PARTICULARS
+  ENTREPRENEURS
+  STUDENTS
+  CHILDREN
+  TEENAGERS
+  ADULTS
+  SENIORS
+  PARENTS
+}
+
+enum Tone {
+  DEFAULT
+  OPTIMISTIC
+  IRONIC
+  AUTHORITATIVE
+  EMPHATIC
+  DETACHED
+  SATIRICAL
+  REFLECTIVE
+  INTIMATE
+  ENGAGED
+  POSITIVE
 }
