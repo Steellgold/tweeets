@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { fetcher } from "@/lib/utils/fetcher";
 import type { Prisma } from "@prisma/client";
-import { useState, type ReactElement } from "react";
+import { useState, type ReactElement, useEffect } from "react";
 import useSWR from "swr";
 import { Skeleton } from "@/lib/components/ui/skeleton";
 import { Textarea } from "@/lib/components/ui/textarea";
@@ -24,9 +24,8 @@ const TweetsList = (): ReactElement => {
 
   const [listTweets, setListTweets] = useState<Prisma.TweetsGetPayload<{ include: { user: false } } | null>[]>([]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, isLoading } = useSWR<UserIncludeAll>("/api/user", fetcher);
-  if (data && !isLoading && !listTweets) setListTweets(data.tweets);
+  useEffect(() => setListTweets(data?.tweets || []), [data]);
 
   if (user && user !== "loading") {
     supabase.channel(`tweets:${user.id}`)

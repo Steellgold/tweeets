@@ -11,7 +11,7 @@ import { useUserContext } from "@/lib/contexts/UserProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger } from "../ui/dropdown-menu";
-import type { ReactElement } from "react";
+import { useEffect, type ReactElement } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { useLocalStorage } from "usehooks-ts";
@@ -23,6 +23,21 @@ export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
   const { user, setUser } = useUserContext();
   const [isAutoSaveTweets, setIsAutoSaveTweets] = useLocalStorage<boolean>("auto-save-tweets", true);
+  const [vreleased, setVReleased] = useLocalStorage<string>("v2-released", "v1");
+
+  useEffect(() => {
+    if (vreleased === null || vreleased !== "v2") {
+      void supabase.auth.signOut().then(() => {
+        toast({
+          title: "New version released!",
+          description: "We logged you out to update your account automatically on your next login!"
+        });
+
+        setUser(null);
+        setVReleased("v2");
+      });
+    }
+  }, [vreleased, setVReleased, setUser, supabase.auth]);
 
   const toggleAutoSaveTweets = (): void => {
     setIsAutoSaveTweets((prev) => !prev);

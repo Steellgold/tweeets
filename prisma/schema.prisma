@@ -23,7 +23,7 @@ model User {
   // DATA FOR MODEL SHARING:
   pictureUrl String? @unique
   username   String  @default("Anonymous User")
-  arobase    String  @unique @default(cuid())
+  arobase    String  @default(cuid())
 }
 
 enum Emotion {

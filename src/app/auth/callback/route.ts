@@ -17,7 +17,6 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
     const resp = await supabase.auth.exchangeCodeForSession(code);
 
     const existingUser = await prisma.user.findUnique({ where: { id: resp.data.user?.id } });
-    if (existingUser) return NextResponse.redirect(requestUrl.origin);
 
     const schema = z.object({
       avatar_url: z.string(),
@@ -33,6 +32,19 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
       user_name: z.string()
     }).safeParse(resp.data.user?.user_metadata);
 
+    if (existingUser) {
+      await prisma.user.update({
+        where: { id: resp.data.user?.id },
+        data: {
+          username: schema.success ? schema.data.full_name : (resp.data.user?.email || ""),
+          arobase: schema.success ? schema.data.preferred_username : (resp.data.user?.email || "anonymious@supabase.best").split("@")[0],
+          pictureUrl: schema.success ? schema.data.picture : "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+        }
+      });
+
+      return NextResponse.redirect(requestUrl.origin);
+    }
+
     await prisma.user.create({
       data: {
         id: resp.data.user?.id || Math.random().toString(36).substring(7).toString(),
@@ -44,8 +56,8 @@ export const GET = async(request: NextRequest): Promise<NextResponse> => {
       }
     });
 
-    await prisma.$disconnect();
   }
 
+  await prisma.$disconnect();
   return NextResponse.redirect(requestUrl.origin);
 };
