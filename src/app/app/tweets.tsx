@@ -19,9 +19,7 @@ type UserIncludeAll = Prisma.UserGetPayload<{
 
 const TweetsList = (): ReactElement => {
   const supabase = createClientComponentClient<Database>();
-
   const { user } = useUserContext();
-
   const [listTweets, setListTweets] = useState<Prisma.TweetsGetPayload<{ include: { user: false } } | null>[]>([]);
 
   const { data, isLoading } = useSWR<UserIncludeAll>("/api/user", fetcher);
