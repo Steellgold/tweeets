@@ -68,7 +68,7 @@ const Landing = (): ReactElement => {
               <div className="flex flex-col items-center w-full px-4">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
                   {/* Last data from 26/09/2023 */}
-                  {isLoading ? intify(1100) : intify(data?.tweetsCount || 507)}
+                  {isLoading ? intify(507) : intify(data?.tweetsCount || 507)}
                   <span className={ks.className}>+</span>
                 </h1>
                 <p className="md:text-xl text-zinc-400 mx-auto text-center">tweets generated.</p>
@@ -77,7 +77,7 @@ const Landing = (): ReactElement => {
               <div className="flex flex-col items-center w-full px-4">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
                   {/* Last data from 26/09/2023 */}
-                  {isLoading ? intify(180) : intify(data?.usersCount || 186)}
+                  {isLoading ? intify(186) : intify(data?.usersCount || 186)}
                   <span className={ks.className}>+</span>
                 </h1>
                 <p className="md:text-xl text-zinc-400 mx-auto text-center">users registered.</p>
