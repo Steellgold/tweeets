@@ -19,9 +19,7 @@ import { z } from "zod";
 
 const BuyCredits = ({ showT = true } : { showT?: boolean }): ReactElement => {
   const { user } = useUserContext();
-
   const { data, isLoading } = useSwr<User>("/api/user", fetcher);
-
   const [isBuying, setIsBuying] = useState<50 | 100 | 300 | null>(null);
 
   const handleBuyCredits = async(type: 50 | 100 | 300): Promise<void> => {
