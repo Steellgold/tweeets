@@ -4,14 +4,14 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Twitter } from "lucide-react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator,
   DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { useEffect, type ReactElement } from "react";
+import { useEffect, type ReactElement, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
 import { useLocalStorage } from "usehooks-ts";
@@ -54,6 +54,11 @@ export const Navbar = (): ReactElement => {
     });
   };
 
+  const [onAppPage, setOnAppPage] = useState(false);
+  useEffect(() => {
+    setOnAppPage(window.location.pathname.includes("/app"));
+  }, []);
+
   return (
     <nav className={cn("mx-auto mt-3 flex max-w-screen-xl items-center justify-between px-5")} suppressHydrationWarning>
       <Link href={"/"}>
@@ -61,7 +66,11 @@ export const Navbar = (): ReactElement => {
       </Link>
 
       <div className="flex h-5 items-center space-x-2 text-sm">
-        <Feedback />
+        {onAppPage && <Feedback />}
+
+        <Link href={"/blog"} className={buttonVariants({ variant: "outline" })}>
+          Blog
+        </Link>
 
         {!user && (
           <Button variant={"twitter"} onClick={() => {

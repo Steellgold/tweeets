@@ -19,6 +19,7 @@ model User {
   invitedBy    String?
   invite       Invite?
   payments     Payments[]
+  posts        Posts[]
 
   // DATA FOR MODEL SHARING:
   pictureUrl String? @unique
@@ -170,4 +171,70 @@ model Payments {
   status      PAYMENT_STATUS @default(PENDING)
   email       String?
   invoiceUrl  String?
+}
+
+// 
+// BLOG
+//
+
+enum POST_RELEASE_STATUS {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+  TRASHED
+  ARCHIVED
+}
+
+model Tags {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique
+  slug      String   @unique
+  color     String?  @default("#000000")
+  posts     Posts[]
+}
+
+model Categories {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique
+  slug      String   @unique
+  posts     Posts[]
+}
+
+model Comments {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  email     String
+  content   String
+  post      Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+}
+
+model Posts {
+  id          String              @id @default(cuid())
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  title       String
+  slug        String              @unique
+  content     String
+  excerpt     String
+  status      POST_RELEASE_STATUS @default(DRAFT)
+  author      User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId    String
+  publishedAt DateTime?
+  tags        Tags[]
+  categories  Categories[]
+  comments    Comments[]
+  views       Int                 @default(0)
+  coverUrl    String?             @unique @default("https://media.discordapp.net/attachments/580083630995537961/1155988371018096761/Group_75_1_2.png")
+
+  // Settings
+  isCommentsEnabled Boolean @default(true)
+  isPublic          Boolean @default(true) // if false, only logged in users can see it
+  isPinned          Boolean @default(false)
 }
