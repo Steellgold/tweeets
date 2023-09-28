@@ -3,7 +3,7 @@ import CardSpotlight from "@/lib/components/ui/card-spotlight";
 import { intify } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
-import { AlarmClock, Dot, Glasses, MessagesSquare, Pin, Sparkles } from "lucide-react";
+import { AlarmClock, Dot, Glasses, MessagesSquare, Pin, Sparkles, Wand2 } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
@@ -40,7 +40,11 @@ const BlogCard = ({ comments, isPinned, slug, title, coverUrl, views, tags, exce
             <Badge
               key={tag.id}
               variant={"blogPost"}>
-              {tag.name == "AI" && <><Sparkles size={18} className="text-yellow-300" />&nbsp;<span className="text-yellow-300">{tag.name}</span></>}
+              {tag.id == "ai" && <><Sparkles size={18} className="text-yellow-300" />&nbsp;<span className="text-yellow-300">{tag.name}</span></>}
+              {tag.id == "release" && <>
+                <Wand2 size={18} className="text-emerald-300" />&nbsp;
+                <span className="text-emerald-300">{tag.name}</span>
+              </>}
             </Badge>
           ))}
         </div>

@@ -144,7 +144,7 @@ model Tweets {
 model Invite {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @default(now()) @updatedAt
   email      String   @unique
   used       Int      @default(0)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -188,17 +188,16 @@ enum POST_RELEASE_STATUS {
 model Tags {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
   name      String   @unique
   slug      String   @unique
-  color     String?  @default("#000000")
   posts     Posts[]
 }
 
 model Categories {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
   name      String   @unique
   slug      String   @unique
   posts     Posts[]
@@ -207,7 +206,7 @@ model Categories {
 model Comments {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
   name      String
   email     String
   content   String
@@ -218,7 +217,7 @@ model Comments {
 model Posts {
   id          String              @id @default(cuid())
   createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  updatedAt   DateTime            @default(now()) @updatedAt
   title       String
   slug        String              @unique
   content     String
