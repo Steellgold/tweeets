@@ -25,7 +25,7 @@ const BlogCard = ({ comments, isPinned, slug, title, coverUrl, views, tags, exce
     <Link href={`/blog/${slug}`}>
       <CardSpotlight
         className="w-full aspect-[8/5] bg-center"
-        style={{ backgroundImage: `url(${coverUrl})` }}>
+        style={{ backgroundImage: `url(${coverUrl ?? "/images/placeholder.png"})` }}>
         <div className="flex items-center justify-between">
           <div className="flex gap-2 items-center">
             {(!publishedAt || !testTime()) && isPinned && <Pin size={18} className="text-[#2da1e3]" fill="#2da1e3" />}
