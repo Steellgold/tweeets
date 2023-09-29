@@ -27,8 +27,6 @@ const BlogCard = ({
     return dayjs(publishedAt).isAfter(dayjs());
   };
 
-  console.log(defaultLang, variants);
-
   return (
     <Link href={`/blog/${slug}`}>
       <CardSpotlight
