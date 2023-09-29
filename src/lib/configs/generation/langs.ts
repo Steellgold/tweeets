@@ -3,40 +3,54 @@ import type { Lang as DBLang } from "@prisma/client";
 /* eslint-disable max-len */
 export type Lang = "id" | "da" | "de" | "en-GB" | "en-US" | "es-ES" | "fr" | "hr" | "it" | "lt" | "hu" | "nl" | "no" | "pl" | "pt-BR" | "ro" | "fi" | "sv-SE" | "vi" | "tr" | "cs" | "el" | "bg" | "ru" | "uk" | "hi" | "th" | "zh-CN" | "ja" | "zh-TW" | "ko" | "ar";
 
-export const langs = [
-  { key: "id", value: "Indonesian" },
-  { key: "da", value: "Danish" },
-  { key: "de", value: "German" },
-  { key: "en-GB", value: "English, UK" },
-  { key: "en-US", value: "English, US" },
-  { key: "es-ES", value: "Spanish" },
-  { key: "fr", value: "French" },
-  { key: "hr", value: "Croatian" },
-  { key: "it", value: "Italian" },
-  { key: "lt", value: "Lithuanian" },
-  { key: "hu", value: "Hungarian" },
-  { key: "nl", value: "Dutch" },
-  { key: "no", value: "Norwegian" },
-  { key: "pl", value: "Polish" },
-  { key: "pt-BR", value: "Portuguese, Brazilian" },
-  { key: "ro", value: "Romanian, Romania" },
-  { key: "fi", value: "Finnish" },
-  { key: "sv-SE", value: "Swedish" },
-  { key: "vi", value: "Vietnamese" },
-  { key: "tr", value: "Turkish" },
-  { key: "cs", value: "Czech" },
-  { key: "el", value: "Greek" },
-  { key: "bg", value: "Bulgarian" },
-  { key: "ru", value: "Russian" },
-  { key: "uk", value: "Ukrainian" },
-  { key: "hi", value: "Hindi" },
-  { key: "th", value: "Thai" },
-  { key: "zh-CN", value: "Chinese, China" },
-  { key: "ja", value: "Japanese" },
-  { key: "zh-TW", value: "Chinese, Taiwan" },
-  { key: "ko", value: "Korean" },
-  { key: "ar", value: "Arabic" }
+type Langs= {
+  key: Lang;
+  value: string;
+  nav: string[];
+}
+
+export const langs: Langs[] = [
+  { key: "id", value: "Indonesian", nav: ["id", "in"] },
+  { key: "da", value: "Danish", nav: ["da", "dk"] },
+  { key: "de", value: "German", nav: ["de", "de-DE", "de-AT", "de-CH", "de-LU"] },
+  { key: "en-GB", value: "English, UK", nav: ["en-GB", "en-UK"] },
+  { key: "en-US", value: "English, US", nav: ["en-US", "en"] },
+  { key: "es-ES", value: "Spanish", nav: ["es-ES", "es"] },
+  { key: "fr", value: "French", nav: ["fr", "fr-FR", "fr-CA"] },
+  { key: "hr", value: "Croatian", nav: ["hr", "hr-HR"] },
+  { key: "it", value: "Italian", nav: ["it", "it-IT", "it-CH"] },
+  { key: "lt", value: "Lithuanian", nav: ["lt", "lt-LT"] },
+  { key: "hu", value: "Hungarian", nav: ["hu", "hu-HU"] },
+  { key: "nl", value: "Dutch", nav: ["nl", "nl-NL", "nl-BE"] },
+  { key: "no", value: "Norwegian", nav: ["no", "no-NO"] },
+  { key: "pl", value: "Polish", nav: ["pl", "pl-PL"] },
+  { key: "pt-BR", value: "Portuguese, Brazilian", nav: ["pt-BR", "pt"] },
+  { key: "ro", value: "Romanian, Romania", nav: ["ro", "ro-RO"] },
+  { key: "fi", value: "Finnish", nav: ["fi", "fi-FI"] },
+  { key: "sv-SE", value: "Swedish", nav: ["sv-SE", "sv"] },
+  { key: "vi", value: "Vietnamese", nav: ["vi", "vi-VN"] },
+  { key: "tr", value: "Turkish", nav: ["tr", "tr-TR"] },
+  { key: "cs", value: "Czech", nav: ["cs", "cs-CZ"] },
+  { key: "el", value: "Greek", nav: ["el", "el-GR"] },
+  { key: "bg", value: "Bulgarian", nav: ["bg", "bg-BG"] },
+  { key: "ru", value: "Russian", nav: ["ru", "ru-RU"] },
+  { key: "uk", value: "Ukrainian", nav: ["uk", "uk-UA"] },
+  { key: "hi", value: "Hindi", nav: ["hi", "hi-IN"] },
+  { key: "th", value: "Thai", nav: ["th", "th-TH"] },
+  { key: "zh-CN", value: "Chinese, China", nav: ["zh-CN", "zh-Hans-CN", "zh"] },
+  { key: "ja", value: "Japanese", nav: ["ja", "ja-JP"] },
+  { key: "zh-TW", value: "Chinese, Taiwan", nav: ["zh-TW", "zh-Hant-TW"] },
+  { key: "ko", value: "Korean", nav: ["ko", "ko-KR"] },
+  { key: "ar", value: "Arabic", nav: ["ar", "ar-SA", "ar-AE", "ar-QA", "ar-KW"] }
 ];
+
+export const isLanguageSupported = (languageCode: string): boolean => {
+  return langs.some(l => l.nav.includes(languageCode));
+};
+
+export const getLangKeyByNav = (nav: string): Lang => {
+  return langs.find(l => l.nav.includes(nav))?.key || "en-US";
+};
 
 export const getLang = (lang: string): string => {
   return langs.find(l => l.key === lang)?.value || "Detect the langage";

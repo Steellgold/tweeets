@@ -1,5 +1,6 @@
 import { Badge } from "@/lib/components/ui/badge";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
+import type { Lang } from "@/lib/configs/generation/langs";
 import { cn, intify } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
@@ -14,13 +15,19 @@ type BlogPostProps = Prisma.PostsGetPayload<{
     tags: true;
     categories: true;
     comments: true;
+    variants: true;
   };
-}>;
+}> & {
+  defaultLang: Lang;
+};
 
-const BlogCard = ({ comments, isPinned, slug, title, coverUrl, views, tags, excerpt, publishedAt }: BlogPostProps): ReactElement => {
+const BlogCard = ({
+  comments, isPinned, slug, title, coverUrl, views, tags, excerpt, publishedAt, defaultLang, variants }: BlogPostProps): ReactElement => {
   const testTime = (): boolean => {
     return dayjs(publishedAt).isAfter(dayjs());
   };
+
+  console.log(defaultLang, variants);
 
   return (
     <Link href={`/blog/${slug}`}>
@@ -56,11 +63,11 @@ const BlogCard = ({ comments, isPinned, slug, title, coverUrl, views, tags, exce
           )}
         </div>
         <Title
-          title={title}
+          title={variants?.find((variant) => variant.lang == defaultLang)?.title ?? title}
           // author={{ username: author.username, avatarUrl: author.pictureUrl || null }}
           comments={(comments ?? []).length}
           views={views ?? 0}
-          excerpt={excerpt} />
+          excerpt={variants?.find((variant) => variant.lang == defaultLang)?.excerpt ?? excerpt} />
       </CardSpotlight>
     </Link>
   );

@@ -12,6 +12,7 @@ import { cn, intify } from "@/lib/utils";
 import Link from "next/link";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils/fetcher";
+import TitleAndSubTitle from "@/lib/components/ui/title/with-sub";
 
 const ks = Kaushan_Script({ style: "normal", weight: "400", subsets: ["latin"] });
 
@@ -37,16 +38,10 @@ const Landing = (): ReactElement => {
         </span>
 
         <div className="flex flex-col items-center w-full px-4">
-          <h1 className={cn(
-            "text-2xl font-bold tracking-tighter sm:text-5xl xl:text-6xl bg-clip-text text-transparent",
-            "bg-gradient-to-r from-zinc-500 via-zinc-300 to-zinc-500 h-full text-center py-3"
-          )}>
-            Revolutionize the way you tweet.
-          </h1>
-
-          <p className="md:text-xl text-zinc-400 mx-auto w-[75%] text-center">
-            Tweeets is a new way to tweet. Write your tweets in a distraction-free environment, and save them for later.
-          </p>
+          <TitleAndSubTitle
+            title="Revolutionize the way you tweet."
+            subtitle="Tweeets is a new way to tweet. Write your tweets in a distraction-free environment, and save them for later."
+            type="default" />
         </div>
 
         <Link href="/app" className={cn(

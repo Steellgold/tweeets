@@ -231,9 +231,23 @@ model Posts {
   comments    Comments[]
   views       Int                 @default(0)
   coverUrl    String?             @unique @default("https://media.discordapp.net/attachments/580083630995537961/1155988371018096761/Group_75_1_2.png")
+  variants    PostVariants[]
+  lang        Lang                @default(en_US)
 
   // Settings
   isCommentsEnabled Boolean @default(true)
   isPublic          Boolean @default(true) // if false, only logged in users can see it
   isPinned          Boolean @default(false)
+}
+
+model PostVariants {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  original   Posts    @relation(fields: [originalId], references: [id], onDelete: Cascade)
+  originalId String
+  lang       Lang     @default(fr)
+  title      String
+  excerpt    String
+  content    String
 }
