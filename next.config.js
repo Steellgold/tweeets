@@ -5,7 +5,8 @@ const nextConfig = {
     domains: [
       "pbs.twimg.com",
       "whkqhlphynegzuexnlyn.supabase.co",
-      "zjgobltabsqjifgmzopa.supabase.co"
+      "zjgobltabsqjifgmzopa.supabase.co",
+      "media.discordapp.net"
     ],
   }
 }

@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { Button, buttonVariants } from "../ui/button";
-import { Twitter } from "lucide-react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
@@ -18,6 +17,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { toast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 import { Feedback } from "./feedback";
+import { LoginWithTwitter } from "./login-with-twitter";
 
 export const Navbar = (): ReactElement => {
   const supabase = createClientComponentClient();
@@ -26,6 +26,8 @@ export const Navbar = (): ReactElement => {
   const [vreleased, setVReleased] = useLocalStorage<string>("v2-released", "v1");
 
   useEffect(() => {
+    if (!user) return;
+
     if (vreleased === null || vreleased !== "v2") {
       void supabase.auth.signOut().then(() => {
         toast({
@@ -37,7 +39,7 @@ export const Navbar = (): ReactElement => {
         setVReleased("v2");
       });
     }
-  }, [vreleased, setVReleased, setUser, supabase.auth]);
+  }, [user, supabase.auth, setUser, vreleased, setVReleased]);
 
   const toggleAutoSaveTweets = (): void => {
     setIsAutoSaveTweets((prev) => !prev);
@@ -72,16 +74,7 @@ export const Navbar = (): ReactElement => {
           Blog
         </Link>
 
-        {!user && (
-          <Button variant={"twitter"} onClick={() => {
-            void supabase.auth.signInWithOAuth({ provider: "twitter", options: {
-              redirectTo: `${window.location.origin}/auth/callback`
-            } });
-          }}>
-            <Twitter size={20} className="mr-2 text-white fill-current" />
-            &nbsp;Login with Twitter
-          </Button>
-        )}
+        {!user && <LoginWithTwitter />}
 
         {user == "loading" && (
           <div className="flex items-center space-x-4">

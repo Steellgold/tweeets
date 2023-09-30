@@ -4,10 +4,9 @@ import type { Lang } from "@/lib/configs/generation/langs";
 import { cn, intify } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";
-import { AlarmClock, Dot, Glasses, MessagesSquare, Pin, Sparkles, Wand2 } from "lucide-react";
+import { AlarmClock, Dot, Glasses, Lock, MessagesSquare, Pin, Sparkles, Wand2 } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
 
 type BlogPostProps = Prisma.PostsGetPayload<{
   include: {
@@ -22,7 +21,7 @@ type BlogPostProps = Prisma.PostsGetPayload<{
 };
 
 const BlogCard = ({
-  comments, isPinned, slug, title, coverUrl, views, tags, excerpt, publishedAt, defaultLang, variants }: BlogPostProps): ReactElement => {
+  comments, isPinned, isPublic, slug, title, coverUrl, views, tags, excerpt, publishedAt, defaultLang, variants }: BlogPostProps): ReactElement => {
   const testTime = (): boolean => {
     return dayjs(publishedAt).isAfter(dayjs());
   };
@@ -62,9 +61,9 @@ const BlogCard = ({
         </div>
         <Title
           title={variants?.find((variant) => variant.lang == defaultLang)?.title ?? title}
-          // author={{ username: author.username, avatarUrl: author.pictureUrl || null }}
           comments={(comments ?? []).length}
           views={views ?? 0}
+          isPublic={isPublic}
           excerpt={variants?.find((variant) => variant.lang == defaultLang)?.excerpt ?? excerpt} />
       </CardSpotlight>
     </Link>
@@ -76,13 +75,10 @@ type BlogCardTitleProps = {
   excerpt: string;
   comments: number;
   views: number;
-  // author: {
-  //   username: string;
-  //   avatarUrl: string | null;
-  // };
+  isPublic?: boolean;
 };
 
-const Title = ({ title, comments, views, excerpt  }: BlogCardTitleProps): ReactElement => {
+const Title = ({ title, comments, views, excerpt, isPublic  }: BlogCardTitleProps): ReactElement => {
   return (
     <div className="absolute bottom-4 flex flex-col px-2 gap-2">
       <div className="flex flex-col">
@@ -90,14 +86,6 @@ const Title = ({ title, comments, views, excerpt  }: BlogCardTitleProps): ReactE
         <span className="flex items-center text-xs md:text-sm text-zinc-400 line-clamp-2">{excerpt}</span>
       </div>
       <div className="flex gap-2 text-sm text-zinc-400 items-center">
-        {/* <span className="flex gap-2 items-center">
-          <Avatar className="w-5 h-5">
-            <AvatarImage src={author.avatarUrl ?? "/images/placeholder.png"} />
-            <AvatarFallback>{author.username.slice(0, 2)}</AvatarFallback>
-          </Avatar>
-          {author.username}
-        </span>
-        <Dot size={16} className="text-zinc-500" /> */}
         <span className="flex gap-1 items-center">
           <MessagesSquare size={18} className="text-zinc-500" />&nbsp;
           {comments} comments
@@ -107,6 +95,14 @@ const Title = ({ title, comments, views, excerpt  }: BlogCardTitleProps): ReactE
           <Glasses size={18} className="text-zinc-500" />&nbsp;
           {intify(views)} views
         </span>
+        {!isPublic && (
+          <>
+            <Dot size={16} className="text-zinc-500" />
+            <span className="flex gap-1 items-center">
+              <Lock size={16} className="text-zinc-500" />&nbsp;
+            </span>
+          </>
+        )}
       </div>
     </div>
   );

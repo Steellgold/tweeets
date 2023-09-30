@@ -1,8 +1,12 @@
 import { prisma } from "@/lib/utils/database";
+import type { Database } from "@/lib/utils/supabase";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export const GET = async(req: NextRequest): Promise<NextResponse> => {
+  const supabase = createRouteHandlerClient<Database>({ cookies });
   const url = new URL(req.nextUrl);
   const slug = url.searchParams.get("slug");
 
@@ -21,16 +25,14 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
   };
 
   if (slug) {
-    return NextResponse.json(await prisma.posts.findFirst({
-      ...include,
-      where: { slug }
-    }));
+    await prisma.posts.update({ where: { slug }, data: { views: { increment: 1 } } });
+    const post = await prisma.posts.findFirst({ ...include,  where: { slug } });
+    if (!post) return NextResponse.json({ status: 404 });
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!post.isPublic && !user) return NextResponse.json({ ...post, content: null, comments: null, variants: null });
+    return NextResponse.json(post);
   }
 
-  return NextResponse.json(await prisma.posts.findMany({
-    ...include,
-    orderBy: {
-      createdAt: "desc"
-    }
-  }));
+  return NextResponse.json(await prisma.posts.findMany({ ...include, orderBy: { createdAt: "desc" } }));
 };

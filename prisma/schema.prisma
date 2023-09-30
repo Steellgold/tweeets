@@ -20,6 +20,7 @@ model User {
   invite       Invite?
   payments     Payments[]
   posts        Posts[]
+  comments     Comments[]
 
   // DATA FOR MODEL SHARING:
   pictureUrl String? @unique
@@ -207,9 +208,9 @@ model Comments {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  name      String
-  email     String
   content   String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
   post      Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
 }
