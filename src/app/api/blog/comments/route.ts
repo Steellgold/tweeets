@@ -19,21 +19,14 @@ export const POST = async(req: NextRequest): Promise<NextResponse> => {
   if (!schema.success) return NextResponse.json({ error: schema.error }, { status: 400 });
   const { content, postID } = schema.data;
 
-  await prisma.comments.create({
+  const comment = await prisma.comments.findFirst({ where: { postId: postID, authorId: user.id } });
+  if (comment) return NextResponse.json({ error: "You have already commented on this post" }, { status: 400 });
+
+  return NextResponse.json(await prisma.comments.create({
     data: {
       content,
-      post: {
-        connect: {
-          id: postID
-        }
-      },
-      author: {
-        connect: {
-          id: user.id
-        }
-      }
+      post: { connect: { id: postID } },
+      author: { connect: { id: user.id } }
     }
-  });
-
-  return NextResponse.json({ message: "Comment created" }, { status: 201 });
+  }), { status: 200 });
 };

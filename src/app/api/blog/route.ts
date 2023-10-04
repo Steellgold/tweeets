@@ -19,7 +19,7 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
       },
       tags: true,
       categories: true,
-      comments: true,
+      comments: { include: { author: { include: { posts: false } } } },
       variants: true
     }
   };
@@ -34,5 +34,6 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
     return NextResponse.json(post);
   }
 
-  return NextResponse.json(await prisma.posts.findMany({ ...include, orderBy: { createdAt: "desc" } }));
+  const postByPinned = await prisma.posts.findMany({ ...include, orderBy: { createdAt: "desc" } });
+  return NextResponse.json(postByPinned.sort((a, b) => Number(b.isPinned ? 1 : 0) - Number(a.isPinned ? 1 : 0)));
 };

@@ -231,7 +231,7 @@ model Posts {
   categories  Categories[]
   comments    Comments[]
   views       Int                 @default(0)
-  coverUrl    String?             @unique @default("https://media.discordapp.net/attachments/580083630995537961/1155988371018096761/Group_75_1_2.png")
+  coverUrl    String?             @default("https://media.discordapp.net/attachments/580083630995537961/1155988371018096761/Group_75_1_2.png")
   variants    PostVariants[]
   lang        Lang                @default(en_US)
 
