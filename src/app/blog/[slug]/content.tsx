@@ -15,7 +15,6 @@ import Image from "next/image";
 import { useState, type ReactElement, useEffect } from "react";
 import dayjs from "dayjs";
 import BlogComments from "./comments";
-import { useFetch } from "usehooks-ts";
 import { Badge } from "@/lib/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -29,15 +28,8 @@ type BlogPostProps = Prisma.PostsGetPayload<{
   };
 }>;
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
-
-const BlogContent = ({ params }: PageProps): ReactElement => {
+const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
   const { user } = useUserContext();
-  const { data, error } = useFetch<BlogPostProps>(`${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`);
   const [browserLanguage, setBrowserLanguage] = useState<Lang | null>(null);
 
   useEffect(() => {
@@ -47,9 +39,9 @@ const BlogContent = ({ params }: PageProps): ReactElement => {
     }
   }, []);
 
-  if (!data) return <></>;
+  if (!post) return <></>;
 
-  if (!data || error) return (
+  if (!post) return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10 mb-10" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center">
         <div className="flex flex-col items-center w-full px-4">
@@ -59,22 +51,22 @@ const BlogContent = ({ params }: PageProps): ReactElement => {
     </div>
   );
 
-  if (!user && !data.isPublic) return (
+  if (!user && !post.isPublic) return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center mb-10 px-4">
         <CardSpotlight hoverEffect={false}>
-          <Image src={data?.coverUrl ?? "/images/placeholder.png"} alt="Tweeets Blog" width={900} height={600} className="rounded-md" />
+          <Image src={post.coverUrl ?? "/images/placeholder.png"} alt="Tweeets Blog" width={900} height={600} className="rounded-md" />
         </CardSpotlight>
         <div className="flex flex-col items-center w-full px-4 mt-3">
           <TitleAndSubTitle
-            title={data?.variants
-              ? data?.variants.find((variant) => variant.lang == browserLanguage)?.title ?? data?.title ?? "No title"
-              : data?.title ?? "No title"
+            title={post.variants
+              ? post.variants.find((variant) => variant.lang == browserLanguage)?.title ?? post.title ?? "No title"
+              : post.title ?? "No title"
             }
 
-            subtitle={data?.variants
-              ? data?.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? data?.excerpt ?? "No excerpt"
-              : data?.excerpt ?? "No excerpt"
+            subtitle={post.variants
+              ? post.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? post.excerpt ?? "No excerpt"
+              : post.excerpt ?? "No excerpt"
             }
             type="default"
             subtitleSize={100} />
@@ -97,12 +89,12 @@ const BlogContent = ({ params }: PageProps): ReactElement => {
       <div className="mx-auto flex flex-col items-center justify-center md:max-w-screen-2xl mt-10" suppressHydrationWarning>
         <div className="flex flex-col items-center justify-center mb-10 px-4">
           <CardSpotlight hoverEffect={false} className="mb-3">
-            <Image src={data?.coverUrl ?? "/images/placeholder.png"} alt="Tweeets Blog" width={900} height={600} className="rounded-md" />
+            <Image src={post.coverUrl ?? "/images/placeholder.png"} alt="Tweeets Blog" width={900} height={600} className="rounded-md" />
           </CardSpotlight>
           <div className="flex flex-col items-center w-full px-4 mt-3">
-            {data.tags && data.tags.length > 0 && (
+            {post.tags && post.tags.length > 0 && (
               <div className="flex gap-2 items-center">
-                {data.tags && data.tags.map((tag) => (
+                {post.tags && post.tags.map((tag) => (
                   <Badge
                     key={tag.id}
                     variant={"blogPost"}
@@ -120,34 +112,34 @@ const BlogContent = ({ params }: PageProps): ReactElement => {
             <div className="flex items-center gap-2 mt-3">
               <span className="flex items-center text-muted-foreground">
                 <Avatar className="w-5 h-5">
-                  {data?.author.pictureUrl ? (
-                    <AvatarImage src={data?.author.pictureUrl} />
+                  {post.author.pictureUrl ? (
+                    <AvatarImage src={post.author.pictureUrl} />
                   ) : (
                     <AvatarFallback>@</AvatarFallback>
                   )}
                   <AvatarFallback>@</AvatarFallback>
                 </Avatar>
-                <span className="ml-2">{data?.author.username}</span>
+                <span className="ml-2">{post.author.username}</span>
               </span>
               <Dot size={18} className="text-muted-foreground" />
               <span className="text-muted-foreground">
-                {dayjs(data?.createdAt).format("DD MMMM YYYY")}
+                {dayjs(post.createdAt).format("DD MMMM YYYY")}
               </span>
               <Dot size={18} className="text-muted-foreground" />
               <span className="text-muted-foreground">
-                {data?.views ?? 0} views
+                {post.views ?? 0} views
               </span>
             </div>
 
             <TitleAndSubTitle
-              title={data?.variants
-                ? data?.variants.find((variant) => variant.lang == browserLanguage)?.title ?? data?.title ?? "No title"
-                : data?.title ?? "No title"
+              title={post.variants
+                ? post.variants.find((variant) => variant.lang == browserLanguage)?.title ?? post.title ?? "No title"
+                : post.title ?? "No title"
               }
 
-              subtitle={data?.variants
-                ? data?.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? data?.excerpt ?? "No excerpt"
-                : data?.excerpt ?? "No excerpt"
+              subtitle={post.variants
+                ? post.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? post.excerpt ?? "No excerpt"
+                : post.excerpt ?? "No excerpt"
               }
               type="default"
               subtitleSize={100} />
@@ -156,12 +148,12 @@ const BlogContent = ({ params }: PageProps): ReactElement => {
 
         <div className="flex flex-col items-center w-full px-4 mt-3 mb-10">
           <Markdown
-            source={data?.variants.find((variant) => variant.lang == browserLanguage)?.content ?? data?.content ?? "No content"}
+            source={post.variants.find((variant) => variant.lang == browserLanguage)?.content ?? post.content ?? "No content"}
             className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />
         </div>
       </div>
 
-      <BlogComments slug={params.slug} />
+      <BlogComments slug={post.slug} />
     </>
   );
 };
