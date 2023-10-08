@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      site: "https://tweeets.app",
+      site: `https://tweeets.app/blog/${post.slug}`,
       title: post.title,
       description: post.excerpt,
       creator: `@${post.author.arobase}`,
