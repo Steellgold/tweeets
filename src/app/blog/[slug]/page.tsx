@@ -33,6 +33,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.excerpt,
+    publisher: "Tweeets",
+    abstract: post.excerpt,
+    applicationName: "Tweeets",
+    keywords: post.tags.map((tag) => tag.name),
+    authors: [{
+      name: post.author.username,
+      url: `https://x.com/${post.author.arobase}`
+    }],
     openGraph: {
       type: "article",
       publishedTime: dayjs(post.publishedAt).toString(),
@@ -49,6 +57,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: post.title
         }
       ]
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@tweeetsapp",
+      title: post.title,
+      description: post.excerpt,
+      creator: `@${post.author.arobase}`,
+      images: [{
+        url: post.coverUrl ?? "/images/placeholder.png",
+        width: 900,
+        height: 600,
+        alt: post.title
+      }]
     }
   };
 }
