@@ -34,22 +34,14 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
 
   useEffect(() => {
     if (navigator && navigator.language) {
-      if (isLanguageSupported(navigator.language)) return setBrowserLanguage(getLangKeyByNav(navigator.language));
+      if (isLanguageSupported(navigator.language)) {
+        return setBrowserLanguage(getLangKeyByNav(navigator.language));
+      }
       setBrowserLanguage("en-US");
     }
   }, []);
 
-  if (!post) return <p>cc</p>;
-
-  if (!post) return (
-    <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10 mb-10" suppressHydrationWarning>
-      <div className="flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center w-full px-4">
-          <TitleAndSubTitle title="404" subtitle="This blog post does not exist." type="error" subtitleSize={100} />
-        </div>
-      </div>
-    </div>
-  );
+  if (!post) return <p>Loading (If this takes too long, please refresh the page)</p>;
 
   if (!user && !post.isPublic) return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10" suppressHydrationWarning>
@@ -148,7 +140,10 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
 
         <div className="flex flex-col items-center w-full px-4 mt-3 mb-10">
           <Markdown
-            source={post.variants.find((variant) => variant.lang == browserLanguage)?.content ?? post.content ?? "No content"}
+            source={post.variants
+              ? post.variants.find((variant) => variant.lang == browserLanguage)?.content ?? post.content ?? "No content"
+              : post.content ?? "No content"
+            }
             className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />
         </div>
       </div>

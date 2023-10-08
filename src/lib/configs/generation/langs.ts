@@ -49,7 +49,7 @@ export const isLanguageSupported = (languageCode: string): boolean => {
 };
 
 export const getLangKeyByNav = (nav: string): Lang => {
-  return langs.find(l => l.nav.includes(nav))?.key || "en-US";
+  return langs.find((l: Langs) => l.nav.includes(nav))?.key || "en-US";
 };
 
 export const getLang = (lang: string): string => {

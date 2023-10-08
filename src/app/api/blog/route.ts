@@ -26,7 +26,6 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
   };
 
   if (slug) {
-    console.log(eai);
     if (!eai) await prisma.posts.update({ where: { slug }, data: { views: { increment: 1 } } });
     const post = await prisma.posts.findFirst({ ...include,  where: { slug } });
     if (!post) return NextResponse.json({ status: 404 });
