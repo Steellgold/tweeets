@@ -6,8 +6,8 @@ import { Card } from "@/lib/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/lib/components/ui/avatar";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
 import TitleAndSubTitle from "@/lib/components/ui/title/with-sub";
-import type { Lang } from "@/lib/configs/generation/langs";
-import { getLangKeyByNav, isLanguageSupported } from "@/lib/configs/generation/langs";
+import type { Lang } from "@prisma/client";
+import { getLangKeyByNav, isLanguageSupported, stringToLang } from "@/lib/configs/generation/langs";
 import { useUserContext } from "@/lib/contexts/UserProvider";
 import { Dot, Sparkles, Wand2 } from "lucide-react";
 import type { Prisma } from "@prisma/client";
@@ -35,9 +35,11 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
   useEffect(() => {
     if (navigator && navigator.language) {
       if (isLanguageSupported(navigator.language)) {
-        return setBrowserLanguage(getLangKeyByNav(navigator.language));
+        console.log(getLangKeyByNav(navigator.language));
+        setBrowserLanguage(stringToLang(getLangKeyByNav(navigator.language)));
+        return;
       }
-      setBrowserLanguage("en-US");
+      setBrowserLanguage("en_US");
     }
   }, []);
 
@@ -52,12 +54,12 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
         <div className="flex flex-col items-center w-full px-4 mt-3">
           <TitleAndSubTitle
             title={post.variants
-              ? post.variants.find((variant) => variant.lang == browserLanguage)?.title ?? post.title ?? "No title"
+              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.title ?? post.title ?? "No title"
               : post.title ?? "No title"
             }
 
             subtitle={post.variants
-              ? post.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? post.excerpt ?? "No excerpt"
+              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.excerpt ?? post.excerpt ?? "No excerpt"
               : post.excerpt ?? "No excerpt"
             }
             type="default"
@@ -125,12 +127,12 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
 
             <TitleAndSubTitle
               title={post.variants
-                ? post.variants.find((variant) => variant.lang == browserLanguage)?.title ?? post.title ?? "No title"
+                ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.title ?? post.title ?? "No title"
                 : post.title ?? "No title"
               }
 
               subtitle={post.variants
-                ? post.variants.find((variant) => variant.lang == browserLanguage)?.excerpt ?? post.excerpt ?? "No excerpt"
+                ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.excerpt ?? post.excerpt ?? "No excerpt"
                 : post.excerpt ?? "No excerpt"
               }
               type="default"
@@ -141,7 +143,7 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
         <div className="flex flex-col items-center w-full px-4 mt-3 mb-10">
           <Markdown
             source={post.variants
-              ? post.variants.find((variant) => variant.lang == browserLanguage)?.content ?? post.content ?? "No content"
+              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.content ?? post.content ?? "No content"
               : post.content ?? "No content"
             }
             className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />

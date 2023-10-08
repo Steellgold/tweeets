@@ -1,6 +1,6 @@
 import { Badge } from "@/lib/components/ui/badge";
 import CardSpotlight from "@/lib/components/ui/card-spotlight";
-import type { Lang } from "@/lib/configs/generation/langs";
+import type { Lang } from "@prisma/client";
 import { cn, intify } from "@/lib/utils";
 import type { Prisma } from "@prisma/client";
 import dayjs from "dayjs";

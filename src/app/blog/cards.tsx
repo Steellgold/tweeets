@@ -4,8 +4,8 @@ import type { Prisma } from "@prisma/client";
 import { useEffect, type ReactElement, useState } from "react";
 import BlogCard from "./card";
 import { cn } from "@/lib/utils";
-import type { Lang } from "@/lib/configs/generation/langs";
-import { getLangKeyByNav, isLanguageSupported } from "@/lib/configs/generation/langs";
+import type { Lang } from "@prisma/client";
+import { getLangKeyByNav, isLanguageSupported, stringToLang } from "@/lib/configs/generation/langs";
 
 type BlogPostsProps = Prisma.PostsGetPayload<{
   include: {
@@ -26,8 +26,8 @@ const BlogPosts = ({ data }: { data: BlogPostsProps[] }): ReactElement => {
 
   useEffect(() => {
     if (navigator && navigator.language) {
-      if (isLanguageSupported(navigator.language)) return setBrowserLanguage(getLangKeyByNav(navigator.language));
-      setBrowserLanguage("en-US");
+      if (isLanguageSupported(navigator.language)) return setBrowserLanguage(stringToLang(getLangKeyByNav(navigator.language)));
+      setBrowserLanguage("en_US");
     }
   }, []);
 
@@ -62,7 +62,7 @@ const BlogPosts = ({ data }: { data: BlogPostsProps[] }): ReactElement => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {data && data.map((post) => (
-                <BlogCard key={post.id} {...post} defaultLang={browserLanguage ?? "en-US"} />
+                <BlogCard key={post.id} {...post} defaultLang={browserLanguage ?? "en_US"} />
               ))}
             </div>
           </div>
