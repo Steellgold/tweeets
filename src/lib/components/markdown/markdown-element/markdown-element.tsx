@@ -8,6 +8,7 @@ import { MDHeading } from "../elements/md-heading";
 import { MDCode } from "../elements/md-code";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 export const MarkdownElement: Component<MarkdownElementProps> = ({ element, parent = null }) => {
   if (parent) {
@@ -24,12 +25,7 @@ export const MarkdownElement: Component<MarkdownElementProps> = ({ element, pare
 
     if (parent.type === "paragraph") {
       if (element.type === "strong" && element.children[0].type === "text") {
-        return <strong className="font-bold text-white"
-        >{element.children[0].value}</strong>;
-      }
-
-      if (element.type === "emphasis" && element.children[0].type === "text") {
-        return <em>{element.children[0].value}</em>;
+        return <strong className="font-bold text-white">{element.children[0].value}</strong>;
       }
 
       if (element.type === "link" && element.children[0].type === "text") {
@@ -41,8 +37,22 @@ export const MarkdownElement: Component<MarkdownElementProps> = ({ element, pare
         );
       }
 
+      if (element.type === "link" && element.children[0].children[0].type === "text") {
+        return (
+          <Link href={element.url} target="_blank" className="text-white no-underline hover:underline inline-block">
+            <span>{element.children[0].value}</span>
+            <ExternalLink className="text-white inline-block ml-1" size={16} />
+          </Link>
+        );
+      }
+
       if (element.type === "image") {
-        return <img src={element.url} alt={element.alt ?? ""} className="lg:max-w-3xl mx-auto my-10 rounded" />;
+        return <Image
+          src={element.url}
+          alt={element.alt ?? ""}
+          className="lg:max-w-3xl mx-auto my-10 rounded"
+          width={element.width ?? 900}
+          height={element.height ?? 600} />;
       }
 
       if (element.type === "text") {
@@ -70,7 +80,7 @@ export const MarkdownElement: Component<MarkdownElementProps> = ({ element, pare
           {element.children.map((child, i) => {
             if (child.type === "paragraph") {
               return (
-                <li key={i} className="text-muted-foreground">
+                <li key={i} className="text-muted-foreground -mt-2 -ml-5">
                   <MarkdownElement element={child} />
                 </li>
               );
@@ -81,6 +91,17 @@ export const MarkdownElement: Component<MarkdownElementProps> = ({ element, pare
             }
           })}
         </>
+      );
+    }
+
+    if (element.type == "paragraph" && (element.children[0].type === "link" && element.children[0].children[0].type === "text")) {
+      return (
+        <p className="text-muted-foreground">
+          {/* @ts-ignore */}
+          {element.children.map((child, i) => (
+            <MarkdownElement key={i} parent={element} element={child} />
+          ))}
+        </p>
       );
     }
 
