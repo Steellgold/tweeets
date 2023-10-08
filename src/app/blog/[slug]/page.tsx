@@ -35,8 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.excerpt,
     openGraph: {
       type: "article",
-      publishedTime: dayjs(post.publishedAt).toISOString(),
-      modifiedTime: dayjs(post.updatedAt).toISOString(),
+      publishedTime: dayjs(post.publishedAt).toString(),
+      modifiedTime: dayjs(post.updatedAt).toString(),
+      tags: post.tags.map((tag) => tag.name),
       title: post.title,
       description: post.excerpt,
       url: `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/blog/${post.slug}`,
