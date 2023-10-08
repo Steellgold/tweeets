@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import BlogContent from "./content";
 import type { Prisma } from "@prisma/client";
+import type { Metadata } from "next";
 
 type PageProps = {
   params: {
@@ -17,6 +18,32 @@ type BlogPostProps = Prisma.PostsGetPayload<{
     variants: true;
   };
 }>;
+
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await fetch(
+    `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`
+  ).then((res) => res.json()) as BlogPostProps;
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      images: [
+        {
+          url: post.coverUrl ?? "/images/placeholder.png",
+          width: 900,
+          height: 600,
+          alt: post.title
+        }
+      ]
+    }
+  };
+}
 
 const Blog = async({ params }: PageProps): Promise<ReactElement> => {
   const data = await fetch(
