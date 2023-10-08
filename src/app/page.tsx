@@ -7,7 +7,7 @@ import { buttonVariants } from "@/lib/components/ui/button";
 import { Badge } from "@/lib/components/ui/badge";
 import { Kaushan_Script } from "next/font/google";
 import type { ReactElement } from "react";
-import { PenSquare } from "lucide-react";
+import { ChevronRight, PenSquare } from "lucide-react";
 import { cn, intify } from "@/lib/utils";
 import Link from "next/link";
 import useSWR from "swr";
@@ -28,14 +28,21 @@ const Landing = (): ReactElement => {
   return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center mb-10">
-        <span className="relative inline-block w-fit mx-auto overflow-hidden rounded-full p-[1px]">
-          <span className="absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#71717a_0%,#27272a_50%,#71717a_100%)]" />
-          <div className={cn(
-            "flex gap-1 h-full w-full items-center justify-center rounded-full bg-zinc-950 px-3 py-1 text-sm text-zinc-200 backdrop-blur-3xl"
-          )}>
-            <p>Tweeets now work with a credit system.</p>
-          </div>
-        </span>
+        <Link href="/blog/supabase-ai-content-storm" prefetch>
+          <span className="relative group inline-block w-fit mx-auto overflow-hidden rounded-full p-[1px]">
+            <span className={cn(
+              "absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#71717a_0%,#27272a_50%,#71717a_100%)]",
+              "animate-spin duration-700 rounded-full group-hover:animate-none"
+            )} />
+            <div className={cn(
+              "flex gap-1 h-full group w-full items-center justify-center rounded-full bg-zinc-950 px-3 py-1 text-sm text-zinc-200 backdrop-blur-3xl",
+              "hover:bg-zinc-900 hover:backdrop-blur-2xl hover:shadow-lg transition-all duration-200 ease-in-out"
+            )}>
+              <p>Discover how Tweeets was made</p>
+              <ChevronRight className="group-hover:ml-[5px] transition-all" size={18} />
+            </div>
+          </span>
+        </Link>
 
         <div className="flex flex-col items-center w-full px-4">
           <TitleAndSubTitle
