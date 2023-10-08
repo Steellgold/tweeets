@@ -31,17 +31,29 @@ type BlogPostProps = Prisma.PostsGetPayload<{
 const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
   const { user } = useUserContext();
   const [browserLanguage, setBrowserLanguage] = useState<Lang | null>(null);
+  const [title, setTitle] = useState<string | null>(post.title ?? null);
+  const [subtitle, setSubtitle] = useState<string | null>(post.excerpt ?? null);
+  const [content, setContent] = useState<string | null>(post.content ?? null);
 
   useEffect(() => {
     if (navigator && navigator.language) {
-      if (isLanguageSupported(navigator.language)) {
-        console.log(getLangKeyByNav(navigator.language));
+      if (
+        isLanguageSupported(navigator.language)
+        && post.variants
+        && post.variants.length > 0
+        && post.variants.find((variant) => variant.lang == stringToLang(getLangKeyByNav(navigator.language)))) {
         setBrowserLanguage(stringToLang(getLangKeyByNav(navigator.language)));
-        return;
+        const variant = post.variants.find((variant) => variant.lang == browserLanguage);
+        console.log(variant);
+        setTitle(variant?.title ?? post.title);
+        setSubtitle(variant?.excerpt ?? post.excerpt);
+        setContent(variant?.content ?? post.content);
+
+        return setBrowserLanguage(stringToLang(getLangKeyByNav(navigator.language)));
       }
       setBrowserLanguage("en_US");
     }
-  }, []);
+  }, [post, browserLanguage]);
 
   if (!post) return <p>Loading (If this takes too long, please refresh the page)</p>;
 
@@ -52,18 +64,7 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
           <Image src={post.coverUrl ?? "/images/placeholder.png"} alt="Tweeets Blog" width={900} height={600} className="rounded-md" />
         </CardSpotlight>
         <div className="flex flex-col items-center w-full px-4 mt-3">
-          <TitleAndSubTitle
-            title={post.variants
-              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.title ?? post.title ?? "No title"
-              : post.title ?? "No title"
-            }
-
-            subtitle={post.variants
-              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.excerpt ?? post.excerpt ?? "No excerpt"
-              : post.excerpt ?? "No excerpt"
-            }
-            type="default"
-            subtitleSize={100} />
+          <TitleAndSubTitle title={title ?? "No title"} subtitle={subtitle ?? "No excerpt"} type="default" subtitleSize={100} />
         </div>
       </div>
 
@@ -125,28 +126,12 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
               </span>
             </div>
 
-            <TitleAndSubTitle
-              title={post.variants
-                ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.title ?? post.title ?? "No title"
-                : post.title ?? "No title"
-              }
-
-              subtitle={post.variants
-                ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.excerpt ?? post.excerpt ?? "No excerpt"
-                : post.excerpt ?? "No excerpt"
-              }
-              type="default"
-              subtitleSize={100} />
+            <TitleAndSubTitle title={title ?? "No title"} subtitle={subtitle ?? "No subtitle"} type="default" subtitleSize={100} />
           </div>
         </div>
 
         <div className="flex flex-col items-center w-full px-4 mt-3 mb-10">
-          <Markdown
-            source={post.variants
-              ? post.variants.find((variant) => variant.lang == stringToLang(browserLanguage ?? "en_US"))?.content ?? post.content ?? "No content"
-              : post.content ?? "No content"
-            }
-            className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />
+          <Markdown source={content ?? "No content"} className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />
         </div>
       </div>
       <BlogComments slug={post.slug} />

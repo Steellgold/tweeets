@@ -52,8 +52,7 @@ const BlogPosts = ({ data }: { data: BlogPostsProps[] }): ReactElement => {
         {data && data.length == 0 && (
           <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10 mb-10" suppressHydrationWarning>
             <div className="flex flex-col items-center w-full px-4">
-              <p className="text-white text-center text-xl">
-                No blog posts yet.</p>
+              <p className="text-white text-center text-xl">No blog posts yet.</p>
             </div>
           </div>
         )}
