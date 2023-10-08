@@ -14,7 +14,7 @@ import type { Prisma } from "@prisma/client";
 import Image from "next/image";
 import { useState, type ReactElement, useEffect } from "react";
 import dayjs from "dayjs";
-import BlogComments from "./comments";
+// import BlogComments from "./comments";
 import { Badge } from "@/lib/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +39,7 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
     }
   }, []);
 
-  if (!post) return <></>;
+  if (!post) return <p>cc</p>;
 
   if (!post) return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10 mb-10" suppressHydrationWarning>
@@ -152,8 +152,7 @@ const BlogContent = ({ post }: { post: BlogPostProps }): ReactElement => {
             className="prose max-w-none w-[90%] sm:w-[70%] md:w-[60%] xl:w-[50%]" />
         </div>
       </div>
-
-      <BlogComments slug={post.slug} />
+      {/* <BlogComments slug={post.slug} /> */}
     </>
   );
 };

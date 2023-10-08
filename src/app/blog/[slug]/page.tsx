@@ -21,9 +21,9 @@ type BlogPostProps = Prisma.PostsGetPayload<{
 const Blog = async({ params }: PageProps): Promise<ReactElement> => {
   const data = await fetch(
     `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`
-  ).then(res => res.json()) as { data: BlogPostProps; error: string };
+  ).then(res => res.json()) as BlogPostProps;
 
-  return <BlogContent post={data.data} />;
+  return <BlogContent post={data} />;
 };
 
 export default Blog;
