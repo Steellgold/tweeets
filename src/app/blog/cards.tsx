@@ -1,13 +1,12 @@
 "use client";
 
-import { fetcher } from "@/lib/utils/fetcher";
 import type { Prisma } from "@prisma/client";
 import { useEffect, type ReactElement, useState } from "react";
-import useSWR from "swr";
 import BlogCard from "./card";
 import { cn } from "@/lib/utils";
 import type { Lang } from "@/lib/configs/generation/langs";
 import { getLangKeyByNav, isLanguageSupported } from "@/lib/configs/generation/langs";
+import { useFetch } from "usehooks-ts";
 
 type BlogPosts = Prisma.PostsGetPayload<{
   include: {
@@ -24,7 +23,7 @@ type BlogPosts = Prisma.PostsGetPayload<{
 }>;
 
 const BlogPosts = (): ReactElement => {
-  const { data, isLoading } = useSWR<BlogPosts[]>(`${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog`, fetcher);
+  const { data, error } = useFetch<BlogPosts[]>(`${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog`);
   const [browserLanguage, setBrowserLanguage] = useState<Lang | null>(null);
 
   useEffect(() => {
@@ -52,7 +51,7 @@ const BlogPosts = (): ReactElement => {
           </div>
         </div>
 
-        {!isLoading && data && data.length == 0 && (
+        {!error && data && data.length == 0 && (
           <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl mt-10 mb-10" suppressHydrationWarning>
             <div className="flex flex-col items-center w-full px-4">
               <p className="text-white text-center text-xl">
@@ -61,10 +60,10 @@ const BlogPosts = (): ReactElement => {
           </div>
         )}
 
-        {!isLoading && data && data.length > 0 && (
+        {!error && data && data.length > 0 && (
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {!isLoading && data && data.map((post) => (
+              {!error && data && data.map((post) => (
                 <BlogCard key={post.id} {...post} defaultLang={browserLanguage ?? "en-US"} />
               ))}
             </div>

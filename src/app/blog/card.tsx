@@ -27,7 +27,7 @@ const BlogCard = ({
   };
 
   return (
-    <Link href={`/blog/${slug}`}>
+    <Link href={`/blog/${slug}`} prefetch>
       <CardSpotlight
         className="w-full aspect-[8/5] bg-center"
         style={{ backgroundImage: `url(${coverUrl ?? "/images/placeholder.png"})` }}>
