@@ -70,7 +70,7 @@ export const Navbar = (): ReactElement => {
       <div className="flex h-5 items-center space-x-2 text-sm">
         {onAppPage && <Feedback />}
 
-        <Link href={"/blog"} className={buttonVariants({ variant: "outline" })} prefetch>
+        <Link href={"/blog"} className={buttonVariants({ variant: "outline" })}>
           Blog
         </Link>
 
