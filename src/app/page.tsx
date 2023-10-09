@@ -28,7 +28,7 @@ const Landing = (): ReactElement => {
   return (
     <div className="mx-auto flex flex-col items-center justify-center max-w-screen-2xl" suppressHydrationWarning>
       <div className="flex flex-col items-center justify-center mb-10">
-        <Link href="/blog/supabase-ai-content-storm">
+        <Link href="/blog/supabase-ai-content-storm" prefetch>
           <span className="relative group inline-block w-fit mx-auto overflow-hidden rounded-full p-[1px]">
             <span className={cn(
               "absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#71717a_0%,#27272a_50%,#71717a_100%)]",
