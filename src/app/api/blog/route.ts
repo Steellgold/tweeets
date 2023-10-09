@@ -9,7 +9,6 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
   const supabase = createRouteHandlerClient<Database>({ cookies });
   const url = new URL(req.nextUrl);
   const slug = url.searchParams.get("slug");
-  const eai = url.searchParams.get("eai");
 
   const include = {
     include: {
@@ -26,7 +25,7 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
   };
 
   if (slug) {
-    if (!eai) await prisma.posts.update({ where: { slug }, data: { views: { increment: 1 } } });
+    await prisma.posts.update({ where: { slug }, data: { views: { increment: 1 } } });
     const post = await prisma.posts.findFirst({ ...include,  where: { slug } });
     if (!post) return NextResponse.json({ status: 404 });
 
