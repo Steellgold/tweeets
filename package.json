@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "tweeets",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -44,7 +44,9 @@
     "dayjs": "^1.11.9",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
+    "highlight.js": "^11.8.0",
     "lucide-react": "^0.263.1",
+    "mdast-util-from-markdown": "^2.0.0",
     "next": "13.4.12",
     "next-themes": "^0.2.1",
     "openai-edge": "^1.2.2",
