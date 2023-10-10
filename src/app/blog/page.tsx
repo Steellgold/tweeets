@@ -17,7 +17,9 @@ type BlogPosts = Prisma.PostsGetPayload<{
 }>;
 
 const Blog = async(): Promise<ReactElement> => {
-  const data = await fetch(`${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog`)
+  const data = await fetch(`${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog`, {
+    cache: "no-cache"
+  })
     .then(res => res.json()) as BlogPosts[];
 
   return (

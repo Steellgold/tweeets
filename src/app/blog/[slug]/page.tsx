@@ -28,6 +28,9 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await fetch(
     `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`
+    , {
+      cache: "no-cache"
+    }
   ).then((res) => res.json()) as BlogPostProps;
 
   return {
@@ -76,7 +79,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const Blog = async({ params }: PageProps): Promise<ReactElement> => {
   const data = await fetch(
-    `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`
+    `${process.env.NEXT_PUBLIC_URL ?? "https://tweeets.app"}/api/blog?slug=${params.slug}`, {
+      cache: "no-cache"
+    }
   ).then(res => res.json()) as BlogPostProps;
 
   return <BlogContent post={data} />;
