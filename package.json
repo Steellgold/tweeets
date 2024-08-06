@@ -16,6 +16,7 @@
 		"@nextui-org/kbd": "2.0.33",
 		"@nextui-org/link": "2.0.34",
 		"@nextui-org/listbox": "2.1.25",
+		"@nextui-org/modal": "^2.0.39",
 		"@nextui-org/navbar": "2.0.36",
 		"@nextui-org/snippet": "2.0.41",
 		"@nextui-org/switch": "2.0.33",
