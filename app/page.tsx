@@ -6,6 +6,8 @@ import { CircleDollarSign, Drum } from "lucide-react";
 import { title, subtitle } from "@/components/primitives";
 import { cn } from "@/lib/utils";
 import { HighlightBadge } from "@/components/HighlightBadge";
+import { LoginModal } from "@/components/LoginModal";
+import { LoginButton } from "@/components/LoginButton";
 
 const Page = () => {
   return (
@@ -30,9 +32,10 @@ const Page = () => {
       </div>
 
       <div className="flex gap-3">
-        <Button color="primary" radius="sm">
-          Get Started
-        </Button>
+        <LoginModal
+          action={<LoginButton />}
+          button={<Button color="primary">Get Started</Button>}
+        />
 
         <Link className={buttonStyles({ variant: "bordered" })} href="/pricing">
           <CircleDollarSign size={16} />
