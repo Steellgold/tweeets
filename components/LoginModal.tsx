@@ -1,7 +1,10 @@
 "use client";
 
 import React, { cloneElement, ReactElement } from "react";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/modal";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/modal";
+import { useSession } from "next-auth/react";
+import { button as buttonStyles } from "@nextui-org/theme";
+import { Link } from "@nextui-org/link";
 
 import { Component } from "./component";
 
@@ -12,6 +15,15 @@ type LoginModalProps = {
 
 export const LoginModal: Component<LoginModalProps> = ({ button, action }) => {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { status } = useSession();
+
+  if (status === "authenticated") {
+    return (
+      <Link className={buttonStyles({ color: "primary" })} href="/">
+        Get started
+      </Link>
+    )
+  }
 
   return (
     <>

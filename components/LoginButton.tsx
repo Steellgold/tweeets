@@ -8,9 +8,9 @@ export const LoginButton = () => {
     <form
       action={async () => {
         "use server"
-        console.log("signing in with Twitter")
         await signIn("twitter")
       }}
+      className="w-full"
     >
       <Button className="w-full" color="primary" type="submit">
         <TwitterIcon fill="#fff" size={20} />
