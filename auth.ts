@@ -5,6 +5,7 @@ import Twitter from "next-auth/providers/twitter"
 import { prisma } from "./lib/prisma"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // @ts-ignore
   adapter: PrismaAdapter(prisma),
   providers: [ Twitter ],
 })
