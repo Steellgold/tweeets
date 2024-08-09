@@ -19,7 +19,7 @@ export const LoginModal: Component<LoginModalProps> = ({ button, action }) => {
 
   if (status === "authenticated") {
     return (
-      <Link className={buttonStyles({ color: "primary" })} href="/">
+      <Link className={buttonStyles({ color: "primary" })} href="/app">
         Get started
       </Link>
     )
@@ -35,7 +35,7 @@ export const LoginModal: Component<LoginModalProps> = ({ button, action }) => {
             <>
               <ModalHeader className="flex flex-col gap-1">Sign in to your account</ModalHeader>
               <ModalBody>
-                <p>If you don&apos;t have an account, one is created for you when you sign in using your Twitter account.</p>
+                <p>Sign in or create an account using the sign-in button with Twitter</p>
               </ModalBody>
               <ModalFooter className="w-full">
                 {action}
