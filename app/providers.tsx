@@ -8,7 +8,7 @@ import { ThemeProviderProps } from "next-themes/dist/types";
 import { SessionProvider } from "next-auth/react";
 import { Onborda, OnbordaProvider } from "onborda";
 
-import CustomCard from "@/components/CustomCardOnBoard";
+import { OnboardCard } from "@/components/OnboardCard";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -20,8 +20,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <OnbordaProvider>
-      {/* rgb(0, 111, 238) */}
-      <Onborda cardComponent={CustomCard} shadowOpacity="0.8" shadowRgb="18,18,18" steps={[
+      <Onborda cardComponent={OnboardCard} shadowOpacity="0.8" shadowRgb="18,18,18" steps={[
         {
           icon: "🔤",
           title: "What's your tweet about?",

@@ -7,8 +7,7 @@ import { XIcon } from "lucide-react";
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 
-
-const CustomCard: React.FC<CardComponentProps> = ({
+export const OnboardCard: React.FC<CardComponentProps> = ({
   step,
   currentStep,
   totalSteps,
@@ -64,5 +63,3 @@ const CustomCard: React.FC<CardComponentProps> = ({
     </Card>
   );
 };
-
-export default CustomCard;
