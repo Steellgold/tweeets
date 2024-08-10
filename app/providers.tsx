@@ -46,7 +46,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
             </div>
 
             <div className="flex flex-wrap gap-2 items-center">
-              <Code className="text-model4"><Zap color="#a3f7ab" fill="#a3f7ab" size={18} /></Code>
+              <Code className="text-model4"><Zap color="#17c562" fill="#17c562" size={18} /></Code>
               <span>Fast mode is powered by <Code className="text-model4">GPT-4o mini</Code></span>
             </div>
           </div>
@@ -58,11 +58,12 @@ export function Providers({ children, themeProps }: ProvidersProps) {
             <p>Each credit costs <Code>$0.99</Code>, but you can buy 10 credits for <Code>$5.99</Code>.</p>
 
             <div className="flex flex-wrap gap-2 items-center mt-2">
-              <Code className="text-model4"><Zap color="#a3f7ab" fill="#a3f7ab" size={18} /></Code>
+              <Code className="text-model4"><Zap color="#17c562" fill="#17c562" size={18} /></Code>
               <span>Fast mode costs one extra credit.</span>
             </div>
           </div>
         ), "#onborda-step5"), 
+        config("🚀", "You're ready to tweet!", "You're ready to tweet, click on the button below to generate your tweet.", "#onborda-step6"),
       ]}>
         <SessionProvider>
           <NextUIProvider navigate={router.push}>
