@@ -12,7 +12,7 @@ module.exports = {
     extend: {
       colors: {
         "model3": "#FFC107",
-        "model4": "#a3f7ab",
+        "model4": "#17c562",
       },
     },
   },
