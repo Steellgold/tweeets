@@ -14,8 +14,7 @@ export const OnboardCard: React.FC<CardComponentProps> = ({
   currentStep,
   totalSteps,
   nextStep,
-  prevStep,
-  arrow,
+  prevStep
 }) => {
   const { closeOnborda } = useOnborda();
 
@@ -42,7 +41,7 @@ export const OnboardCard: React.FC<CardComponentProps> = ({
         </div>
       </CardHeader>
 
-      <CardBody>{step.content}</CardBody>
+      <CardBody className="-mt-5">{step.content}</CardBody>
       
       <CardFooter>
         <div className="flex justify-between w-full">
@@ -59,7 +58,6 @@ export const OnboardCard: React.FC<CardComponentProps> = ({
           )}
         </div>
       </CardFooter>
-      <span className="text-card">{arrow}</span>
     </Card>
   );
 };
