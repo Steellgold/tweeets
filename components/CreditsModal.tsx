@@ -36,7 +36,10 @@ export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
     <>
       {cloneElement(button, { onPress: onOpen })}
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={(open) => {
+        onOpenChange();
+        if (!open) setCredits(0);
+      }}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
             Need credits?
