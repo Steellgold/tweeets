@@ -9,7 +9,12 @@ module.exports = {
     './node_modules/onborda/dist/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "model3": "#FFC107",
+        "model4": "#a3f7ab",
+      },
+    },
   },
   darkMode: "class",
   plugins: [nextui()],
