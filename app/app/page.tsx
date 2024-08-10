@@ -2,16 +2,23 @@
 
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
-import { BadgeCheck, HandMetal, LifeBuoy, Zap } from "lucide-react";
+import { BadgeCheck, HandMetal, PiggyBank, Presentation, Zap } from "lucide-react";
 import { Textarea } from "@nextui-org/input";
 import { Tabs, Tab } from "@nextui-org/tabs"; 
 import { Slider } from "@nextui-org/slider";
 import { useState } from "react";
 import { useOnborda } from "onborda";
+import { useSession } from "next-auth/react";
+
+import { CreditsModal } from "@/components/CreditsModal";
+
 
 const Page = () => {
   const [tweetLength, setTweetLength] = useState(50);
   const { startOnborda } = useOnborda();
+  const { data } = useSession();
+
+  const [mode, setMode] = useState<"normal" | "fast">("normal");
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -30,7 +37,7 @@ const Page = () => {
 
           <div className="w-full flex flex-col sm:flex-row gap-2 items-center justify-between">
             <div id="onborda-step2">
-              <Tabs aria-label="Generator type" color="primary" defaultSelectedKey={"normal"}>
+              <Tabs aria-label="Generator type" color={mode === "fast" ? "success" : "primary"} defaultSelectedKey={"normal"}>
                 <Tab key="humorisitc" title="Humoristic" />
                 <Tab key="serious" title="Serious" />
                 <Tab key="informative" title="Informative" />
@@ -39,7 +46,12 @@ const Page = () => {
             </div>
 
             <div id="onborda-step3"> 
-              <Tabs aria-label="Generator speed" color="primary" defaultSelectedKey={"normal"}>
+              <Tabs
+                aria-label="Generator speed"
+                color={mode === "fast" ? "success" : "primary"}
+                defaultSelectedKey={"normal"}
+                onSelectionChange={(key) => setMode(key as "normal" | "fast")}
+              >
                 <Tab key="slow" title={
                   <div className="flex items-center gap-1">
                     <Zap color="#FFC107" fill="#FFC107" size={16} />
@@ -49,7 +61,11 @@ const Page = () => {
 
                 <Tab key="fast" title={
                   <div className="flex items-center gap-1">
-                    <Zap color="#a3f7ab" fill="#a3f7ab" size={16} />
+                    <Zap
+                      color={mode === "fast" ? "#063c1c" : "#17c562"}
+                      fill={mode === "fast" ? "#063c1c" : "#17c562"}
+                      size={16}
+                    />
                     Fast
                   </div>
                 } />
@@ -69,15 +85,16 @@ const Page = () => {
               <CardBody className="flex flex-col gap-2">
                 <Slider 
                   className="w-full" 
-                  defaultValue={50}
-                  formatOptions={{ style: "decimal" }}  
+                  color={mode === "fast" ? "success" : "primary"}
+                  defaultValue={50}  
+                  formatOptions={{ style: "decimal" }}
                   maxValue={500}
                   minValue={0}
                   showTooltip={true}
                   step={1}
                   tooltipProps={{
                     placement: "top",
-                    color: "primary",
+                    color: mode === "fast" ? "success" : "primary",
                     content: (
                       <div className="flex items-center gap-1">
                         {tweetLength > 280 && <BadgeCheck size={12} />}
@@ -96,16 +113,35 @@ const Page = () => {
           </div>
         </CardBody>
 
-        <CardFooter className="flex justify-end flex gap-2">
-          <Button color="primary" size="sm">
-            <HandMetal size={16} />
-            Generate Tweet
-          </Button>
+        <CardFooter className="flex justify-between flex gap-2">
+          <div className="flex gap-2">
+            <Button color="default" size="sm" onClick={startOnborda}>
+              <Presentation size={16} />
+              Onboarding
+            </Button>
 
-          <Button color="primary" size="sm" onClick={startOnborda}>
-            <LifeBuoy size={16} />
-            Help me
-          </Button>
+            <div id="onborda-step5">
+              <CreditsModal button={
+                <Button color="default" size="sm">
+                  <PiggyBank size={16} />
+                  {data?.user?.credits || 0} credits
+                </Button>
+              } />
+            </div>
+
+            {/* <form action={logout}>
+              <Button color="danger" size="sm" type="submit">
+                Sign out
+              </Button>
+            </form> */}
+          </div>
+
+          <div id="onborda-step6">
+            <Button color={mode === "fast" ? "success" : "primary"} size="sm">
+              <HandMetal size={16} />
+              Generate Tweet
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </section>
