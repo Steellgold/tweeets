@@ -52,6 +52,17 @@ export function Providers({ children, themeProps }: ProvidersProps) {
           </div>
         ), "#onborda-step3"),
         config("📏", "How long do you want your tweet to be?", "Select the length of your tweet, it can be 140, 280 or more characters if you have a Twitter Premium account.", "#onborda-step4"),
+        config("💳", "How much does a tweet cost?", (
+          <div className="flex flex-col gap-2">
+            <p>Each tweet generation will cost you 1 credit, and for a length above 280 characters it will cost you 2 credits.</p>
+            <p>Each credit costs <Code>$0.99</Code>, but you can buy 10 credits for <Code>$5.99</Code>.</p>
+
+            <div className="flex flex-wrap gap-2 items-center mt-2">
+              <Code className="text-model4"><Zap color="#a3f7ab" fill="#a3f7ab" size={18} /></Code>
+              <span>Fast mode costs one extra credit.</span>
+            </div>
+          </div>
+        ), "#onborda-step5"), 
       ]}>
         <SessionProvider>
           <NextUIProvider navigate={router.push}>
