@@ -12,7 +12,6 @@ import { useSession } from "next-auth/react";
 
 import { CreditsModal } from "@/components/CreditsModal";
 
-
 const Page = () => {
   const [tweetLength, setTweetLength] = useState(50);
   const { startOnborda } = useOnborda();
@@ -89,7 +88,7 @@ const Page = () => {
                   defaultValue={50}  
                   formatOptions={{ style: "decimal" }}
                   maxValue={500}
-                  minValue={0}
+                  minValue={15}
                   showTooltip={true}
                   step={1}
                   tooltipProps={{
