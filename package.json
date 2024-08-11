@@ -17,6 +17,7 @@
 		"@nextui-org/code": "2.0.32",
 		"@nextui-org/divider": "^2.0.31",
 		"@nextui-org/dropdown": "^2.1.29",
+		"@nextui-org/image": "^2.0.31",
 		"@nextui-org/input": "2.2.4",
 		"@nextui-org/kbd": "2.0.33",
 		"@nextui-org/link": "2.0.34",
@@ -43,9 +44,11 @@
 		"next-auth": "5.0.0-beta.17",
 		"next-themes": "^0.2.1",
 		"onborda": "^1.2.2",
+		"openai": "^4.55.4",
 		"react": "18.3.1",
 		"react-dom": "18.3.1",
-		"tailwind-merge": "^2.4.0"
+		"tailwind-merge": "^2.4.0",
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
 		"@types/canvas-confetti": "^1.6.4",
