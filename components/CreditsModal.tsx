@@ -36,7 +36,7 @@ export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
     <>
       {cloneElement(button, { onPress: onOpen })}
 
-      <Modal isOpen={isOpen} onOpenChange={(open) => {
+      <Modal backdrop="blur" isOpen={isOpen} onOpenChange={(open) => {
         onOpenChange();
         if (!open) setCredits(0);
       }}>
