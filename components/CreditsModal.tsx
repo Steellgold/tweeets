@@ -18,7 +18,7 @@ type CreditsModalProps = {
 export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const { status } = useSession();
-  const [credits, setCredits] = useState(0);
+  const [credits, setCredits] = useState(5);
 
   if (status !== "authenticated") {
     return (
