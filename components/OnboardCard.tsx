@@ -52,9 +52,7 @@ export const OnboardCard: React.FC<CardComponentProps> = ({
             <Button className="ml-auto" radius="md" onClick={() => nextStep()}>Next</Button>
           )}
           {currentStep + 1 === totalSteps && (
-            <Button className="ml-auto" onClick={() => handleConfetti()}>
-              🎉 Finish!
-            </Button>
+            <Button className="ml-auto" onClick={() => handleConfetti()}>🎉 Finish!</Button>
           )}
         </div>
       </CardFooter>
