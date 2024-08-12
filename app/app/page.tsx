@@ -2,22 +2,28 @@
 
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
-import { BadgeCheck, HandMetal, PiggyBank, Presentation, Zap } from "lucide-react";
+import { ArrowRight, BadgeCheck, HandMetal, MessageSquare, MessagesSquare, PiggyBank, Presentation } from "lucide-react";
 import { Textarea } from "@nextui-org/input";
 import { Tabs, Tab } from "@nextui-org/tabs"; 
 import { Slider } from "@nextui-org/slider";
+import { Chip } from "@nextui-org/chip";
 import { useState } from "react";
 import { useOnborda } from "onborda";
 import { useSession } from "next-auth/react";
+import { Switch } from "@nextui-org/switch";
 
 import { CreditsModal } from "@/components/CreditsModal";
+import { cn } from "@/lib/utils";
 
 const Page = () => {
   const [tweetLength, setTweetLength] = useState(50);
+  const [threadLength, setThreadLength] = useState(2);
+
   const { startOnborda } = useOnborda();
   const { data } = useSession();
 
-  const [mode, setMode] = useState<"normal" | "fast">("normal");
+  // const [tone, setTone] = useState<"humoristic" | "serious" | "informative" | "normal">("normal");
+  const [type, setType] = useState<"singleTweet" | "thread">("singleTweet");
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -36,7 +42,7 @@ const Page = () => {
 
           <div className="w-full flex flex-col sm:flex-row gap-2 items-center justify-between">
             <div id="onborda-step2">
-              <Tabs aria-label="Generator type" color={mode === "fast" ? "success" : "primary"} defaultSelectedKey={"normal"}>
+              <Tabs aria-label="Generator type" color={"primary"} defaultSelectedKey={"normal"}>
                 <Tab key="humorisitc" title="Humoristic" />
                 <Tab key="serious" title="Serious" />
                 <Tab key="informative" title="Informative" />
@@ -46,26 +52,25 @@ const Page = () => {
 
             <div id="onborda-step3"> 
               <Tabs
-                aria-label="Generator speed"
-                color={mode === "fast" ? "success" : "primary"}
-                defaultSelectedKey={"normal"}
-                onSelectionChange={(key) => setMode(key as "normal" | "fast")}
+                aria-label="Generator type"
+                color={"primary"}
+                defaultSelectedKey={type}
+                onSelectionChange={(key) => {
+                  setType(key as "singleTweet" | "thread");
+                  // TODO: Reset "Indicators" switch
+                }}
               >
-                <Tab key="slow" title={
+                <Tab key="singleTweet" title={
                   <div className="flex items-center gap-1">
-                    <Zap color="#FFC107" fill="#FFC107" size={16} />
-                    Normal
+                    <MessageSquare size={16} />
+                    Single
                   </div>
                 } />
 
-                <Tab key="fast" title={
+                <Tab key="thread" title={
                   <div className="flex items-center gap-1">
-                    <Zap
-                      color={mode === "fast" ? "#063c1c" : "#17c562"}
-                      fill={mode === "fast" ? "#063c1c" : "#17c562"}
-                      size={16}
-                    />
-                    Fast
+                    <MessagesSquare size={16} />
+                    Thread
                   </div>
                 } />
               </Tabs>
@@ -74,7 +79,7 @@ const Page = () => {
 
           <div id="onborda-step4">
             <Card className="w-full border-2 border-[#262629]">
-              <CardHeader className="flex flex-col items-start">
+              <CardHeader className="flex flex-col items-start border-b border-[#262629]">
                 Tweet length
                 <span className="text-[#9CA3AF] text-sm">
                   The amount of characters that your tweet will have.
@@ -84,7 +89,7 @@ const Page = () => {
               <CardBody className="flex flex-col gap-2">
                 <Slider 
                   className="w-full" 
-                  color={mode === "fast" ? "success" : "primary"}
+                  color={"primary"}
                   defaultValue={50}  
                   formatOptions={{ style: "decimal" }}
                   maxValue={500}
@@ -93,7 +98,7 @@ const Page = () => {
                   step={1}
                   tooltipProps={{
                     placement: "top",
-                    color: mode === "fast" ? "success" : "primary",
+                    color: "primary",
                     content: (
                       <div className="flex items-center gap-1">
                         {tweetLength > 280 && <BadgeCheck size={12} />}
@@ -109,6 +114,100 @@ const Page = () => {
                 />
               </CardBody>
             </Card>
+
+            {type == "thread" && (
+              <Card className="w-full border-2 border-[#262629] mt-2">
+                <CardHeader className="flex flex-col items-start border-b border-[#262629]">
+                  Thread length
+                  <span className="text-[#9CA3AF] text-sm">
+                    The amount of sub-tweets that your thread will have.
+                  </span>
+                </CardHeader>
+
+                <CardBody className="flex flex-col gap-2">
+                  <Slider 
+                    className="w-full" 
+                    color={"primary"}
+                    defaultValue={50}  
+                    formatOptions={{ style: "decimal" }}
+                    maxValue={12}
+                    minValue={2}
+                    showTooltip={true}
+                    step={1}
+                    tooltipProps={{
+                      placement: "top",
+                      color: "primary",
+                      content: (
+                        <span className="flex items-center gap-1">
+                          {threadLength} tweets <ArrowRight size={16} /> {calculateCredits(threadLength)} credits
+                        </span>
+                      )
+                    }}
+                    value={threadLength}
+                    // @ts-ignore
+                    onChange={(value: number) => setThreadLength(value)}
+                  />
+                </CardBody>
+              </Card>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step5">
+            <Switch
+              classNames={{
+                base: cn(
+                  "inline-flex flex-row-reverse w-full max-w-xl bg-content1 hover:bg-content2 items-center",
+                  "justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent",
+                  "data-[selected=true]:border-primary",
+                ),
+                wrapper: "p-0 h-4 overflow-visible",
+                thumb: cn("w-6 h-6 border-2 shadow-lg",
+                  "group-data-[hover=true]:border-primary",
+                  //selected
+                  "group-data-[selected=true]:ml-6",
+                  // pressed
+                  "group-data-[pressed=true]:w-7",
+                  "group-data-[selected]:group-data-[pressed]:ml-4",
+                ),
+              }}
+            >
+              <div className="flex flex-col gap-1">
+                <p className="text-medium">Emojies</p>
+                <p className="text-tiny text-default-400">
+                  Do you want to add emojies to your tweet?
+                </p>
+              </div>
+            </Switch>
+
+            <Switch
+              classNames={{
+                base: cn(
+                  "inline-flex flex-row-reverse w-full max-w-xl bg-content1 hover:bg-content2 items-center",
+                  "justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent",
+                  "data-[selected=true]:border-primary",
+                ),
+                wrapper: "p-0 h-4 overflow-visible",
+                thumb: cn("w-6 h-6 border-2 shadow-lg",
+                  "group-data-[hover=true]:border-primary",
+                  //selected
+                  "group-data-[selected=true]:ml-6",
+                  // pressed
+                  "group-data-[pressed=true]:w-7",
+                  "group-data-[selected]:group-data-[pressed]:ml-4",
+                ),
+              }}
+              isDisabled={type == "singleTweet"}
+            >
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-medium">Indicators</p>
+                  {type == "singleTweet" && <Chip color="primary" size="sm" variant="flat">Threads only</Chip>}
+                </div>
+                <p className="text-tiny text-default-400">
+                  Do you want to add indicators to your tweet?
+                </p>
+              </div>
+            </Switch>
           </div>
         </CardBody>
 
@@ -119,7 +218,7 @@ const Page = () => {
               Onboarding
             </Button>
 
-            <div id="onborda-step5">
+            <div id="onborda-step6">
               <CreditsModal button={
                 <Button color="default" size="sm">
                   <PiggyBank size={16} />
@@ -135,8 +234,8 @@ const Page = () => {
             </form> */}
           </div>
 
-          <div id="onborda-step6">
-            <Button color={mode === "fast" ? "success" : "primary"} size="sm">
+          <div id="onborda-step7">
+            <Button color={"primary"} size="sm">
               <HandMetal size={16} />
               Generate Tweet
             </Button>
@@ -148,3 +247,14 @@ const Page = () => {
 }
 
 export default Page;
+
+
+const calculateCredits = (threadLength: number): number => {
+  if (threadLength <= 5) {
+    return threadLength;
+  } else {
+    return threadLength - 1;
+  }
+
+  return 0;
+}
