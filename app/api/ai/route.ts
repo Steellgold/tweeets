@@ -20,7 +20,7 @@ const SingleTweet = z.object({
   text: z.string()
 });
 
-const bodySchema = z.object({
+export const bodySchema = z.object({
   "type": z.enum(["singleTweet", "thread"]),
   "min-chars": z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : undefined),
