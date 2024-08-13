@@ -5,6 +5,7 @@ import { z } from "zod";
 import dayjs from "dayjs";
 
 import { EnumLanguages, generatePrompt } from "@/config/prompt";
+import { getTokensCount } from "@/config/credits";
 
 const openai = new OpenAI();
 
@@ -84,11 +85,16 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 
   if (type === "thread") responseSchema = Thread;
   else responseSchema = SingleTweet;
-  
+
+  console.log(userPrompt);
+  console.log(chars, type, threadLength, getTokensCount(chars, type == "thread", threadLength));
+
   const completion = await openai.beta.chat.completions.parse({
     model: "gpt-4o-mini",
-    messages: [{ role: "user", content: userPrompt }],
-    max_tokens: 1300,
+    messages: [
+      { role: "user", content: userPrompt }
+    ],
+    max_tokens: getTokensCount(chars, type == "thread", type == "thread" ? threadLength : 1),
     response_format: zodResponseFormat(responseSchema, type === "thread" ? "tweets" : "text"),
   });
 
