@@ -1,23 +1,46 @@
-interface GeneratePromptOptions {
+import { z } from "zod";
+
+export const EnumLanguages = z.enum([
+  "English",
+  "French",
+  "Spanish",
+  "Italian",
+  "Portuguese",
+  "German",
+  "Argentinian",
+  "Australian",
+  "Brazilian",
+  "Arabic",
+  "Japanese",
+  "Ukrainian",
+  "Korean",
+  "Turkish",
+]);
+
+export type Language = z.infer<typeof EnumLanguages>;
+
+type GeneratePromptOptions = {
   type: "singleTweet" | "thread";
   tone: "humoristic" | "serious" | "informative" | "normal";
   threadLength?: number;
-  minChars?: number;
+  chars?: number;
   includeEmojis?: boolean;
   includeIndicators?: boolean;
   context: string;
+  language: Language;
 }
 
 export const generatePrompt = ({
   type,
   tone = "normal",
   threadLength = 12,
-  minChars = 280,
+  chars = 280,
   includeEmojis = false,
   includeIndicators = false,
+  language = "English",
   context,
 }: GeneratePromptOptions): string => {
-  const maxChars = minChars + 15;
+  const maxChars = chars + 15;
 
   const A = type === "thread" ? "a Twitter thread" : "a single tweet";
   const B = type === "thread" ? `of ${threadLength} tweets` : "tweet";
@@ -31,7 +54,7 @@ export const generatePrompt = ({
                       ? "humoristic"
                         : "conversational"; 
 
-  const basePrompt = `Generate ${A} ${B} about "${context}". ${C} must be between ${minChars} and ${maxChars} characters long. Ensure ${D} is detailed, engaging, and ${E} tone.`;
+  const basePrompt = `Generate ${A} ${B} about "${context}". ${C} must be between ${chars} and ${maxChars} characters long. Ensure ${D} is detailed, engaging, and ${E} tone.`;
   
   const indicatorText = includeIndicators && type === "thread"
   ? " Include numbering or tweet indicators like '1/12', '2/12', etc."
@@ -43,7 +66,9 @@ export const generatePrompt = ({
   
   const noHashtags = " Do not include any hashtags in the content.";
 
-  console.log(type, tone, threadLength, minChars, includeEmojis, includeIndicators, context);
+  const langText = `The content should be in ${language}.`;
 
-  return `${basePrompt}${indicatorText}${emojiText}${charsLimit}${noHashtags}`;
+  console.log(type, tone, threadLength, chars, includeEmojis, includeIndicators, context, langText);
+
+  return `${basePrompt}${indicatorText}${emojiText}${charsLimit}${noHashtags}${langText}`;
 };
