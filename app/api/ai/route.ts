@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import dayjs from "dayjs";
 
-import { generatePrompt } from "@/config/prompt";
+import { EnumLanguages, generatePrompt } from "@/config/prompt";
 
 const openai = new OpenAI();
 
@@ -22,7 +23,7 @@ const SingleTweet = z.object({
 
 export const bodySchema = z.object({
   "type": z.enum(["singleTweet", "thread"]),
-  "min-chars": z.preprocess(
+  "chars": z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : undefined),
     z.number().min(1)
   ),
@@ -34,9 +35,17 @@ export const bodySchema = z.object({
     (val) => (val ? parseInt(val as string, 10) : undefined),
     z.number().min(1).max(12).optional()
   ),
+  language: EnumLanguages,
+});
+
+export const responseSchema = z.object({
+  event: z.union([SingleTweet, Thread]),
+  in: z.number(),
 });
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
+  const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
+
   const body = await req.json();
   const parsedBody = bodySchema.safeParse(body);
 
@@ -51,22 +60,24 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 
   const {
     "type": type,
-    "min-chars": minChars,
+    "chars": chars,
     "include-emojis": includeEmojis,
     "include-indicators": includeIndicators,
     "context": context,
     "tone": tone,
     "thread-length": threadLength,
+    language,
   } = parsedBody.data;
 
   const userPrompt = generatePrompt({
     type,
     tone,
     threadLength,
-    minChars,
+    chars,
     includeEmojis,
     includeIndicators,
-    context
+    context,
+    language
   });
 
   let responseSchema;
@@ -82,6 +93,14 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   });
 
   const event = completion.choices[0].message.parsed;
+  const time2 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
 
-  return NextResponse.json(event);
+  const timeDiff = dayjs(time2).diff(time1, "millisecond", true);
+  const seconds = Math.floor(timeDiff / 1000);
+  const milliseconds = (timeDiff % 1000).toString().padStart(3, '0').slice(0, 2);
+  
+  return NextResponse.json({
+    event,
+    in: parseFloat(`${seconds}.${milliseconds}`),
+  });
 };

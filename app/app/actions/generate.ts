@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { bodySchema } from "@/app/api/ai/route";
+import { bodySchema, responseSchema } from "@/app/api/ai/route";
 import { auth } from "@/auth";
 
 export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<any> => {
@@ -20,16 +20,21 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
 
   const res = await fetch(process.env.URL + "/api/ai", {
     method: "POST",
-    headers: {
+    headers: new Headers({
       "Content-Type": "application/json",
-      "x-api-key": process.env.SAK,
-    },
+      "x-api-key": process.env.SAK || "",
+    }),
     body: JSON.stringify(data),
   });
 
   const result = await res.json();
+  const parsedResult = responseSchema.safeParse(result);
 
-  console.log(result);
+  if (!parsedResult.success) {
+    return {
+      isError: true, errorType: "alert", message: "An error occurred while generating content, please try again, if the problem persists, contact support"
+    }
+  }
 
   return {
     isError: false,
