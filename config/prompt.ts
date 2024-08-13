@@ -60,13 +60,13 @@ export const generatePrompt = ({
   ? " Include numbering or tweet indicators like '1/12', '2/12', etc."
   : " Do not include any numbering or tweet indicators like '1/12', '2/12', etc.";
   
-  const emojiText = includeEmojis ? " Feel free to use emojis to enhance the content." : "Do not include emojis in the content.";
+  const emojiText = includeEmojis ? " Feel free to use emojis to enhance the content." : " Do not include emojis in the content.";
 
   const charsLimit = " Make sure that each tweet strictly adheres to the character limits.";
   
   const noHashtags = " Do not include any hashtags in the content.";
 
-  const langText = `The content should be in ${language}.`;
+  const langText = ` The content should be in ${language}.`;
 
   console.log(type, tone, threadLength, chars, includeEmojis, includeIndicators, context, langText);
 
