@@ -5,13 +5,12 @@ import { Modal, ModalContent, ModalHeader, ModalBody, useDisclosure } from "@nex
 import { useSession } from "next-auth/react";
 import { Slider } from "@nextui-org/slider";
 import { Button } from "@nextui-org/button";
+import { Link } from "@nextui-org/link";
 import { Code } from "@nextui-org/code";
 import { CardFooter } from "@nextui-org/card";
 import { Zap } from "lucide-react";
 
 import { Component } from "./component";
-import { LoginModal } from "./LoginModal";
-import { LoginButton } from "./LoginButton";
 
 type CreditsModalProps = {
   button: ReactElement;
@@ -22,15 +21,8 @@ export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
   const { status } = useSession();
   const [credits, setCredits] = useState(5);
 
-  if (status !== "authenticated") {
-    return (
-      <LoginModal action={<LoginButton />} button={(
-        <Button color="danger" size="sm">
-          You need to be logged in to
-        </Button>
-      )} />
-    )
-  }
+  if (status == "loading") return <Button isLoading color="default" size="sm" />
+  if (status == "unauthenticated") return <Button as={Link} color="default" href="/api/auth/signin" size="sm">Need credits?</Button>
 
   const prixBase = parseInt((credits * 0.599).toFixed(2));
   const prixFinal = prixBase + 0.99;
