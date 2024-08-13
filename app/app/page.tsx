@@ -131,7 +131,7 @@ const Page = () => {
 
           <LanguageSelectComponent value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step6">
             <EmojiesSwitchComponent value={emojies} onChange={(value) => setEmojies(value)} />
             <IndicatorsSwitchComponent type={type} value={indicators} onChange={(value) => setIndicators(value)} />
           </div>
@@ -144,7 +144,7 @@ const Page = () => {
               Onboarding
             </Button>
 
-            <div id="onborda-step6">
+            <div id="onborda-step7">
               <CreditsModal button={
                 <Button color="default" size="sm">
                   <PiggyBank size={16} />
@@ -160,7 +160,7 @@ const Page = () => {
             </form> */}
           </div>
 
-          <form action={formAction} id="onborda-step7">
+          <form action={formAction} id="onborda-step8">
             <Submit />
           </form>
         </CardFooter>
