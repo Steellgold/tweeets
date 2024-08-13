@@ -11,7 +11,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { Chip } from "@nextui-org/chip";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
-import { TONES } from "./type/tabs.type";
+import { TONES, TYPE } from "./type/tabs.type";
 import { TypeTabsComponent } from "./lib/TabsTypeComponent";
 import { LengthSliderComponent } from "./lib/LengthSliderComponent";
 import { ThreadLengthSliderComponent } from "./lib/ThreadLengthSliderComponent";
@@ -115,8 +115,8 @@ const Page = () => {
 
           <div className="w-full flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
             <ToneTabsComponent setType={setTone} type={tone} />
-            <TypeTabsComponent setType={setType} type={type} onChange={() => {
-              if (type == "singleTweet") {
+            <TypeTabsComponent setType={setType} type={type} onChange={(value: TYPE) => {
+              if (value == "thread") {
                 setThreadLength(0);
                 setIndicators(false);
               }

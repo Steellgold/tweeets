@@ -8,7 +8,7 @@ import { Component } from "@/components/component";
 interface TabsComponentProps {
   type: TYPE;
   setType: (value: TYPE) => void;
-  onChange: () => void;
+  onChange: (type: TYPE) => void;
 }
 
 export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType, onChange }) => (
@@ -19,7 +19,7 @@ export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType
       defaultSelectedKey={type}
       onSelectionChange={(key) => {
         setType(key as TYPE)
-        onChange()
+        onChange(type);
       }}
     >
       <Tab key="singleTweet" title={
