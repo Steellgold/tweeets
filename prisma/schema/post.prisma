@@ -1,0 +1,20 @@
+model Post {
+  id           String  @id @default(cuid())
+  context      String  @db.Text
+  type         Type    @default(NORMAL)
+  mode         Mode    @default(SINGLE)
+  uLength      Int     @default(0)
+  rLength      Int     @default(0)
+  threadLength Int     @default(0)
+  data         Json    @db.Json
+  emojies      Boolean @default(true)
+  indicators   Boolean @default(false)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+  generationTime Float?   @default(0)
+  generationcost Int      @default(0)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}

@@ -1,0 +1,22 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+enum Type {
+  HUMORISTIC
+  SERIOUS
+  INFORMATIVE
+  NORMAL
+}
+
+enum Mode {
+  SINGLE
+  THREAD
+}
