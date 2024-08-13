@@ -5,7 +5,6 @@ import { z } from "zod";
 import { bodySchema } from "@/app/api/ai/route";
 import { auth } from "@/auth";
 
-
 export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<any> => {
   const session = await auth();
 
@@ -19,7 +18,18 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
 
   if (!context || context.length < 10) return { isError: true, errorType: "textarea", message: "Context is required and should be at least 10 characters" };
 
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const res = await fetch(process.env.URL + "/api/ai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.SAK,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await res.json();
+
+  console.log(result);
 
   return {
     isError: false,

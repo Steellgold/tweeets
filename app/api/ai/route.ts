@@ -40,6 +40,11 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const body = await req.json();
   const parsedBody = bodySchema.safeParse(body);
 
+  const apiKey = req.headers.get("x-api-key");
+
+  if (!apiKey) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (apiKey !== process.env.AIG) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   if (!parsedBody.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
