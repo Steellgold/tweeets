@@ -18,8 +18,10 @@ import { ThreadLengthSliderComponent } from "./lib/ThreadLengthSliderComponent";
 import { EmojiesSwitchComponent } from "./lib/EmojiesSwitchComponent";
 import { IndicatorsSwitchComponent } from "./lib/IndicatorsSwitchComponent";
 import { generateAction } from "./actions/generate";
+import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
 
 import { CreditsModal } from "@/components/CreditsModal";
+import { Language } from "@/config/prompt";
 
 type State = {
   isError: boolean;
@@ -41,6 +43,7 @@ const Page = () => {
 
   const [tone, setTone] = useState<TONES>("normal"); // normal, positive, negative, neutral
   const [type, setType] = useState<"singleTweet" | "thread">("singleTweet"); // singleTweet, thread
+  const [language, setLanguage] = useState<Language>("English");
   const [tweetLength, setTweetLength] = useState(50); // A number between 1 and 500
   const [threadLength, setThreadLength] = useState(2); // A number between 2 and 12
   const [emojies, setEmojies] = useState<boolean>(true); // true, false
@@ -52,10 +55,11 @@ const Page = () => {
   const sendGenerate = generateAction.bind(null, {
     "include-emojis": emojies,
     "include-indicators": indicators,
-    "min-chars": tweetLength,
+    "chars": tweetLength,
     "thread-length": type == "thread" ? threadLength : 0,
     "tone": tone,
     "context": content,
+    language,
     type
   });
 
@@ -111,7 +115,7 @@ const Page = () => {
             />
           </div>
 
-          <div className="w-full flex flex-col sm:flex-row gap-2 items-center justify-between">
+          <div className="w-full flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
             <ToneTabsComponent setType={setTone} type={tone} />
             <TypeTabsComponent setType={setType} type={type} onChange={() => {
               if (type == "singleTweet") {
@@ -126,6 +130,11 @@ const Page = () => {
           
           {/* @ts-ignore */}
           {type == "thread" && <ThreadLengthSliderComponent value={threadLength} onChange={(value) => setThreadLength(value)} />}
+
+          <LanguageSelectComponent value={language} onChange={(e) => {
+            console.log(e.target.value);
+            setLanguage(e.target.value as Language)
+          }} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step5">
             <EmojiesSwitchComponent value={emojies} onChange={(value) => setEmojies(value)} />
