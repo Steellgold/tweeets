@@ -10,6 +10,8 @@ import { CardFooter } from "@nextui-org/card";
 import { Zap } from "lucide-react";
 
 import { Component } from "./component";
+import { LoginModal } from "./LoginModal";
+import { LoginButton } from "./LoginButton";
 
 type CreditsModalProps = {
   button: ReactElement;
@@ -22,9 +24,11 @@ export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
 
   if (status !== "authenticated") {
     return (
-      <Button color="danger" size="sm">
-        Buy credits
-      </Button>
+      <LoginModal action={<LoginButton />} button={(
+        <Button color="danger" size="sm">
+          You need to be logged in to
+        </Button>
+      )} />
     )
   }
 
