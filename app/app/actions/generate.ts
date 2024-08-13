@@ -36,8 +36,6 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
     }
   }
 
-  console.log(parsedResult.data.event);
-
   return {
     isError: false,
     message: `Generated content for context: ${data.context}`,

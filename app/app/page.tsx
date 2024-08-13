@@ -68,8 +68,6 @@ const Page = () => {
   useEffect(() => {
     const { isError, message } = state;
 
-    console.log(state);
-
     if (isError) {
       setIsInvalid(true);
       setErrorMessage(message);
@@ -131,10 +129,7 @@ const Page = () => {
           {/* @ts-ignore */}
           {type == "thread" && <ThreadLengthSliderComponent value={threadLength} onChange={(value) => setThreadLength(value)} />}
 
-          <LanguageSelectComponent value={language} onChange={(e) => {
-            console.log(e.target.value);
-            setLanguage(e.target.value as Language)
-          }} />
+          <LanguageSelectComponent value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step5">
             <EmojiesSwitchComponent value={emojies} onChange={(value) => setEmojies(value)} />

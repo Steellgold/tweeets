@@ -86,9 +86,6 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   if (type === "thread") responseSchema = Thread;
   else responseSchema = SingleTweet;
 
-  console.log(userPrompt);
-  console.log(chars, type, threadLength, getTokensCount(chars, type == "thread", threadLength));
-
   const completion = await openai.beta.chat.completions.parse({
     model: "gpt-4o-mini",
     messages: [

@@ -68,7 +68,5 @@ export const generatePrompt = ({
 
   const langText = ` The content should be in ${language}.`;
 
-  console.log(type, tone, threadLength, chars, includeEmojis, includeIndicators, context, langText);
-
   return `${basePrompt}${indicatorText}${emojiText}${charsLimit}${noHashtags}${langText}`;
 };
