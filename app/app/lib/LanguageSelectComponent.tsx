@@ -10,26 +10,25 @@ type LanguageSelectComponentProps = {
 }
 
 type SelectLanguage = {
-  id: string;
   code: string;
   name: string;
 }
 
 const languages: SelectLanguage[] = [
-  { code: "us", name: "English", id: "english" },
-  { code: "fr", name: "French", id: "french" },
-  { code: "es", name: "Spanish", id: "spanish" },
-  { code: "it", name: "Italian", id: "italian" },
-  { code: "pt", name: "Portuguese", id: "portuguese" },
-  { code: "de", name: "German", id: "german" },
-  { code: "ae", name: "Arabic", id: "arabic" },
-  { code: "ar", name: "Argentinian", id: "argentinian" },
-  { code: "au", name: "Australian", id: "australian" },
-  { code: "br", name: "Brazilian", id: "brazilian" },
-  { code: "jp", name: "Japanese", id: "japanese" },
-  { code: "ua", name: "Ukrainian", id: "ukrainian" },
-  { code: "kr", name: "Korean", id: "korean" },
-  { code: "tr", name: "Turkish", id: "turkish" }
+  { code: "us", name: "English" },
+  { code: "fr", name: "French" },
+  { code: "es", name: "Spanish" },
+  { code: "it", name: "Italian" },
+  { code: "pt", name: "Portuguese" },
+  { code: "de", name: "German" },
+  { code: "ae", name: "Arabic" },
+  { code: "ar", name: "Argentinian" },
+  { code: "au", name: "Australian" },
+  { code: "br", name: "Brazilian" },
+  { code: "jp", name: "Japanese" },
+  { code: "ua", name: "Ukrainian" },
+  { code: "kr", name: "Korean" },
+  { code: "tr", name: "Turkish" }
 ];
 
 export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = ({ value, onChange }) => {
@@ -53,7 +52,7 @@ export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = 
       onChange={onChange}
     >
       {(language) => (
-        <SelectItem key={language.name} textValue={language.name} value={language.id}>
+        <SelectItem key={language.name} textValue={language.name} value={language.name.toLowerCase()}>
           <div className="flex items-center gap-2">
             <Avatar
               alt={language.name}
