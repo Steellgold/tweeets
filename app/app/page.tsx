@@ -5,13 +5,19 @@ import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Textarea } from "@nextui-org/input";
-import { HandMetal, PiggyBank, Presentation } from "lucide-react";
+import { HandMetal, Mail, PiggyBank, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useOnborda } from "onborda";
 import { useSession } from "next-auth/react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Chip } from "@nextui-org/chip";
 import { z } from "zod";
+import { Avatar } from "@nextui-org/avatar";
+
+import { CreditsModal } from "@/components/CreditsModal";
+import { Language } from "@/config/prompt";
+import { Component } from "@/components/component";
+import { cn } from "@/lib/utils";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";
@@ -20,15 +26,12 @@ import { LengthSliderComponent } from "./lib/LengthSliderComponent";
 import { ThreadLengthSliderComponent } from "./lib/ThreadLengthSliderComponent";
 import { EmojiesSwitchComponent } from "./lib/EmojiesSwitchComponent";
 import { IndicatorsSwitchComponent } from "./lib/IndicatorsSwitchComponent";
-import { generateAction } from "./actions/generate";
+import { generateAction } from "./actions/generate.action";
 import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
 import { GeneratedPostModal } from "./lib/modals/GeneratedPostModal";
 import { responseSchema, SingleTweet, Thread } from "./type/post.type";
-
-import { CreditsModal } from "@/components/CreditsModal";
-import { Language } from "@/config/prompt";
-import { Component } from "@/components/component";
-import { cn } from "@/lib/utils";
+import { EmailRequiredModal } from "./lib/modals/EmailRequiredModal";
+import { logout } from "./actions/logout.action";
 
 type State = {
   isError: boolean;
@@ -91,13 +94,44 @@ const Page = () => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <Card className="max-w-[610px] w-full border-2 border-[#393941]">
+    <section className="flex flex-col items-center justify-center gap-4 sm:py-8 md:py-10">
+      {session && !session?.user.email && (
+        <Card className="sm:max-w-[610px] w-full border-2 border-[#f31260] bg-[#f3126010]">
+          <CardHeader className="flex flex-col items-start">
+            <Chip className="mb-1" color="danger">Uhm, wait!</Chip>
+            We haven&apos;t received your email from Twitter, please provide it to continue.
+          </CardHeader>
+
+          <CardFooter className="flex justify-end">
+            <EmailRequiredModal button={
+              <Button color="danger" size="sm">
+                <Mail size={16} />
+                Add your email
+              </Button>
+            } />
+          </CardFooter>
+        </Card>
+      )}
+
+      <Card className="sm:max-w-[610px] w-full border-2 border-[#393941]">
         <CardHeader className="border-b border-[#393941] flex flex-col items-start p-4">
           Post like a pro
           <span className="text-[#9CA3AF] text-sm">
             Tweeets is a tool for analyzing and creating tweets to make your life easier as a regular Twitter user.
           </span>
+
+          {session && (
+            <form action={logout}>
+              <Chip
+                as={Button}
+                avatar={<Avatar name={session?.user.name!.split(" ")[0]} src={session?.user.image!} />}
+                className="mt-2"
+                type={"submit"}
+              >
+                {session.user.name}
+              </Chip>
+            </form>
+          )}
         </CardHeader>
 
         {state && state.isError && state.errorType == "alert" && (
@@ -117,19 +151,20 @@ const Page = () => {
               required
               className="w-full"
               errorMessage={isInvalid && state.isError && state.errorType == "textarea" ? state.message : ""}
+              isDisabled={!session}
               isInvalid={isInvalid && state.isError && state.errorType == "textarea"}
               label="What is your tweet about?"
               placeholder="Type a context for your tweet"
-              value={content}
-              variant={isInvalid && state.isError && state.errorType == "textarea" ? "bordered" : "flat"} 
+              value={content} 
+              variant={isInvalid && state.isError && state.errorType == "textarea" ? "bordered" : "flat"}
               onChange={(e) => setContent(e.target.value)}
               onFocus={handleClear}
             />
           </div>
 
           <div className="w-full flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
-            <ToneTabsComponent setType={setTone} type={tone} />
-            <TypeTabsComponent setType={setType} type={type} onChange={(value: TYPE) => {
+            <ToneTabsComponent isDisabled={!session} setType={setTone} type={tone} />
+            <TypeTabsComponent isDisabled={!session} setType={setType} type={type} onChange={(value: TYPE) => {
               if (value == "thread") {
                 setThreadLength(0);
                 setIndicators(false);
@@ -138,16 +173,16 @@ const Page = () => {
           </div>
           
           {/* @ts-ignore */}
-          <LengthSliderComponent value={tweetLength} onChange={(value) => setTweetLength(value)} />
+          <LengthSliderComponent isDisabled={!session} value={tweetLength} onChange={(value) => setTweetLength(value)} />
           
           {/* @ts-ignore */}
-          {type == "thread" && <ThreadLengthSliderComponent value={threadLength} onChange={(value) => setThreadLength(value)} />}
+          {type == "thread" && <ThreadLengthSliderComponent isDisabled={!session} value={threadLength} onChange={(value) => setThreadLength(value)} />}
 
-          <LanguageSelectComponent value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
+          <LanguageSelectComponent isDisabled={!session} value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step6">
-            <EmojiesSwitchComponent value={emojies} onChange={(value) => setEmojies(value)} />
-            <IndicatorsSwitchComponent type={type} value={indicators} onChange={(value) => setIndicators(value)} />
+            <EmojiesSwitchComponent isDisabled={!session} value={emojies} onChange={(value) => setEmojies(value)} />
+            <IndicatorsSwitchComponent isDisabled={!session} type={type} value={indicators} onChange={(value) => setIndicators(value)} />
           </div>
         </CardBody>
 
@@ -175,7 +210,7 @@ const Page = () => {
           </div>
 
           <form action={formAction} id="onborda-step8">
-            <Submit context={content} data={state} type={type} />
+            <Submit context={content} data={state} isDisabled={!session} type={type} />
           </form>
         </CardFooter>
       </Card>
@@ -187,9 +222,10 @@ type SubmitProps = {
   data: State;
   type: TYPE;
   context: string;
+  isDisabled: boolean;
 };
 
-const Submit: Component<SubmitProps> = ({ data, type, context }) => {
+const Submit: Component<SubmitProps> = ({ data, type, context, isDisabled }) => {
   const { pending } = useFormStatus();
 
   const renderContent = () => {
@@ -237,7 +273,7 @@ const Submit: Component<SubmitProps> = ({ data, type, context }) => {
   return (
     <GeneratedPostModal
       button={
-        <Button color={"primary"} isDisabled={!context || context.length < 10 || pending} isLoading={pending} size="sm" type="submit">
+        <Button color={"primary"} isDisabled={isDisabled || !context || context.length < 10 || pending} isLoading={pending} size="sm" type="submit">
           {!pending && <HandMetal size={16} />}
           Generate Tweet
         </Button>
