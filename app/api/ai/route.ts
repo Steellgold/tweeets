@@ -1,26 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import dayjs from "dayjs";
 
 import { EnumLanguages, generatePrompt } from "@/config/prompt";
 import { getTokensCount } from "@/config/credits";
-
-const openai = new OpenAI();
-
-const Tweet = z.object({
-  id: z.number(),
-  text: z.string(),
-});
-
-const Thread = z.object({
-  tweets: z.array(Tweet),
-});
-
-const SingleTweet = z.object({
-  text: z.string()
-});
+import { openai } from "@/lib/openai"
+import { SingleTweet, Thread } from "@/app/app/type/post.type";
 
 export const bodySchema = z.object({
   "type": z.enum(["singleTweet", "thread"]),
@@ -37,11 +23,6 @@ export const bodySchema = z.object({
     z.number().min(1).max(12).optional()
   ),
   language: EnumLanguages,
-});
-
-export const responseSchema = z.object({
-  event: z.union([SingleTweet, Thread]),
-  in: z.number(),
 });
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {

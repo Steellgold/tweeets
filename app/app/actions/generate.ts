@@ -2,7 +2,9 @@
 
 import { z } from "zod";
 
-import { bodySchema, responseSchema } from "@/app/api/ai/route";
+import { responseSchema } from "../type/post.type";
+
+import { bodySchema } from "@/app/api/ai/route";
 import { auth } from "@/auth";
 
 export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<any> => {
@@ -10,7 +12,21 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
 
   const formData = bodySchema.safeParse(data);
 
-  if (!formData.success) return { isError: true, errorType: "alert", message: "It seems that the content sent is not valid, please try again, if the problem persists, contact support" };
+  if (!formData.success) {
+    if (formData.error.errors[0].path[0] === "context") {
+      return {
+        isError: true,
+        errorType: "textarea",
+        message: "Context is required and should be at least 10 characters"
+      };
+    }
+
+    return {
+      isError: true,
+      errorType: "alert",
+      message: "An error occurred while generating content, please try again, if the problem persists, contact support"
+    };
+  }
 
   if (!session) return { isError: true, errorType: "alert", message: "You need to be logged in to generate content, please login" };
 
@@ -38,6 +54,7 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
 
   return {
     isError: false,
-    message: `Generated content for context: ${data.context}`,
+    errorType: undefined,
+    data: parsedResult.data,
   };
 }
