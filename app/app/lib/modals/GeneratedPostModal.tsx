@@ -7,9 +7,10 @@ import { Spinner } from "@nextui-org/spinner";
 import { Link } from "@nextui-org/link";
 import { Bird } from "lucide-react";
 
+import { Component } from "@/components/component";
+
 import { TYPE } from "../../type/tabs.type";
 
-import { Component } from "@/components/component";
 
 type Props = {
   button: ReactElement;
@@ -83,9 +84,9 @@ export const GeneratedPostModal: Component<Props> = ({ button, content, isLoadin
                   </Button>
                 )}
 
-                <Button color="primary" onPress={onClose}>
+                {/* <Button color="primary" onPress={onClose}>
                   My Posts
-                </Button>
+                </Button> */}
               </ModalFooter>
             </>
           )}
