@@ -64,9 +64,6 @@ const Page = () => {
   const [indicators, setIndicators] = useState<boolean>(false); // true, false
 
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const [result, setResult] = useState<z.infer<typeof responseSchema>>();
 
   const sendGenerate = generateAction.bind(null, {
     "include-emojis": emojies,
@@ -82,22 +79,15 @@ const Page = () => {
   const [state, formAction] = useFormState(sendGenerate, initialState);
 
   useEffect(() => {
-    const { isError, message } = state;
+    const { isError } = state;
 
     if (isError) {
       setIsInvalid(true);
-      setErrorMessage(message);
-    }
-
-    if (!isError && state.data) {
-      setResult(state.data);
     }
   }, [state]);
 
   const handleClear = () => {
     setIsInvalid(false);
-    setErrorMessage("");
-    setResult(undefined);
   };
 
   return (

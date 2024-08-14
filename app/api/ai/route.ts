@@ -1,29 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { z } from "zod";
 import dayjs from "dayjs";
+import { OpenAI } from "openai";
 
-import { EnumLanguages, generatePrompt } from "@/config/prompt";
+import { generatePrompt } from "@/config/prompt";
 import { getTokensCount } from "@/config/credits";
-import { openai } from "@/lib/openai"
-import { SingleTweet, Thread } from "@/app/app/type/post.type";
+import { bodySchema, SingleTweet, Thread } from "@/app/app/type/post.type";
 
-export const bodySchema = z.object({
-  "type": z.enum(["singleTweet", "thread"]),
-  "chars": z.preprocess(
-    (val) => (val ? parseInt(val as string, 10) : undefined),
-    z.number().min(1)
-  ),
-  "include-emojis": z.boolean(),
-  "include-indicators": z.boolean(),
-  "context": z.string().min(1),
-  "tone": z.enum(["humoristic", "serious", "informative", "normal"]),
-  "thread-length": z.preprocess(
-    (val) => (val ? parseInt(val as string, 10) : undefined),
-    z.number().min(1).max(12).optional()
-  ),
-  language: EnumLanguages,
-});
+const openai = new OpenAI();
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");

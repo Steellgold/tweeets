@@ -20,7 +20,7 @@ type Props = {
 }
 
 
-export const HighlightBadge: Component<Props> = ({ size = "sm", text, badge, color = "#111111", link }) => {
+export const HighlightBadge: Component<Props> = ({ size = "sm", text, badge, color = "#111111" }) => {
   return (
     <div className={cn("inline-flex items-center rounded-full shadow-lg border-2")}
       style={{

@@ -31,7 +31,7 @@ const languages: SelectLanguage[] = [
   { code: "tr", name: "Turkish" }
 ];
 
-export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = ({ value, onChange }) => {
+export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = ({ onChange }) => {
   return (
     <div id="onborda-step5">
       <Select

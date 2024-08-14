@@ -2,10 +2,10 @@
 
 import { z } from "zod";
 
-import { responseSchema } from "../type/post.type";
 
-import { bodySchema } from "@/app/api/ai/route";
 import { auth } from "@/auth";
+
+import { bodySchema, responseSchema } from "../type/post.type";
 
 export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<any> => {
   const session = await auth();

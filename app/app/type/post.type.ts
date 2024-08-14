@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { EnumLanguages } from "@/config/prompt";
+
 export const Tweet = z.object({
   id: z.number(),
   text: z.string(),
@@ -24,4 +26,21 @@ export const responseSingleTweet = z.object({
 export const responseThread = z.object({
   event: Thread,
   in: z.number(),
+});
+
+export const bodySchema = z.object({
+  "type": z.enum(["singleTweet", "thread"]),
+  "chars": z.preprocess(
+    (val) => (val ? parseInt(val as string, 10) : undefined),
+    z.number().min(1)
+  ),
+  "include-emojis": z.boolean(),
+  "include-indicators": z.boolean(),
+  "context": z.string().min(1),
+  "tone": z.enum(["humoristic", "serious", "informative", "normal"]),
+  "thread-length": z.preprocess(
+    (val) => (val ? parseInt(val as string, 10) : undefined),
+    z.number().min(1).max(12).optional()
+  ),
+  language: EnumLanguages,
 });
