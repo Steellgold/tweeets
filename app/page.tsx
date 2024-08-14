@@ -13,13 +13,7 @@ const Page = () => {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
 
-      <HighlightBadge
-        badge={{ icon: <Drum size={16} /> }}
-        color="#0064d7"
-        link={{ href: "https://google.com", isExternal: true }}
-        size="sm"
-        text="New update, check it out!"
-      />
+      <HighlightBadge badge={{ icon: <Drum size={16} /> }} color="#0064d7" size="sm" text="New update, check it out!" />
 
       <div className="inline-block max-w-lg text-center justify-center">
         <h1 className={title()}>Change the way you&nbsp;</h1>
