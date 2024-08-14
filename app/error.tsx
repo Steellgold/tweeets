@@ -24,6 +24,7 @@ const Error: Component<ErrorProps> = ({ error, reset }) => {
     setClicked(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setClicked(false);
+    reset();
   };
 
   return (
