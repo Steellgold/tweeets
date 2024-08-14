@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.4.2",
+		"@nextui-org/accordion": "^2.0.38",
 		"@nextui-org/avatar": "^2.0.32",
 		"@nextui-org/button": "2.0.37",
 		"@nextui-org/card": "^2.0.33",
@@ -25,6 +26,7 @@
 		"@nextui-org/listbox": "2.1.25",
 		"@nextui-org/modal": "^2.0.39",
 		"@nextui-org/navbar": "2.0.36",
+		"@nextui-org/scroll-shadow": "^2.1.19",
 		"@nextui-org/select": "^2.2.5",
 		"@nextui-org/slider": "^2.2.15",
 		"@nextui-org/snippet": "2.0.41",

@@ -2,6 +2,8 @@
 
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { Textarea } from "@nextui-org/input";
 import { HandMetal, PiggyBank, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -26,6 +28,7 @@ import { responseSchema, SingleTweet, Thread } from "./type/post.type";
 import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
 import { Component } from "@/components/component";
+import { cn } from "@/lib/utils";
 
 type State = {
   isError: boolean;
@@ -205,36 +208,38 @@ const Submit: Component<SubmitProps> = ({ data, type, context }) => {
 
       if (parsed.success) {
         return (
-          <pre>
-            <code>{JSON.stringify(parsed.data, null, 2)}</code>
-          </pre>
+          <ScrollShadow hideScrollBar className="h-[330px]">
+            <Accordion defaultExpandedKeys={["1"]} variant="splitted">
+              {parsed.data.tweets.map((tweet, index) => (
+                <AccordionItem key={tweet.id} aria-label="Tweet" className={cn({
+                    "mb-4": index == parsed.data.tweets.length - 1
+                })} title={`Tweet ${index + 1}`}>
+                  {tweet.text}
+                </AccordionItem>
+              ))}
+            </Accordion>
+        </ScrollShadow>
         );
       } else {
-        console.error(parsed.error);
-
-        return (
-          <pre>
-            <code>{JSON.stringify(parsed.error, null, 2)}</code>
-          </pre>
-        );
+        return <p>An error occurred while parsing the response.</p>;
       }
     } else {
       const parsed = SingleTweet.safeParse(data.data.event);
 
       if (parsed.success) {
         return (
-          <pre>
-            <code>{JSON.stringify(parsed.data, null, 2)}</code>
-          </pre>
+          <Card>
+            <CardBody>
+              <p className="text-sm">
+                {parsed.data.text}</p>
+            </CardBody>
+            <CardFooter>
+              <p className="text-[#9CA3AF] text-sm">Generated in {data.data.in}ms</p>
+            </CardFooter>
+          </Card>
         );
       } else {
-        console.error(parsed.error);
-
-        return (
-          <pre>
-            <code>{JSON.stringify(parsed.error, null, 2)}</code>
-          </pre>
-        );
+        return <p>An error occurred while parsing the response.</p>;
       }
     }
   };
