@@ -4,11 +4,12 @@ import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
 import { Textarea } from "@nextui-org/input";
 import { HandMetal, PiggyBank, Presentation } from "lucide-react";
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useOnborda } from "onborda";
 import { useSession } from "next-auth/react";
 import { useFormState, useFormStatus } from "react-dom";
 import { Chip } from "@nextui-org/chip";
+import { z } from "zod";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";
@@ -19,20 +20,30 @@ import { EmojiesSwitchComponent } from "./lib/EmojiesSwitchComponent";
 import { IndicatorsSwitchComponent } from "./lib/IndicatorsSwitchComponent";
 import { generateAction } from "./actions/generate";
 import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
+import { GeneratedPostModal } from "./lib/modals/GeneratedPostModal";
+import { responseSchema, SingleTweet, Thread } from "./type/post.type";
 
 import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
+import { Component } from "@/components/component";
 
 type State = {
   isError: boolean;
   errorType?: "textarea" | "alert";
-  message: string;
+  message?: string;
+  data: z.infer<typeof responseSchema>;
 };
 
 const initialState: State = {
   isError: false,
   errorType: undefined,
   message: "",
+  data: {
+    event: {
+      text: ""
+    },
+    in: 0
+  }
 };
 
 const Page = () => {
@@ -51,6 +62,8 @@ const Page = () => {
 
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const [result, setResult] = useState<z.infer<typeof responseSchema>>();
 
   const sendGenerate = generateAction.bind(null, {
     "include-emojis": emojies,
@@ -71,11 +84,18 @@ const Page = () => {
     if (isError) {
       setIsInvalid(true);
       setErrorMessage(message);
-    } else {
-      setIsInvalid(false);
-      setErrorMessage("");
+    }
+
+    if (!isError && state.data) {
+      setResult(state.data);
     }
   }, [state]);
+
+  const handleClear = () => {
+    setIsInvalid(false);
+    setErrorMessage("");
+    setResult(undefined);
+  };
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -88,8 +108,8 @@ const Page = () => {
         </CardHeader>
 
         {state && state.isError && state.errorType == "alert" && (
-          <div className="px-2 mt-2.5">
-            <Card className="py-2 px-1 border-2 border-[#f31260] bg-[#f3126010]">
+          <div className="px-3 mt-2.5">
+            <Card className="py-1 px-1 border-2 border-[#f31260] bg-[#f3126010]">
               <CardHeader className="flex flex-col items-start">
                 <Chip color="danger">Oh no!</Chip>
                 <p>{state.message}</p>
@@ -110,6 +130,7 @@ const Page = () => {
               value={content}
               variant={isInvalid && state.isError && state.errorType == "textarea" ? "bordered" : "flat"} 
               onChange={(e) => setContent(e.target.value)}
+              onFocus={handleClear}
             />
           </div>
 
@@ -161,7 +182,7 @@ const Page = () => {
           </div>
 
           <form action={formAction} id="onborda-step8">
-            <Submit />
+            <Submit context={content} data={state} type={type} />
           </form>
         </CardFooter>
       </Card>
@@ -169,14 +190,68 @@ const Page = () => {
   );
 }
 
-const Submit = (): ReactElement => {
+type SubmitProps = {
+  data: State;
+  type: TYPE;
+  context: string;
+};
+
+const Submit: Component<SubmitProps> = ({ data, type, context }) => {
   const { pending } = useFormStatus();
 
+  const renderContent = () => {
+    if (type === "thread" && !data.isError) {
+      const parsed = Thread.safeParse(data.data.event);
+
+      if (parsed.success) {
+        return (
+          <pre>
+            <code>{JSON.stringify(parsed.data, null, 2)}</code>
+          </pre>
+        );
+      } else {
+        console.error(parsed.error);
+
+        return (
+          <pre>
+            <code>{JSON.stringify(parsed.error, null, 2)}</code>
+          </pre>
+        );
+      }
+    } else {
+      const parsed = SingleTweet.safeParse(data.data.event);
+
+      if (parsed.success) {
+        return (
+          <pre>
+            <code>{JSON.stringify(parsed.data, null, 2)}</code>
+          </pre>
+        );
+      } else {
+        console.error(parsed.error);
+
+        return (
+          <pre>
+            <code>{JSON.stringify(parsed.error, null, 2)}</code>
+          </pre>
+        );
+      }
+    }
+  };
+
   return (
-    <Button color={"primary"} isLoading={pending} size="sm" type="submit">
-      {!pending && <HandMetal size={16} />}
-      Generate Tweet
-    </Button>
+    <GeneratedPostModal
+      button={
+        <Button color={"primary"} isDisabled={!context || context.length < 10 || pending} isLoading={pending} size="sm" type="submit">
+          {!pending && <HandMetal size={16} />}
+          Generate Tweet
+        </Button>
+      }
+      content={renderContent()}
+      isError={data.isError}
+      isLoading={pending}
+      type={type}
+    />
   );
 }
 
