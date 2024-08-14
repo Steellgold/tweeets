@@ -6,6 +6,7 @@ import { Language } from "@/config/prompt";
 
 type LanguageSelectComponentProps = {
   value: Language;
+  isDisabled?: boolean;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
@@ -31,12 +32,13 @@ const languages: SelectLanguage[] = [
   { code: "tr", name: "Turkish" }
 ];
 
-export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = ({ onChange }) => {
+export const LanguageSelectComponent: Component<LanguageSelectComponentProps> = ({ onChange, isDisabled }) => {
   return (
     <div id="onborda-step5">
       <Select
         className="max-w-full"
         defaultSelectedKeys={["English"]}
+        isDisabled={isDisabled}
         items={languages}
         renderValue={(items: SelectedItems<SelectLanguage>) => {
           return items.map((item) => (

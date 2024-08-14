@@ -8,10 +8,11 @@ import { calculateCredits } from "@/config/credits";
 
 type SliderComponentProps = {
   value: number;
+  isDisabled: boolean;
   onChange: ((value: number | number[]) => void) | undefined
 }
 
-export const ThreadLengthSliderComponent: Component<SliderComponentProps> = ({ value, onChange }) => {
+export const ThreadLengthSliderComponent: Component<SliderComponentProps> = ({ value, onChange, isDisabled }) => {
   return (
     <div id="onborda-step4">
       <Card className="w-full border-2 border-[#262629]">
@@ -26,6 +27,7 @@ export const ThreadLengthSliderComponent: Component<SliderComponentProps> = ({ v
             color={"primary"}
             defaultValue={50}  
             formatOptions={{ style: "decimal" }}
+            isDisabled={isDisabled}
             maxValue={12}
             minValue={2}
             showTooltip={true}

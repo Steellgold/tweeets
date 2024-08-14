@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 
 type EmojiesSwitchComponentProps = {
   value: boolean;
+  isDisabled?: boolean;
   onChange: ((value: boolean) => void) | undefined
 }
 
-export const EmojiesSwitchComponent: Component<EmojiesSwitchComponentProps> = ({ value, onChange }) => {
+export const EmojiesSwitchComponent: Component<EmojiesSwitchComponentProps> = ({ value, onChange, isDisabled }) => {
   return (
     <Switch
       classNames={{
@@ -27,6 +28,7 @@ export const EmojiesSwitchComponent: Component<EmojiesSwitchComponentProps> = ({
           "group-data-[selected]:group-data-[pressed]:ml-4",
         ),
       }}
+      isDisabled={isDisabled}
       isSelected={value}
       onValueChange={onChange}
     >

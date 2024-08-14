@@ -1,22 +1,25 @@
 import { Tabs, Tab } from "@nextui-org/tabs";
 import { MessageSquare, MessagesSquare } from "lucide-react";
 
+import { Component } from "@/components/component";
+
 import { TYPE } from "../type/tabs.type";
 
-import { Component } from "@/components/component";
 
 interface TabsComponentProps {
   type: TYPE;
   setType: (value: TYPE) => void;
   onChange: (type: TYPE) => void;
+  isDisabled: boolean;
 }
 
-export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType, onChange }) => (
+export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType, onChange, isDisabled }) => (
   <div id="onborda-step3"> 
     <Tabs
       aria-label="Generator type"
       color={"primary"}
       defaultSelectedKey={type}
+      isDisabled={isDisabled}
       onSelectionChange={(key) => {
         setType(key as TYPE)
         onChange(type);

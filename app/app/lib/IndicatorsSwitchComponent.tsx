@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils";
 type IndicatorsSwitchComponentProps = {
   type: "singleTweet" | "thread";
   value: boolean;
+  isDisabled?: boolean;
   onChange: ((value: boolean) => void) | undefined
 }
 
-export const IndicatorsSwitchComponent: Component<IndicatorsSwitchComponentProps> = ({ type, value, onChange }) => {
+export const IndicatorsSwitchComponent: Component<IndicatorsSwitchComponentProps> = ({ type, value, onChange,isDisabled }) => {
   return (
     <Switch
       classNames={{
@@ -29,7 +30,7 @@ export const IndicatorsSwitchComponent: Component<IndicatorsSwitchComponentProps
           "group-data-[selected]:group-data-[pressed]:ml-4",
         ),
       }}
-      isDisabled={type == "singleTweet"}
+      isDisabled={type == "singleTweet" || isDisabled}
       isSelected={value}
       onValueChange={onChange}
     >

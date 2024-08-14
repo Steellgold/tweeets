@@ -7,10 +7,11 @@ import { Component } from "@/components/component";
 
 type SliderComponentProps = {
   value: number;
+  isDisabled: boolean;
   onChange: ((value: number | number[]) => void) | undefined
 }
 
-export const LengthSliderComponent: Component<SliderComponentProps> = ({ value, onChange }) => {
+export const LengthSliderComponent: Component<SliderComponentProps> = ({ value, onChange, isDisabled }) => {
   return (
     <div id="onborda-step4">
     <Card className="w-full border-2 border-[#262629]">
@@ -27,6 +28,7 @@ export const LengthSliderComponent: Component<SliderComponentProps> = ({ value, 
           color={"primary"}
           defaultValue={50}
           formatOptions={{ style: "decimal" }}
+          isDisabled={isDisabled}
           maxValue={500}
           minValue={15}
           showTooltip={true}
