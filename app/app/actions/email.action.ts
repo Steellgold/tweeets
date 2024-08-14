@@ -1,6 +1,6 @@
 "use server"
 
-import { auth, unstable_update } from "@/auth";
+import { auth } from "@/auth";
 import { stripe } from "@/config/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -13,12 +13,23 @@ type Response = {
 export const defineMailAction = async (email: string): Promise<Response> => {
   const session = await auth();
 
-  unstable_update({ user: { email } });
-
-  
-  const stripeCustomer = await stripe.customers.create({ email });
-
   if (!session || !session.user) return { isError: true, message: "Not authenticated" };
+
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const emailExists = await prisma.user.findFirst({ where: { email } });
+
+  if (emailExists) return { isError: true, message: "This email is already in use, please choose another one" };
+  if (!user) return { isError: true, message: "User not found" };
+
+  const customerExists = user.stripeCustomerId ? true : false;
+
+  if (customerExists) return { isError: true, message: "You already have a stripe customer" };
+
+  const stripeCustomerExists = await stripe.customers.list({ email });
+
+  if (stripeCustomerExists.data.length > 0) return { isError: true, message: "A customer with this email already exists" };
+
+  const stripeCustomer = await stripe.customers.create({ email });
   const userId = session.user.id;
   
   const data = await prisma.user.update({
@@ -29,7 +40,6 @@ export const defineMailAction = async (email: string): Promise<Response> => {
     }
   });
 
-  console.log(data);
   if (!data) return { isError: true, message: "Could not update user" };
 
   return {

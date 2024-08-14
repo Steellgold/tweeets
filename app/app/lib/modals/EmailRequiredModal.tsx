@@ -53,7 +53,9 @@ export const EmailRequiredModal: Component<Props> = ({ button }) => {
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
             Email Required
-            <span className="text-sm font-normal -mt-1">Your email is required if in the future you want to purchase credits, we will not send you any spam.</span>
+            <span className="text-sm font-normal -mt-1">
+              Your email is required if in the future you want to purchase credits, we will not send you any spam.
+            </span>
           </ModalHeader>
 
           <ModalBody className="flex flex-col gap-2">
@@ -63,6 +65,10 @@ export const EmailRequiredModal: Component<Props> = ({ button }) => {
               </div>
             ) : (
               <div className="flex flex-col">
+                {state.isError && (
+                  <div className="text-red-500 text-sm">{state.message}</div>
+                )}
+
                 <Input
                   errorMessage={isValidEmail === false ? "Invalid email, please check it again." : ""}
                   isInvalid={isValidEmail === false}
