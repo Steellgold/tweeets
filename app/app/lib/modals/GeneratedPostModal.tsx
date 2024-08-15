@@ -75,10 +75,10 @@ export const GeneratedPostModal: Component<Props> = ({ button, content, isLoadin
               </ModalBody>
               
               <ModalFooter>
-                <Button color="danger" variant="flat" onPress={onClose}>Close</Button>
+                <Button color="danger" isDisabled={isLoading} variant="flat" onPress={onClose}>Close</Button>
 
                 {type == "singleTweet" && content && (
-                  <Button as={Link} color="primary" href={`https://twitter.com/intent/tweet?text=${content}`} target="_blank" variant="flat">
+                  <Button as={Link} color="primary" href={`https://twitter.com/intent/tweet?text=${content}`} isDisabled={isLoading} target="_blank" variant="flat">
                     <Bird fill="currentColor" size={16} />
                     Share
                   </Button>
