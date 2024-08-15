@@ -4,7 +4,7 @@ import { z } from "zod";
 
 
 import { auth } from "@/auth";
-import { openai } from "@/app/api/ai/route";
+import { openai } from "@/lib/openai";
 
 import { bodySchema, responseSchema } from "../type/post.type";
 

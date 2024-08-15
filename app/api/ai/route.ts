@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { zodResponseFormat } from "openai/helpers/zod";
 import dayjs from "dayjs";
-import { OpenAI } from "openai";
 
 import { generatePrompt } from "@/config/prompt";
 import { getTokensCount } from "@/config/credits";
 import { bodySchema, SingleTweet, Thread } from "@/app/app/type/post.type";
-
-export const openai = new OpenAI();
+import { openai } from "@/lib/openai";
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
