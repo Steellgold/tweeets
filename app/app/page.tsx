@@ -50,20 +50,20 @@ const initialState: GenerateFormActionState = {
 };
 
 const Page = () => {  
-  const [content, setContent] = useState<string>(""); // A string of text (min 10 chars)
+  const [content, setContent] = useState<string>("");
 
-  const [tone, setTone] = useState<TONES>("normal"); // normal, positive, negative, neutral
-  const [type, setType] = useState<"singleTweet" | "thread">("singleTweet"); // singleTweet, thread
+  const [tone, setTone] = useState<TONES>("normal");
+  const [type, setType] = useState<"singleTweet" | "thread">("singleTweet");
   const [language, setLanguage] = useState<Language>("English");
-  const [tweetLength, setTweetLength] = useState(50); // A number between 1 and 500
-  const [threadLength, setThreadLength] = useState(2); // A number between 2 and 12
-  const [emojies, setEmojies] = useState<boolean>(true); // true, false
-  const [indicators, setIndicators] = useState<boolean>(false); // true, false
+  const [tweetLength, setTweetLength] = useState(50);
+  const [threadLength, setThreadLength] = useState(2);
+  const [emojies, setEmojies] = useState<boolean>(true);
+  const [indicators, setIndicators] = useState<boolean>(false);
 
   const [isReset, setReset] = useState<boolean>(false);
 
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  
+
   const { data: session } = useSession();
   const { startOnborda } = useOnborda();
 
