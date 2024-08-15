@@ -1,14 +1,17 @@
 "use client";
 
-import React, { cloneElement, ReactElement, useState } from "react";
+import React, { cloneElement, ReactElement } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, useDisclosure } from "@nextui-org/modal";
 import { useSession } from "next-auth/react";
-import { Slider } from "@nextui-org/slider";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
-import { Code } from "@nextui-org/code";
-import { CardFooter } from "@nextui-org/card";
-import { Zap } from "lucide-react";
+import { Card, CardFooter } from "@nextui-org/card";
+import { Image } from "@nextui-org/image";
+import { useFormState } from "react-dom";
+
+import { cn } from "@/lib/utils";
+import { createCheckoutSessionAction } from "@/lib/actions/stripe.action";
+import { getPriceIdToUse } from "@/config/stripe";
 
 import { Component } from "./component";
 
@@ -19,62 +22,76 @@ type CreditsModalProps = {
 export const CreditsModal: Component<CreditsModalProps> = ({ button }) => {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const { status } = useSession();
-  const [credits, setCredits] = useState(5);
 
   if (status == "loading") return <Button isLoading color="default" size="sm" />
   if (status == "unauthenticated") return <Button as={Link} color="default" href="/api/auth/signin" size="sm">Need credits?</Button>
-
-  const prixBase = parseInt((credits * 0.599).toFixed(2));
-  const prixFinal = prixBase + 0.99;
-  const prixAffiche = credits >= 10 ? prixFinal.toFixed(2) : (credits * 0.599 + 0.99).toFixed(2);
 
   return (
     <>
       {cloneElement(button, { onPress: onOpen })}
 
-      <Modal backdrop="blur" isOpen={isOpen} onOpenChange={(open) => {
-        onOpenChange();
-        if (!open) setCredits(0);
-      }}>
+      <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
-            Need credits?
+            How much ?
+            <p className="text-sm font-normal -mt-1 text-white/80">
+              Click on the price of a pack to buy credits, you will be redirected to the payment page.</p>
           </ModalHeader>
 
-          <ModalBody className="-mt-5">
-            <div className="flex flex-col gap-2">
-              <p>Each tweet generation will cost you <Code className="text-model4">1 credit</Code>.</p>
-              <div className="flex flex-wrap items-center gap-1 -mt-2">
-                <p>When</p>
-                <Code className="text-model4 flex items-center gap-1">
-                  <Zap color="#17c964" fill="#17c964" size={18} />
-                  Fast mode
-                </Code>
-                <p>is enabled, </p>
-                <p>it will</p>
-                <p> cost you</p>
-                <p> one extra credit.</p>
-              </div>
+          <ModalBody className="flex flex-col gap-2 mb-4">
+            <div className="flex flex-row gap-2 items-center">
+              <CreditCard nbr={"10"} price={'0.60'} />
+              <CreditCard nbr={"50"} price={3} />
+            </div>
+            <div className="flex flex-row gap-2 items-center">
+              <CreditCard nbr={"100"} price={6} />
+              <CreditCard nbr={"500"} price={30} />
             </div>
           </ModalBody>
-
-          <CardFooter className="flex flex-col gap-2 p-5">
-            <Slider
-              defaultValue={5}
-              maxValue={100}
-              minValue={5}
-              step={5}
-              value={credits}
-              // @ts-ignore
-              onChange={(value: number) => setCredits(value)}
-            />
-            
-            <Button className="w-full" color="primary">
-              Buy {credits} credits for ${prixAffiche}
-            </Button>
-          </CardFooter>
         </ModalContent>
       </Modal>
     </>
   );
+}
+
+type CreditCardProps = {
+  nbr: "10" | "50" | "100" | "500";
+  price: number | string;
+}
+
+const CreditCard: Component<CreditCardProps> = ({ nbr, price }): ReactElement => {
+  const initialState = {
+    isError: false,
+    message: ""
+  };
+
+  const sendGenerate = createCheckoutSessionAction.bind(null, getPriceIdToUse(nbr));
+
+  const [state, formAction] = useFormState(sendGenerate, initialState);
+
+  return (
+    <Card isFooterBlurred className="border-none" radius="lg">
+      <Image alt="Credits" className="object-cover" height={200} src={`/credits/${nbr}.png`} width={200} />
+
+      <CardFooter className={cn(
+        "before:bg-white/5 border-white/20 justify-between",
+        "border-1 overflow-hidden py-1 absolute before:rounded-xl",
+        "rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10"
+      )}>
+        <p className="text-tiny text-white/90">{nbr} credits</p>
+        <form action={formAction}>
+          <Button
+            className="text-tiny text-white bg-black/20"
+            color="default"
+            radius="lg"
+            size="sm"
+            type="submit"
+            variant="flat"
+          >
+            {price}€
+          </Button>
+        </form>
+      </CardFooter>
+    </Card>
+  )
 }
