@@ -7,7 +7,7 @@ import { generatePrompt } from "@/config/prompt";
 import { getTokensCount } from "@/config/credits";
 import { bodySchema, SingleTweet, Thread } from "@/app/app/type/post.type";
 
-const openai = new OpenAI();
+export const openai = new OpenAI();
 
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
