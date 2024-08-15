@@ -1,12 +1,9 @@
 enum Status {
   PENDING
-  SUCCESS
   FAILED
-}
-
-enum Currency {
-  USD
-  EUR
+  SUCCESS
+  EXPIRED
+  REFUNDED
 }
 
 model Payments {
@@ -17,13 +14,18 @@ model Payments {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  credits  Int      @default(10)
+  credits  Int    @default(10)
   price    Float
-  status   Status   @default(PENDING)
-  currency Currency @default(USD)
+  status   Status @default(PENDING)
+  currency String @default("usd")
 
-  priceId          String?
-  stripeCustomerId String?
+  expiresAt DateTime
+  liveMode  Boolean  @default(false)
+
+  priceId            String
+  checkoutSessionId  String @unique
+  checkoutSessionUrl String
+  stripeCustomerId   String
 
   invoiceUrl String?
 }
