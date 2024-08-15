@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 
-
 import { auth } from "@/auth";
 import { openai } from "@/lib/openai";
 
@@ -11,6 +10,7 @@ import { bodySchema, responseSchema } from "../type/post.type";
 export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<any> => {
   const session = await auth();
   const formData = bodySchema.safeParse(data);
+  
 
   if (!formData.success) {
     if (formData.error.errors[0].path[0] === "context") {
