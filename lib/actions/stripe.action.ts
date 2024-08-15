@@ -3,7 +3,9 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
-import { stripe } from "@/config/stripe";
+import { priceIdToCredits, stripe } from "@/config/stripe";
+
+import { prisma } from "../prisma";
 
 export const createCheckoutSessionAction = async(priceId: string): Promise<{
   isError?: boolean;
@@ -28,6 +30,23 @@ export const createCheckoutSessionAction = async(priceId: string): Promise<{
   if (!checkoutSession.url) {
     throw new Error("Stripe session url is undefined");
   }
+
+  await prisma.payments.create({
+    data: {
+      user: { connect: { id: session.user.id } },
+      priceId,
+      stripeCustomerId: session.user.stripeCustomerId,
+      price: checkoutSession.amount_total! / 100,
+      credits: priceIdToCredits(priceId),
+      currency: checkoutSession.currency?.toString(),
+      
+      liveMode: checkoutSession.livemode,
+      expiresAt: new Date(checkoutSession.expires_at! * 1000),
+
+      checkoutSessionId: checkoutSession.id,
+      checkoutSessionUrl: checkoutSession.url
+    }
+  });
 
   redirect(checkoutSession.url);
 }

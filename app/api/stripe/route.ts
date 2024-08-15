@@ -18,19 +18,45 @@ export const GET = async(req: NextRequest): Promise<NextResponse> => {
 
   if (session.status !== "complete" || session.payment_status !== "paid") {
     console.log("Payment failed 💔");
+
+    await prisma.payments.update({
+      where: {
+        checkoutSessionId: session.id
+      },
+      data: {
+        status: "FAILED"
+      }
+    });
   }
 
   if (schema.success && session.status === "complete" && session.payment_status === "paid") {
     console.log("Payment completed 💖");
     const receiptUrl = await getReceiptUrl(session.payment_intent?.toString() || null);
-    
-    console.log("Your receipt url is (saved in database/billing page):", receiptUrl);
 
     const user = await prisma.user.findUnique({ where: { id: schema.data.userId } });
     const credits = user?.credits!;
     const newCredits = credits + priceIdToCredits(schema.data.priceId);
 
-    await prisma.user.update({ where: { id: schema.data.userId }, data: { credits: newCredits } });
+    await prisma.user.update({
+      where: {
+        id: schema.data.userId
+      },
+      data: {
+        credits: newCredits,
+        payments: {
+          update: {
+            where: {
+              checkoutSessionId: session.id
+            },
+            data: {
+              status: "SUCCESS",
+              invoiceUrl: receiptUrl
+            }
+          }
+        }
+      }
+    });
+    
     unstable_update({ ...user, user: { credits: newCredits } });
   }
 
