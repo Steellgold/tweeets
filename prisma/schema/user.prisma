@@ -10,6 +10,11 @@ model User {
   stripeCustomerId String?
   credits          Int     @default(5)
   posts            Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  payments Payments[]
 }
 
 model Account {
