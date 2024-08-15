@@ -14,6 +14,8 @@ import { Avatar } from "@nextui-org/avatar";
 
 import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
+import { generateAction } from "@/lib/actions/generate.action";
+import { logout } from "@/lib/actions/logout.action";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";
@@ -22,11 +24,9 @@ import { LengthSliderComponent } from "./lib/LengthSliderComponent";
 import { ThreadLengthSliderComponent } from "./lib/ThreadLengthSliderComponent";
 import { EmojiesSwitchComponent } from "./lib/EmojiesSwitchComponent";
 import { IndicatorsSwitchComponent } from "./lib/IndicatorsSwitchComponent";
-import { generateAction } from "./actions/generate.action";
 import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
 import { responseSchema } from "./type/post.type";
 import { EmailRequiredModal } from "./lib/modals/EmailRequiredModal";
-import { logout } from "./actions/logout.action";
 import { Submit } from "./lib/SubmitButton";
 
 export type GenerateFormActionState = {
@@ -49,10 +49,7 @@ const initialState: GenerateFormActionState = {
   }
 };
 
-const Page = () => {
-  const { data: session } = useSession();
-  const { startOnborda } = useOnborda();
-  
+const Page = () => {  
   const [content, setContent] = useState<string>(""); // A string of text (min 10 chars)
 
   const [tone, setTone] = useState<TONES>("normal"); // normal, positive, negative, neutral
@@ -66,6 +63,9 @@ const Page = () => {
   const [isReset, setReset] = useState<boolean>(false);
 
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
+  
+  const { data: session } = useSession();
+  const { startOnborda } = useOnborda();
 
   const sendGenerate = generateAction.bind(null, {
     "include-emojis": emojies,

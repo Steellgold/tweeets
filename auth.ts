@@ -14,6 +14,7 @@ declare module "next-auth" {
 
   interface User {
     credits: number;
+    stripeCustomerId: string;
   }
 }
 
