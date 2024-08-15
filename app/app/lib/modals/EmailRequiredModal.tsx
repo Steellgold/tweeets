@@ -10,8 +10,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { useSession } from "next-auth/react";
 
 import { Component } from "@/components/component";
-
-import { defineMailAction } from "../../actions/email.action";
+import { defineMailAction } from "@/lib/actions/email.action";
 
 type Props = {
   button: ReactElement;
