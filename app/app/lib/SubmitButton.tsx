@@ -26,12 +26,12 @@ type SubmitProps = {
 export const Submit: Component<SubmitProps> = ({ data, type, context, isDisabled, isReset, onSubmit }) => {
   const { pending } = useFormStatus();
 
-  const handleSubmit = () => {
-    console.log("Submit button clicked");
-    if (onSubmit) {
-      onSubmit();
-    }
-  };
+  // const handleSubmit = () => {
+  //   console.log("Submit button clicked");
+  //   if (onSubmit) {
+  //     onSubmit();
+  //   }
+  // };
 
   const renderContent = () => {
     if (type === "thread" && !data.isError) {
@@ -61,8 +61,7 @@ export const Submit: Component<SubmitProps> = ({ data, type, context, isDisabled
         return (
           <Card>
             <CardBody>
-              <p className="text-sm">
-                {parsed.data.text}</p>
+              <p className="text-sm">{parsed.data.text}</p>
             </CardBody>
             <CardFooter>
               <p className="text-[#9CA3AF] text-sm">Generated in {data.data.in}ms</p>
@@ -84,7 +83,7 @@ export const Submit: Component<SubmitProps> = ({ data, type, context, isDisabled
           isLoading={pending}
           size="sm"
           type="submit"
-          onClick={handleSubmit}
+          // onClick={handleSubmit}
         >
           {!pending && <HandMetal size={16} />}
           Generate Tweet
