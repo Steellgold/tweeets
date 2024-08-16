@@ -135,22 +135,31 @@ const Page = () => {
           </div>
 
           <div className="w-full flex flex-col sm:flex-row gap-2 sm:items-center justify-between">
-            <ToneTabsComponent isDisabled={!session} setType={setTone} type={tone} />
-            <TypeTabsComponent isDisabled={!session} setType={setType} type={type} onChange={(value: TYPE) => {
-              if (value == "thread") {
-                setThreadLength(0);
-                setIndicators(false);
-              }
-            }} />
+            <div id="onborda-step2">
+              <ToneTabsComponent isDisabled={!session} setType={setTone} type={tone} />
+            </div>
+            
+            <div id="onborda-step3">
+              <TypeTabsComponent isDisabled={!session} setType={setType} type={type} onChange={(value: TYPE) => {
+                if (value == "thread") {
+                  setThreadLength(0);
+                  setIndicators(false);
+                }
+              }} />
+            </div>
           </div>
           
-          {/* @ts-ignore */}
-          <LengthSliderComponent isDisabled={!session} value={tweetLength} onChange={(value) => setTweetLength(value)} />
-          
+          <div id="onborda-step4">
+            {/* @ts-ignore */}
+            <LengthSliderComponent isDisabled={!session} value={tweetLength} onChange={(value) => setTweetLength(value)} />
+          </div>
+
           {/* @ts-ignore */}
           {type == "thread" && <ThreadLengthSliderComponent isDisabled={!session} value={threadLength} onChange={(value) => setThreadLength(value)} />}
 
-          <LanguageSelectComponent isDisabled={!session} value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
+          <div id="onborda-step5">
+            <LanguageSelectComponent isDisabled={!session} value={language} onChange={(e) => setLanguage(e.target.value as Language)} />
+          </div>
             
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl" id="onborda-step6">
             <EmojiesSwitchComponent isDisabled={!session} value={emojies} onChange={(value) => setEmojies(value)} />
