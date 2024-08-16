@@ -28,7 +28,7 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
     return { isError: true, errorType: "textarea", message: "Context is required and should be at least 10 characters" }
   }
 
-  if (!await hasEnoughCredits(data.type == "thread", data["thread-length"] || 1)) {
+  if (!await hasEnoughCredits(data.type == "thread", data.threadLength || 1)) {
     console.log("Not enough credits");
 
     return { isError: true, errorType: "alert", message: "You do not have enough credits to generate this content, please purchase more credits" };
@@ -46,11 +46,11 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
       "x-api-key": process.env.SAK!,
       "x-data-type": data.type,
       "x-data-chars": data.chars.toString(),
-      "x-data-include-emojis": data["include-emojis"].toString(),
-      "x-data-include-indicators": data["include-indicators"].toString(),
+      "x-data-include-emojis": data.includeEmojis.toString(),
+      "x-data-include-indicators": data.includeIndicators.toString(),
       "x-data-context": data.context,
       "x-data-tone": data.tone,
-      "x-data-thread-length": data["thread-length"].toString(),
+      "x-data-thread-length": data.threadLength!.toString(),
       "x-data-language": data.language,
     }),
   });
@@ -64,7 +64,7 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
     }
   }
 
-  const newCreditsCount = await deduceCredits(data.type == "thread", data["thread-length"] || 1, session.user.id!);
+  const newCreditsCount = await deduceCredits(data.type == "thread", data.threadLength || 1, session.user.id!);
 
   return {
     isError: false,

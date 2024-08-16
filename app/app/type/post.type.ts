@@ -29,18 +29,18 @@ export const responseThread = z.object({
 });
 
 export const bodySchema = z.object({
-  "type": z.enum(["singleTweet", "thread"]),
-  "chars": z.preprocess(
+  type: z.enum(["singleTweet", "thread"]),
+  chars: z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : undefined),
     z.number().min(1)
   ),
-  "include-emojis": z.boolean(),
-  "include-indicators": z.boolean(),
-  "context": z.string().min(1),
-  "tone": z.enum(["humoristic", "serious", "informative", "normal"]),
-  "thread-length": z.preprocess(
+  includeEmojis: z.boolean(),
+  includeIndicators: z.boolean(),
+  context: z.string().min(1),
+  tone: z.enum(["humoristic", "serious", "informative", "normal"]),
+  threadLength: z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : undefined),
-    z.number().min(1).max(12).default(1)
+    z.number().min(1).max(12).optional()
   ),
   language: EnumLanguages,
 });

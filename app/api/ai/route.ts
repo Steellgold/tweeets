@@ -18,17 +18,19 @@ export const GET = async (req: Request): Promise<NextResponse> => {
   const data = {
     type: headers.get("x-data-type") || "",
     chars: parseInt(headers.get("x-data-chars") || "0"),
-    "include-emojis": headers.get("x-data-include-emojis") === "true",
-    "include-indicators": headers.get("x-data-include-indicators") === "true",
+    includeEmojis: headers.get("x-data-include-emojis") === "true",
+    includeIndicators: headers.get("x-data-include-indicators") === "true",
     context: headers.get("x-data-context") || "",
     tone: headers.get("x-data-tone") || "",
     threadLength: parseInt(headers.get("x-data-thread-length") || "1"),
     language: headers.get("x-data-language") || "en",
   };
 
+  console.log("data", data);
+
   const parsedBody = bodySchema.safeParse(data);
 
-  console.log(parsedBody);
+  console.log("parsedBody", parsedBody);
 
   const apiKey = req.headers.get("x-api-key");
 
@@ -39,18 +41,7 @@ export const GET = async (req: Request): Promise<NextResponse> => {
     return NextResponse.json({ error: "Invalid parameters" }, { status: 400 });
   }
 
-  const {
-    chars,
-    "include-emojis": includeEmojis,
-    "include-indicators": includeIndicators,
-    "thread-length": threadLength,
-    context,
-    tone,
-    type,
-    language,
-  } = parsedBody.data;
-
-  console.log(1);
+  const { chars, threadLength, includeEmojis, includeIndicators, context, tone, type, language } = parsedBody.data;
 
   const userPrompt = generatePrompt({
     type,

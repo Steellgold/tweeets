@@ -70,12 +70,12 @@ const Page = () => {
   const { startOnborda } = useOnborda();
 
   const sendGenerate = generateAction.bind(null, {
-    "include-emojis": emojies,
-    "include-indicators": indicators,
-    "chars": tweetLength,
-    "thread-length": type == "thread" ? threadLength : 0,
-    "tone": tone,
-    "context": content,
+    includeEmojis: emojies,
+    includeIndicators: indicators,
+    chars: tweetLength,
+    threadLength: type == "thread" ? threadLength : 1,
+    tone,
+    context: content,
     language,
     type
   });
