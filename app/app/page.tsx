@@ -160,7 +160,7 @@ const Page = () => {
 
         <CardFooter className="flex justify-between flex gap-2">
           <div className="flex gap-2">
-            <Button color="default" size="sm" onClick={startOnborda}>
+            <Button color="default" size="sm" onClick={() => startOnborda("demo")}>
               <Presentation size={16} />
               Onboarding
             </Button>
