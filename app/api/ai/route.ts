@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { zodResponseFormat } from "openai/helpers/zod";
 import dayjs from "dayjs";
 
@@ -10,7 +10,7 @@ import { openai } from "@/lib/openai";
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
-export const POST = async (req: NextRequest): Promise<NextResponse> => {
+export const POST = async (req: Request): Promise<NextResponse> => {
   const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
 
   const body = await req.json();

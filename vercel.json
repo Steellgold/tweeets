@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/ai/route.js": {
+      "maxDuration": 30
+    }
+  }
+}
