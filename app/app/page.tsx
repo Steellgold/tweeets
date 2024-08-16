@@ -14,6 +14,7 @@ import { z } from "zod";
 import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
 import { generateAction } from "@/lib/actions/generate.action";
+import { useDetectDevice } from "@/lib/hooks/useDetectDevice";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";
@@ -91,11 +92,14 @@ const Page = () => {
   const handleClear = () => {
     setIsInvalid(false);
   };
+  
+  const { isMobile } = useDetectDevice();
+
+  if (isMobile) return <MobileComponent />;
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 sm:py-8 md:py-10">
       {session && !session?.user.email && <EmailRequiredComponent />}
-      <MobileComponent />
 
       <Card className="sm:max-w-[610px] w-full border-2 border-[#393941]">
         <CardHeader className="border-b border-[#393941] flex flex-col items-start p-4">
