@@ -7,6 +7,8 @@ import { getTokensCount } from "@/config/credits";
 import { bodySchema, SingleTweet, Thread } from "@/app/app/type/post.type";
 import { openai } from "@/lib/openai";
 
+export const maxDuration = 30;
+
 export const POST = async (req: NextRequest): Promise<NextResponse> => {
   const time1 = dayjs().format("YYYY-MM-DD HH:mm:ss:sss");
 
