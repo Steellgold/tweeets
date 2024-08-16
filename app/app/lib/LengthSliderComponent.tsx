@@ -13,7 +13,6 @@ type SliderComponentProps = {
 
 export const LengthSliderComponent: Component<SliderComponentProps> = ({ value, onChange, isDisabled }) => {
   return (
-    <div id="onborda-step4">
     <Card className="w-full border-2 border-[#262629]">
       <CardHeader className="flex flex-col items-start border-b border-[#262629]">
         Tweet length
@@ -50,6 +49,5 @@ export const LengthSliderComponent: Component<SliderComponentProps> = ({ value, 
         />
       </CardBody>
     </Card>
-  </div>
   );
 }

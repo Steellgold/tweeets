@@ -11,8 +11,8 @@ interface TabsComponentProps {
   isDisabled: boolean;
 }
 
-export const ToneTabsComponent: Component<TabsComponentProps> = ({ type, setType, isDisabled }) => (
-  <div id="onborda-step2"> 
+export const ToneTabsComponent: Component<TabsComponentProps> = ({ type, setType, isDisabled }) => {
+  return (
     <Tabs
       aria-label="Generator type"
       className="overflow-x-auto w-full"
@@ -26,5 +26,5 @@ export const ToneTabsComponent: Component<TabsComponentProps> = ({ type, setType
       <Tab key="normal" title="Natural" />
       <Tab key="informative" title="Informative" />
     </Tabs>
-  </div>
-);
+  )
+}

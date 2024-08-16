@@ -13,8 +13,8 @@ interface TabsComponentProps {
   isDisabled: boolean;
 }
 
-export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType, onChange, isDisabled }) => (
-  <div id="onborda-step3"> 
+export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType, onChange, isDisabled }) => {
+  return (
     <Tabs
       aria-label="Generator type"
       color={"primary"}
@@ -39,5 +39,5 @@ export const TypeTabsComponent: Component<TabsComponentProps> = ({ type, setType
         </div>
       } />
     </Tabs>
-  </div>
-);
+  )
+}
