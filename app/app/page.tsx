@@ -26,6 +26,7 @@ import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
 import { responseSchema } from "./type/post.type";
 import { Submit } from "./lib/SubmitButton";
 import { EmailRequiredComponent } from "./lib/EmailRequiredComponent";
+import { MobileComponent } from "./lib/MobileComponent";
 
 export type GenerateFormActionState = {
   isError: boolean;
@@ -94,6 +95,7 @@ const Page = () => {
   return (
     <section className="flex flex-col items-center justify-center gap-4 sm:py-8 md:py-10">
       {session && !session?.user.email && <EmailRequiredComponent />}
+      <MobileComponent />
 
       <Card className="sm:max-w-[610px] w-full border-2 border-[#393941]">
         <CardHeader className="border-b border-[#393941] flex flex-col items-start p-4">
