@@ -30,7 +30,7 @@ export const OnboardCard: Component<CardComponentProps> = ({
   }
 
   return (
-    <Card>
+    <Card className="w-max max-w-max sm:max-w-xl">
       <CardHeader>
         <div className="flex items-start justify-between w-full">
           <div>
