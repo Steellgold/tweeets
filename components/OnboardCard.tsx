@@ -8,8 +8,10 @@ import { Button } from "@nextui-org/button";
 import confetti from "canvas-confetti";
 import { Code } from "@nextui-org/code";
 
+import { Component } from "./component";
 
-export const OnboardCard: React.FC<CardComponentProps> = ({
+
+export const OnboardCard: Component<CardComponentProps> = ({
   step,
   currentStep,
   totalSteps,
@@ -18,7 +20,7 @@ export const OnboardCard: React.FC<CardComponentProps> = ({
 }) => {
   const { closeOnborda } = useOnborda();
 
-  function handleConfetti() {
+  const handleConfetti = () => {
     closeOnborda();
     confetti({
       particleCount: 100,
