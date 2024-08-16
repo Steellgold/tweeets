@@ -40,13 +40,19 @@ export const generateAction = async(data: z.infer<typeof bodySchema>): Promise<a
     return { isError: true, errorType: "alert", message: "The content you provided is not allowed, please review and try again" };
   }
 
-  const res = await fetch(process.env.URL + "/api/ai", {
-    method: "POST",
+  const res = await fetch(`${process.env.URL}/api/ai`, {
+    method: "GET",
     headers: new Headers({
-      "Content-Type": "application/json",
-      "x-api-key": process.env.SAK || "",
+      "x-api-key": process.env.SAK!,
+      "x-data-type": data.type,
+      "x-data-chars": data.chars.toString(),
+      "x-data-include-emojis": data["include-emojis"].toString(),
+      "x-data-include-indicators": data["include-indicators"].toString(),
+      "x-data-context": data.context,
+      "x-data-tone": data.tone,
+      "x-data-thread-length": data["thread-length"].toString(),
+      "x-data-language": data.language,
     }),
-    body: JSON.stringify(data),
   });
 
   const result = await res.json();

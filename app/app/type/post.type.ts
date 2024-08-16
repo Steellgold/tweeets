@@ -40,7 +40,7 @@ export const bodySchema = z.object({
   "tone": z.enum(["humoristic", "serious", "informative", "normal"]),
   "thread-length": z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : undefined),
-    z.number().min(1).max(12).optional()
+    z.number().min(1).max(12).default(1)
   ),
   language: EnumLanguages,
 });
