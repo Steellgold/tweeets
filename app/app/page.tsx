@@ -3,19 +3,17 @@
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/card";
 import { Textarea } from "@nextui-org/input";
-import { Mail, PiggyBank, Presentation } from "lucide-react";
+import { PiggyBank, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useOnborda } from "onborda";
 import { useSession } from "next-auth/react";
 import { useFormState } from "react-dom";
 import { Chip } from "@nextui-org/chip";
 import { z } from "zod";
-import { Avatar } from "@nextui-org/avatar";
 
 import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
 import { generateAction } from "@/lib/actions/generate.action";
-import { logout } from "@/lib/actions/logout.action";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";
@@ -26,14 +24,15 @@ import { EmojiesSwitchComponent } from "./lib/EmojiesSwitchComponent";
 import { IndicatorsSwitchComponent } from "./lib/IndicatorsSwitchComponent";
 import { LanguageSelectComponent } from "./lib/LanguageSelectComponent";
 import { responseSchema } from "./type/post.type";
-import { EmailRequiredModal } from "./lib/modals/EmailRequiredModal";
 import { Submit } from "./lib/SubmitButton";
+import { EmailRequiredComponent } from "./lib/EmailRequiredComponent";
 
 export type GenerateFormActionState = {
   isError: boolean;
   errorType?: "textarea" | "alert";
   message?: string;
   data: z.infer<typeof responseSchema>;
+  newCreditsCount: number;
 };
 
 
@@ -41,6 +40,7 @@ const initialState: GenerateFormActionState = {
   isError: false,
   errorType: undefined,
   message: "",
+  newCreditsCount: 0,
   data: {
     event: {
       text: ""
@@ -64,7 +64,7 @@ const Page = () => {
 
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const { startOnborda } = useOnborda();
 
   const sendGenerate = generateAction.bind(null, {
@@ -81,12 +81,11 @@ const Page = () => {
   const [state, formAction] = useFormState(sendGenerate, initialState);
 
   useEffect(() => {
-    const { isError } = state;
+    const { isError, newCreditsCount } = state;
 
-    if (isError) {
-      setIsInvalid(true);
-    }
-  }, [state]);
+    if (newCreditsCount > 0 && session?.user?.credits !== newCreditsCount) update({ user: { credits: newCreditsCount, } });
+    if (isError) setIsInvalid(true);
+  }, [state, update]);
 
   const handleClear = () => {
     setIsInvalid(false);
@@ -94,23 +93,7 @@ const Page = () => {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 sm:py-8 md:py-10">
-      {session && !session?.user.email && (
-        <Card className="sm:max-w-[610px] w-full border-2 border-[#f31260] bg-[#f3126010]">
-          <CardHeader className="flex flex-col items-start">
-            <Chip className="mb-1" color="danger">Uhm, wait!</Chip>
-            We haven&apos;t received your email from Twitter, please provide it to continue.
-          </CardHeader>
-
-          <CardFooter className="flex justify-end">
-            <EmailRequiredModal button={
-              <Button color="danger" size="sm">
-                <Mail size={16} />
-                Add your email
-              </Button>
-            } />
-          </CardFooter>
-        </Card>
-      )}
+      {session && !session?.user.email && <EmailRequiredComponent />}
 
       <Card className="sm:max-w-[610px] w-full border-2 border-[#393941]">
         <CardHeader className="border-b border-[#393941] flex flex-col items-start p-4">
@@ -118,19 +101,6 @@ const Page = () => {
           <span className="text-[#9CA3AF] text-sm">
             Tweeets is a tool for analyzing and creating tweets to make your life easier as a regular Twitter user.
           </span>
-
-          {session && (
-            <form action={logout}>
-              <Chip
-                as={Button}
-                avatar={<Avatar name={session?.user.name!.split(" ")[0]} src={session?.user.image!} />}
-                className="mt-2"
-                type={"submit"}
-              >
-                {session.user.name}
-              </Chip>
-            </form>
-          )}
         </CardHeader>
 
         {state && state.isError && state.errorType == "alert" && (
