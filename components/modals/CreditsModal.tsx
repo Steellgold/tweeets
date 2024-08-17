@@ -6,9 +6,8 @@ import { useSession } from "next-auth/react";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { Card, CardFooter } from "@nextui-org/card";
-// import { Image } from "@nextui-org/image";
+import { Image } from "@nextui-org/image";
 import { useFormState } from "react-dom";
-import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { createCheckoutSessionAction } from "@/lib/actions/stripe.action";
@@ -71,14 +70,7 @@ const CreditCard: Component<CreditCardProps> = ({ nbr, price }): ReactElement =>
 
   return (
     <Card isFooterBlurred className="border-none" radius="lg">
-      {/* <Image alt="Credits" className="object-cover" height={200} src={`/credits/${nbr}.png`} width={200} /> */}
-      <Image
-        alt="Credits"
-        className="object-cover"
-        height={200}
-        src={`/credits/${nbr}.png`}
-        width={200}
-      />
+      <Image alt="Credits" className="object-cover" height={200} src={`/credits/${nbr}.png`} width={200} />
 
       <CardFooter className={cn(
         "before:bg-white/5 border-white/20 justify-between",
