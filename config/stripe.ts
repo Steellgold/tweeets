@@ -17,9 +17,7 @@ const PricesIds: PricesIdsType = {
 }
 
 export const getPriceIdToUse = (priceId: "10" | "50" | "100" | "500") =>
-  process.env.NODE_ENV === "development"
-    ? PricesIds[priceId].dev
-    : PricesIds[priceId].prod;
+  (process.env.VERCEL_ENV === "development" || process.env.VERCEL_ENV === "preview") ? PricesIds[priceId].dev : PricesIds[priceId].prod;
 
 export const priceIdToCredits = (priceId: string) => {
   const credits = Object.entries(PricesIds).find(([key, value]) => value.dev === priceId || value.prod === priceId);
