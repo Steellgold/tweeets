@@ -3,7 +3,7 @@ import { Chip } from "@nextui-org/chip"
 import { Button } from "@nextui-org/button"
 import { Mail } from "lucide-react"
 
-import { EmailRequiredModal } from "./modals/EmailRequiredModal"
+import { EmailRequiredModal } from "@/components/modals/EmailRequiredModal"
 
 export const EmailRequiredComponent = () => {
   return (

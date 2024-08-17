@@ -11,10 +11,10 @@ import { useFormState } from "react-dom";
 import { Chip } from "@nextui-org/chip";
 import { z } from "zod";
 
-import { CreditsModal } from "@/components/CreditsModal";
 import { Language } from "@/config/prompt";
 import { generateAction } from "@/lib/actions/generate.action";
 import { useDetectDevice } from "@/lib/hooks/useDetectDevice";
+import { CreditsModal } from "@/components/modals/CreditsModal";
 
 import { ToneTabsComponent } from "./lib/TabsToneComponent";
 import { TONES, TYPE } from "./type/tabs.type";

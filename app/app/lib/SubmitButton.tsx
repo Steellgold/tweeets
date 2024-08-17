@@ -7,12 +7,11 @@ import { useFormStatus } from "react-dom";
 
 import { Component } from "@/components/component";
 import { cn } from "@/lib/utils";
+import { GeneratedPostModal } from "@/components/modals/GeneratedPostModal";
 
 import { GenerateFormActionState } from "../page";
 import { TYPE } from "../type/tabs.type";
 import { SingleTweet, Thread } from "../type/post.type";
-
-import { GeneratedPostModal } from "./modals/GeneratedPostModal";
 
 type SubmitProps = {
   data: GenerateFormActionState;
