@@ -31,12 +31,7 @@ export const viewport: Viewport = {
 const RootLayout: Component<PropsWithChildren> = ({ children }) => {
   return (
     <html suppressHydrationWarning lang="en">
-      <head>
-        <link as="image" href="/credits/10.png" rel="preload"/>
-        <link as="image" href="/credits/50.png" rel="preload"/>
-        <link as="image" href="/credits/100.png" rel="preload"/>
-        <link as="image" href="/credits/500.png" rel="preload"/>
-      </head>
+      <head />
 
       <body
         className={cn(
