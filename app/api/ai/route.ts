@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 
 import { generatePrompt } from "@/config/prompt";
 import { getTokensCount } from "@/config/credits";
-import { bodySchema, SingleTweet, Thread } from "@/app/app/type/post.type";
+import { bodySchema, SingleTweet, Thread } from "@/lib/types/post.type";
 import { openai } from "@/lib/openai";
 
 export const maxDuration = 30;

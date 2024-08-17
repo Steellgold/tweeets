@@ -3,7 +3,7 @@ import { MessageSquare, MessagesSquare } from "lucide-react";
 
 import { Component } from "@/components/component";
 
-import { TYPE } from "../type/tabs.type";
+import { TYPE } from "../../../lib/types/tabs.type";
 
 
 interface TabsComponentProps {

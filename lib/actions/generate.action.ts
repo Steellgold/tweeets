@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { auth, unstable_update } from "@/auth";
 import { openai } from "@/lib/openai";
-import { bodySchema, responseSchema } from "@/app/app/type/post.type";
+import { bodySchema, responseSchema } from "@/lib/types/post.type";
 
 import { prisma } from "../prisma";
 

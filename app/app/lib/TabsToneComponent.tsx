@@ -2,7 +2,7 @@ import { Tabs, Tab } from "@nextui-org/tabs";
 
 import { Component } from "@/components/component";
 
-import { TONES } from "../type/tabs.type";
+import { TONES } from "../../../lib/types/tabs.type";
 
 
 interface TabsComponentProps {

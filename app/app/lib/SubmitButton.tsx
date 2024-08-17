@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 import { GeneratedPostModal } from "@/components/modals/GeneratedPostModal";
 
 import { GenerateFormActionState } from "../page";
-import { TYPE } from "../type/tabs.type";
-import { SingleTweet, Thread } from "../type/post.type";
+import { TYPE } from "../../../lib/types/tabs.type";
+import { SingleTweet, Thread } from "../../../lib/types/post.type";
 
 type SubmitProps = {
   data: GenerateFormActionState;
