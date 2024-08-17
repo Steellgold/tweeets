@@ -6,7 +6,7 @@ import { CircleDollarSign, Drum } from "lucide-react";
 import { title, subtitle } from "@/components/primitives";
 import { cn } from "@/lib/utils";
 import { HighlightBadge } from "@/components/HighlightBadge";
-import { LoginModal } from "@/components/LoginModal";
+import { LoginModal } from "@/app/app/lib/modals/LoginModal";
 import { LoginButton } from "@/components/LoginButton";
 
 const Page = () => {

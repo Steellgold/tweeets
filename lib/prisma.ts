@@ -17,6 +17,6 @@ const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export { prisma };
 
-if (process.env.VERCEL_ENV !== 'production' && process.env.VERCEL_ENV !== 'preview') {
+if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production' && process.env.NEXT_PUBLIC_VERCEL_ENV !== 'preview') {
   globalForPrisma.prisma = prisma;
 }

@@ -17,10 +17,8 @@ const PricesIds: PricesIdsType = {
 }
 
 export const getPriceIdToUse = (priceId: "10" | "50" | "100" | "500") => {
-  console.log(process.env.VERCEL_ENV);
-  
-  if (process.env.VERCEL_ENV === "development") return PricesIds[priceId].dev;
-  if (process.env.VERCEL_ENV === "preview") return PricesIds[priceId].dev;
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === "development") return PricesIds[priceId].dev;
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview") return PricesIds[priceId].dev;
 
   return PricesIds[priceId].prod;
 }

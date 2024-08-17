@@ -12,8 +12,7 @@ import { useFormState } from "react-dom";
 import { cn } from "@/lib/utils";
 import { createCheckoutSessionAction } from "@/lib/actions/stripe.action";
 import { getPriceIdToUse } from "@/config/stripe";
-
-import { Component } from "./component";
+import { Component } from "@/components/component";
 
 type CreditsModalProps = {
   button: ReactElement;
