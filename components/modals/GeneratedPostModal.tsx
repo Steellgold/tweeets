@@ -8,9 +8,7 @@ import { Link } from "@nextui-org/link";
 import { Bird } from "lucide-react";
 
 import { Component } from "@/components/component";
-
-import { TYPE } from "../../type/tabs.type";
-
+import { TYPE } from "@/app/app/type/tabs.type";
 
 type Props = {
   button: ReactElement;

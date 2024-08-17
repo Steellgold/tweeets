@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { button as buttonStyles } from "@nextui-org/theme";
 import { Link } from "@nextui-org/link";
 
-import { Component } from "../../../../components/component";
+import { Component } from "../component";
 
 type LoginModalProps = {
   button: ReactElement;
