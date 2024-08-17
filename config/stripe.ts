@@ -16,8 +16,14 @@ const PricesIds: PricesIdsType = {
   "500": { dev: "price_1PoB8pEEDyBTUKxwG0mCGtw7", prod: "price_1PoCGyEEDyBTUKxwTupRGMe9" }
 }
 
-export const getPriceIdToUse = (priceId: "10" | "50" | "100" | "500") =>
-  (process.env.VERCEL_ENV === "development" || process.env.VERCEL_ENV === "preview") ? PricesIds[priceId].dev : PricesIds[priceId].prod;
+export const getPriceIdToUse = (priceId: "10" | "50" | "100" | "500") => {
+  console.log(process.env.VERCEL_ENV);
+  
+  if (process.env.VERCEL_ENV === "development") return PricesIds[priceId].dev;
+  if (process.env.VERCEL_ENV === "preview") return PricesIds[priceId].dev;
+
+  return PricesIds[priceId].prod;
+}
 
 export const priceIdToCredits = (priceId: string) => {
   const credits = Object.entries(PricesIds).find(([key, value]) => value.dev === priceId || value.prod === priceId);
