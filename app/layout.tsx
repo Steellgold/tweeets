@@ -40,11 +40,9 @@ const RootLayout: Component<PropsWithChildren> = ({ children }) => {
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-              {children}
-            </main>
-          </div>
+          <main className="p-5 sm:p-10 md:p-20 lg:p-30">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>
