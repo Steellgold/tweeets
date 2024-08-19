@@ -11,19 +11,10 @@ import { LifeBuoy, Receipt } from "lucide-react";
 import { Link } from "@nextui-org/link";
 import { Chip } from "@nextui-org/chip";
 
-import { responseSchema } from "@/lib/types/post.type";
 import { stripePortalAction } from "@/lib/actions/stripe-portal.action";
 import { paymentsSchema } from "@/lib/types/user.type";
 import { priceIdToCredits } from "@/config/stripe";
 import { dayJS } from "@/lib/dayjs/day-js";
-
-export type GenerateFormActionState = {
-  isError: boolean;
-  errorType?: "textarea" | "alert";
-  message?: string;
-  data: z.infer<typeof responseSchema>;
-  newCreditsCount: number;
-};
 
 export const BillingTabPage = () => {
   const { data: session, status } = useSession();
