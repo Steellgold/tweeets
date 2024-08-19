@@ -32,6 +32,9 @@ export const GET = async (): Promise<NextResponse> => {
       stripeCustomerId: true,
       
       invoiceUrl: true,
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   });
 
