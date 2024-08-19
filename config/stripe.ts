@@ -23,7 +23,7 @@ export const getPriceIdToUse = (priceId: "10" | "50" | "100" | "500") => {
   return PricesIds[priceId].prod;
 }
 
-export const priceIdToCredits = (priceId: string) => {
+export const priceIdToCredits = (priceId: string): number => {
   const credits = Object.entries(PricesIds).find(([key, value]) => value.dev === priceId || value.prod === priceId);
 
   if (!credits) return 0;
