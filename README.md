@@ -1,17 +1,53 @@
-## Tweet like a pro with Tweeets
-Tweeets is a SaaS that simplifies tweeting by generating intelligent, personalized messages for users.
+# Next.js & NextUI Template
 
-![Group 38 (3) 1](./public/assets/cards/cover.png)
+This is a template for creating applications using Next.js 14 (app directory) and NextUI (v2).
 
-### Stack:
-- Next.js : Application foundation for a responsive and efficient user interface.
-- Stripe: Integrated for seamless payments and a smooth user experience.
-- Supabase: Authentication, database management and real-time tweet display.
-- Prisma: ORM to simplify database interactions.
-- Vercel: Reliable deployment and hosting platform.
-- TypeScript: Improved code quality and maintainability through static typing.
-- shadcn/ui: Attractive, user-friendly visual base thanks to TailwindCSS and RadixUI.
-- Vercel AI SDK: AI integration for intelligent tweet suggestions.
-- OpenAI: Advanced natural language processing for consistent and engaging tweets.
-- Zod: Validation library for data integrity and security.
-- ESLint: Use of @Bluzzi configuration for clean, consistent code.
+[Try it on CodeSandbox](https://githubbox.com/nextui-org/next-app-template)
+
+## Technologies Used
+
+- [Next.js 14](https://nextjs.org/docs/getting-started)
+- [NextUI v2](https://nextui.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tailwind Variants](https://tailwind-variants.org)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [next-themes](https://github.com/pacocoursey/next-themes)
+
+## How to Use
+
+### Use the template with create-next-app
+
+To create a new project based on this template using `create-next-app`, run the following command:
+
+```bash
+npx create-next-app -e https://github.com/nextui-org/next-app-template
+```
+
+### Install dependencies
+
+You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+
+```bash
+npm install
+```
+
+### Run the development server
+
+```bash
+npm run dev
+```
+
+### Setup pnpm (optional)
+
+If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+
+```bash
+public-hoist-pattern[]=*@nextui-org/*
+```
+
+After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+
+## License
+
+Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).

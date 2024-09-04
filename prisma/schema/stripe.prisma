@@ -1,0 +1,31 @@
+enum Status {
+  PENDING
+  FAILED
+  SUCCESS
+  EXPIRED
+  REFUNDED
+}
+
+model Payments {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  credits  Int    @default(10)
+  price    Float
+  status   Status @default(PENDING)
+  currency String @default("usd")
+
+  expiresAt DateTime
+  liveMode  Boolean  @default(false)
+
+  priceId            String
+  checkoutSessionId  String @unique
+  checkoutSessionUrl String
+  stripeCustomerId   String
+
+  invoiceUrl String?
+}

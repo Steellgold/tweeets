@@ -1,0 +1,29 @@
+-- CreateEnum
+CREATE TYPE "Type" AS ENUM ('HUMORISTIC', 'SERIOUS', 'INFORMATIVE', 'NORMAL');
+
+-- CreateEnum
+CREATE TYPE "Mode" AS ENUM ('SINGLE', 'THREAD');
+
+-- CreateTable
+CREATE TABLE "Post" (
+    "id" TEXT NOT NULL,
+    "context" TEXT NOT NULL,
+    "type" "Type" NOT NULL DEFAULT 'NORMAL',
+    "mode" "Mode" NOT NULL DEFAULT 'SINGLE',
+    "uLength" INTEGER NOT NULL DEFAULT 0,
+    "rLength" INTEGER NOT NULL DEFAULT 0,
+    "threadLength" INTEGER NOT NULL DEFAULT 0,
+    "data" JSON NOT NULL,
+    "emojies" BOOLEAN NOT NULL DEFAULT true,
+    "indicators" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "generationTime" DOUBLE PRECISION DEFAULT 0,
+    "generationcost" INTEGER NOT NULL DEFAULT 0,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+);
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
